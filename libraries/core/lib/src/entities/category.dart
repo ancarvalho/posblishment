@@ -1,13 +1,34 @@
-import 'package:isar/isar.dart';
+import 'package:core/src/entities/product.dart';
+import 'package:objectbox/objectbox.dart';
+import "package:uuid/uuid.dart";
 
-part 'category.g.dart';
+@Entity()
+class Category {
+  @Id()
+  int objectboxID;
+  @Unique()
+  String id;
 
-@Collection()
-@Name("categories")
-class Categories {
+  @Unique()
+  String name;
+  String description;
 
-  Id id = Isar.autoIncrement;
+  @Backlink()
+  final products = ToMany<Product>;
 
-  late String name;
-  late String description;
+  @Property(type: PropertyType.date)
+  DateTime? createdAt;
+  @Property(type: PropertyType.date)
+  DateTime? updatedAt;
+
+  Category({
+    this.objectboxID = 0,
+    id,
+    required this.name,
+    required this.description,
+    createdAt,
+    updatedAt,
+  })  : id = id ?? const Uuid().v4(),
+        createdAt = createdAt ?? DateTime.now(),
+        updatedAt = updatedAt ?? DateTime.now();
 }

@@ -5,8 +5,10 @@ import 'package:posblishment/app/app_module.dart';
 import 'package:posblishment/app/app_widget.dart';
 
 void main() {
-  runApp(ModularApp(
-    module: AppModule(),
-    child: const AppWidget(),
-  ));
+  runApp(
+    ModularApp(
+      module: AppModule(),
+      child: const AppWidget(),
+    ),
+  );
 }

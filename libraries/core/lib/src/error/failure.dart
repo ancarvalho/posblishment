@@ -1,5 +1,4 @@
-import 'package:flutter/cupertino.dart';
-
+import 'package:flutter/foundation.dart';
 
 abstract class Failure implements Exception {
   final String errorMessage;
@@ -14,6 +13,10 @@ abstract class Failure implements Exception {
       debugPrintStack(label: label, stackTrace: stackTrace);
     }
     //Store Error on Storage or service
+
+    if (kDebugMode) {
+      print(exception);
+    }
   }
 }
 

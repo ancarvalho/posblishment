@@ -12,7 +12,7 @@ class ButtonConfig {
       {this.dialogDone = 'Done',
       this.dialogCancel = 'Cancel',
       this.buttonCancelColor,
-      this.buttonDoneColor}) {
+      this.buttonDoneColor,}) {
     buttonCancelColor ??= ColorPalettes.white;
     buttonDoneColor ??= ColorPalettes.darkAccent;
     labelCancelColor ??= ColorPalettes.black;
@@ -86,7 +86,7 @@ class SmoothDialog {
                           progressIndicatorBuilder:
                               (context, url, downloadProgress) =>
                                   CircularProgressIndicator(
-                                      value: downloadProgress.progress),
+                                      value: downloadProgress.progress,),
                           errorWidget: (context, url, error) =>
                               const Icon(Icons.error),
                         ),
