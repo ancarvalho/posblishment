@@ -1,6 +1,13 @@
-import '../../domain/entities/crew.dart';
+import '../../domain/entities/basic_statistics.dart';
 
 abstract class DashboardDataSource {
-
-  Future<List<Crew>> getMovieCrewById(int id);
+  Future<BasicStatistics> getTodayStats();
+  Future<BasicStatistics> getThisWeekStats();
+  Future<BasicStatistics> getThisMonthStats();
+  Future<List<BasicStatistics>> getMostSoldProductsThisToday();
+  Future<List<BasicStatistics>> getMostSoldProductsThisWeek();
+  Future<List<BasicStatistics>> getMostSoldProductsThisMonth();
+  Future<List<BasicStatistics>> getMostSoldProductsByCategoryThisToday();
+  Future<List<BasicStatistics>> getMostSoldProductsByCategoryThisWeek();
+  Future<List<BasicStatistics>> getMostSoldProductsByCategoryThisMonth();
 }

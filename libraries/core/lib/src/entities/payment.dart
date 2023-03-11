@@ -1,6 +1,8 @@
-import 'package:core/src/entities/bill.dart';
-import 'package:objectbox/objectbox.dart';
+import 'package:core/core.dart';
+import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
+
+import 'item.dart';
 
 enum PaymentType {
   creditCard,
@@ -9,31 +11,17 @@ enum PaymentType {
   pix,
 }
 
-@Entity()
-class Payment {
-  @Id()
-  int objectboxID;
-  @Unique()
-  String id;
 
-  double value;
-  PaymentType paymentType;
+class Payment extends Table {
+  TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
+  RealColumn get value => real()();
 
-  @Property(type: PropertyType.date)
-  DateTime? createdAt;
-  @Property(type: PropertyType.date)
-  DateTime? updatedAt;
+  IntColumn get paymentType =>
+      integer().map(JsonAwareIntEnumConverter(PaymentType.values))();
+  TextColumn get billId => text().references(Bill, #id)();
 
-  final billID = ToOne<Bill>();
-
-  Payment({
-    this.objectboxID = 0,
-    id,
-    required this.value,
-    this.paymentType = PaymentType.creditCard,
-    createdAt,
-    updatedAt,
-  })  : id = id ?? const Uuid().v4(),
-        createdAt = createdAt ?? DateTime.now(),
-        updatedAt = updatedAt ?? DateTime.now();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(Constant(DateTime.now()))();
+  DateTimeColumn get updatedAt =>
+      dateTime().withDefault(Constant(DateTime.now()))();
 }

@@ -65,6 +65,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.0"
+  convert:
+    dependency: transitive
+    description:
+      name: convert
+      sha256: "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.1"
   crypto:
     dependency: transitive
     description:
@@ -81,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.10.1"
+  drift:
+    dependency: "direct main"
+    description:
+      name: drift
+      sha256: "2a16754641485ca4eaf31bb7961f3ec26bcddad1ce4869a37f238791e164c073"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
   fake_async:
     dependency: transitive
     description:
@@ -105,14 +121,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
-  flat_buffers:
-    dependency: transitive
-    description:
-      name: flat_buffers
-      sha256: "23e2ced0d8e8ecdffbd9f267f49a668c74438393b9acaeac1c724123e3764263"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.5"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -256,22 +264,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
-  objectbox:
-    dependency: "direct main"
-    description:
-      name: objectbox
-      sha256: c18d41f4e81e5a30fc0e2200e9e8306f5ccc8a9b61fe3746426359690c33dc7b
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.7.2"
-  objectbox_flutter_libs:
-    dependency: "direct main"
-    description:
-      name: objectbox_flutter_libs
-      sha256: "179a2edfca5eb80abee6e829ebff69872ad20c9f07c2527fe9d098f4bf5a5b83"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.7.2"
   octo_image:
     dependency: transitive
     description:
@@ -469,6 +461,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.2+2"
+  sqlite3:
+    dependency: transitive
+    description:
+      name: sqlite3
+      sha256: "0a9f8fe561aad15b94549c98d55dee6825a401efec83bf92956e337e35e68ae5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.9.3"
   stack_trace:
     dependency: transitive
     description:

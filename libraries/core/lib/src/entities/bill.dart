@@ -1,8 +1,7 @@
-import 'package:objectbox/objectbox.dart';
+import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
-import 'orders.dart';
-import 'payment.dart';
+import 'item.dart';
 
 enum BillStatus {
   open,
@@ -12,55 +11,33 @@ enum BillStatus {
   canceled,
 }
 
-// TODO define bill service taxes and extra, like delivery
-enum BillType {
-  takeout,
-  saloon,
-  delivery,
-}
+// // TODO define bill service taxes and extra, like delivery
+// enum BillType {
+//   takeout,
+//   saloon,
+//   delivery,
+// }
 
-// three fields predefined, tax of service(shipping, waiter fee), (discount), (no tax) -> personalized tax (percentage or fixed)
-enum BillServiceType {
-  fixedBillTax, // a fixed percentage of bill total value
-  fixedTax, // fixed value
-  billDiscount, // a fixed percentage of bill total value
-  discount, // fixed value
-  dynamicTax,
-  dynamicBillTax,
-}
+// // three fields predefined, tax of service(shipping, waiter fee), (discount), (no tax) -> personalized tax (percentage or fixed)
+// enum BillServiceType {
+//   fixedBillTax, // a fixed percentage of bill total value
+//   fixedTax, // fixed value
+//   billDiscount, // a fixed percentage of bill total value
+//   discount, // fixed value
+//   dynamicTax,
+//   dynamicBillTax,
+// }
 
-@Entity()
-class Bill {
-  @Id()
-  int objectboxID;
-  @Unique()
-  String id;
+class Bill extends Table {
+  TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
+  IntColumn get table => integer().nullable()();
+  TextColumn get customerName => text().nullable()();
 
-  @Unique()
-  int? table;
-  String? customerName;
-  BillStatus? status;
+  IntColumn get status =>
+      integer().map(JsonAwareIntEnumConverter(BillStatus.values))();
 
-  @Property(type: PropertyType.date)
-  DateTime? createdAt;
-  @Property(type: PropertyType.date)
-  DateTime? updatedAt;
-
-  @Backlink()
-  final orders = ToMany<Orders>;
-
-  @Backlink()
-  final payments = ToMany<Payment>;
-
-  Bill({
-    this.objectboxID = 0,
-    id,
-    this.table,
-    this.customerName,
-    BillStatus this.status = BillStatus.open,
-    createdAt,
-    updatedAt,
-  })  : id = id ?? const Uuid().v4(),
-        createdAt = createdAt ?? DateTime.now(),
-        updatedAt = updatedAt ?? DateTime.now();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(Constant(DateTime.now()))();
+  DateTimeColumn get updatedAt =>
+      dateTime().withDefault(Constant(DateTime.now()))();
 }

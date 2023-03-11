@@ -1,36 +1,18 @@
-import "package:objectbox/objectbox.dart";
-import 'package:uuid/uuid.dart';
+import 'package:core/core.dart';
+import 'package:drift/drift.dart';
+import "package:uuid/uuid.dart";
 
-import 'product.dart';
+class ProductVariation extends Table {
+  TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
+  TextColumn get name => text().unique()();
+  RealColumn get price => real()();
+  BoolColumn get priceVariation =>
+      boolean().withDefault(const Constant(false))();
 
-@Entity()
-class ProductVariation {
-  @Id()
-  int objectboxID;
-  @Unique()
-  String id;
+  TextColumn get productId => text().references(Product, #id)();
 
-  @Unique()
-  String name;
-  bool? priceVariation;
-  double? price;
-
-  final productID = ToOne<Product>();
-
-  @Property(type: PropertyType.date)
-  DateTime? createdAt;
-  @Property(type: PropertyType.date)
-  DateTime? updatedAt;
-
-  ProductVariation({
-    this.objectboxID = 0,
-    id,
-    required this.name,
-    this.priceVariation,
-    this.price,
-    createdAt,
-    updatedAt,
-  })  : id = id ?? const Uuid().v4(),
-        createdAt = createdAt ?? DateTime.now(),
-        updatedAt = updatedAt ?? DateTime.now();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(Constant(DateTime.now()))();
+  DateTimeColumn get updatedAt =>
+      dateTime().withDefault(Constant(DateTime.now()))();
 }

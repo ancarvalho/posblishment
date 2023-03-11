@@ -1,8 +1,6 @@
-import 'package:objectbox/objectbox.dart';
-import 'package:uuid/uuid.dart';
-
-import 'orders.dart';
-import 'product.dart';
+import 'package:core/core.dart';
+import 'package:drift/drift.dart';
+import "package:uuid/uuid.dart";
 
 enum ItemStatus {
   preparing,
@@ -10,37 +8,24 @@ enum ItemStatus {
   canceled,
 }
 
-@Entity()
-class Item {
-  @Id()
-  int objectboxID;
 
-  @Unique()
-  String id;
+class JsonAwareIntEnumConverter<E extends Enum> extends EnumIndexConverter<E> {
+  JsonAwareIntEnumConverter(super.values);
+}
 
-  double price;
-  int quantity;
-  int totalQuantity;
-  ItemStatus status;
+class Item extends Table {
+  TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
+  RealColumn get price => real()();
+  IntColumn get quantity => integer().withDefault(const Constant(1))();
+  IntColumn get totalQuantity => integer().generatedAs(quantity)();
+  IntColumn get status =>
+      integer().map(JsonAwareIntEnumConverter(ItemStatus.values))();
 
-  final productId = ToOne<Product>();
-  final orderId = ToOne<Orders>();
+  TextColumn get productId => text().references(Product, #id)();
+  TextColumn get requestId => text().references(Request, #id)();
 
-  @Property(type: PropertyType.date)
-  DateTime? createdAt;
-  @Property(type: PropertyType.date)
-  DateTime? updatedAt;
-
-  Item({
-    this.objectboxID = 0,
-    id,
-    required this.price,
-    required this.totalQuantity,
-    required this.quantity,
-    this.status = ItemStatus.preparing,
-    createdAt,
-    updatedAt,
-  })  : id = id ?? const Uuid().v4(),
-        createdAt = createdAt ?? DateTime.now(),
-        updatedAt = updatedAt ?? DateTime.now();
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(Constant(DateTime.now()))();
+  DateTimeColumn get updatedAt =>
+      dateTime().withDefault(Constant(DateTime.now()))();
 }

@@ -3,14 +3,10 @@ import 'package:drift/drift.dart';
 import "package:uuid/uuid.dart";
 
 
-class Product extends Table {
+class Request extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
-  TextColumn get name => text().unique()();
-  TextColumn get description => text().nullable()();
-  RealColumn get price => real()();
-  BoolColumn get preparable => boolean().withDefault(const Constant(false))();
-
-  TextColumn get categoryId => text().references(Category, #id)();
+  TextColumn get observation => text().nullable()();
+  TextColumn get billId => text().references(Bill, #id)();
 
   DateTimeColumn get createdAt =>
       dateTime().withDefault(Constant(DateTime.now()))();
