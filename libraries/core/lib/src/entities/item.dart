@@ -2,6 +2,9 @@ import 'package:core/core.dart';
 import 'package:drift/drift.dart';
 import "package:uuid/uuid.dart";
 
+import 'enum_converter.dart';
+// part 'item.g.dart';
+
 enum ItemStatus {
   preparing,
   delivered,
@@ -9,9 +12,7 @@ enum ItemStatus {
 }
 
 
-class JsonAwareIntEnumConverter<E extends Enum> extends EnumIndexConverter<E> {
-  JsonAwareIntEnumConverter(super.values);
-}
+
 
 class Item extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();

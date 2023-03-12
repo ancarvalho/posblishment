@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
-
-import 'item.dart';
+import 'enum_converter.dart';
+// part 'bill.g.dart';
 
 enum BillStatus {
   open,

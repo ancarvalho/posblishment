@@ -1,8 +1,9 @@
 import 'package:core/core.dart';
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
+import 'enum_converter.dart';
 
-import 'item.dart';
+// part 'payment.g.dart';
 
 enum PaymentType {
   creditCard,

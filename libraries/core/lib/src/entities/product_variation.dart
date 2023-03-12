@@ -2,6 +2,8 @@ import 'package:core/core.dart';
 import 'package:drift/drift.dart';
 import "package:uuid/uuid.dart";
 
+// part 'product_variation.g.dart';
+
 class ProductVariation extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
   TextColumn get name => text().unique()();

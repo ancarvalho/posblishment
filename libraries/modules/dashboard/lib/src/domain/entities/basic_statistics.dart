@@ -10,4 +10,8 @@ class BasicStatistics {
     this.commission,
     this.notPaid,
   });
+
+  factory BasicStatistics.empty() {
+    return BasicStatistics(commission: 0, notPaid: 0, subtotal: 0, total: 0);
+  }
 }

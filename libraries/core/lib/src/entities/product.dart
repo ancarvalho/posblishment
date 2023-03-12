@@ -1,7 +1,7 @@
 import 'package:core/core.dart';
 import 'package:drift/drift.dart';
 import "package:uuid/uuid.dart";
-
+// part 'product.g.dart';
 
 class Product extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
