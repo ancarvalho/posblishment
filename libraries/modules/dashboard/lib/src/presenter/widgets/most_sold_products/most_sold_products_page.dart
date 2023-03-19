@@ -101,8 +101,10 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
                       'data': [
                         ...state
                             .map(
-                              (e) =>
-                                  {"domain": e.name, "measure": e.totalQuantity},
+                              (e) => {
+                                "domain": e.name,
+                                "measure": e.totalQuantity
+                              },
                             )
                             .toList()
                       ],
@@ -128,8 +130,6 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
                   showBarValue: true,
                   barValuePosition: BarValuePosition.inside,
                   showDomainLine: false,
-                 
-
                 ),
               ),
             ],

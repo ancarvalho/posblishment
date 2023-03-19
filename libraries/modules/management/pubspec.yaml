@@ -1,0 +1,32 @@
+name: management
+description: A new Flutter module project.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.2 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  dependencies:
+    path: "../../dependencies"
+  core:
+    path: "../../core"
+  design_system:
+    path: "../../design_system"
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  module:
+    androidX: true
+    androidPackage: com.example.management
+    iosBundleIdentifier: com.example.management
