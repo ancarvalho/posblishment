@@ -6,8 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'splash/splash_module.dart';
 
 class AppModule extends Module {
+
+  // Fixed
   @override
-  List<Module> get imports => [];
+  List<Module> get imports => [DashboardModule()];
 
   @override
   final List<Bind> binds = [

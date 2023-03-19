@@ -19,6 +19,7 @@ dependencies:
   path_provider: ^2.0.13
   uuid: ^3.0.7
   drift: ^2.5.0
+  d_chart: ^2.2.11
   
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:d_chart/d_chart.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -9,21 +10,25 @@ import '../../../domain/enums/frequency.dart';
 import '../../../domain/errors/dashboard_failures.dart';
 import 'most_sold_products_store.dart';
 
-class BasicStatisticsPage extends StatefulWidget {
-  const BasicStatisticsPage({super.key});
+class MostSoldProductsPage extends StatefulWidget {
+  const MostSoldProductsPage({super.key});
 
   @override
-  State<BasicStatisticsPage> createState() => _BasicStatisticsPageState();
+  State<MostSoldProductsPage> createState() => _MostSoldProductsPageState();
 }
 
-class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
+class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
   final store = Modular.get<MostSoldProductsStore>();
-  final Frequency _frequency = Frequency.today;
+  Frequency _frequency = Frequency.today;
+
+  Future<void> reload(Frequency frequency) async {
+    await store.load(frequency);
+  }
 
   @override
   void initState() {
     super.initState();
-    store.load(_frequency);
+    reload(_frequency);
   }
 
   @override
@@ -31,16 +36,39 @@ class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
     return Column(
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ...Frequency.values
-                .map(
-                  (e) => GestureDetector(
-                    child: Text(e.displayName),
-                    onTap: () {},
-                  ),
-                )
-                .toList()
+            Text(
+              "Mais Vendidos",
+              style: TextStyle(
+                fontSize: Sizes.dp27(context),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ...Frequency.values
+                    .map(
+                      (e) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: CustomButton(
+                          text: e.displayName,
+                          onPressed: () {
+                            setState(() {
+                              _frequency = e;
+                            });
+                          },
+                        ),
+                      ),
+                    )
+                    .toList()
+              ],
+            ),
           ],
+        ),
+        SizedBox(
+          height: Sizes.heightPercentile125(context),
         ),
         ScopedBuilder<MostSoldProductsStore, Failure,
             List<ItemsSold>>.transition(
@@ -62,7 +90,50 @@ class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
             return CustomErrorWidget(message: error?.errorMessage);
           },
           onLoading: (context) => const CircularProgressIndicator(),
-          onState: (context, state) => Column(),
+          onState: (context, state) => Column(
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: DChartBar(
+                  data: [
+                    {
+                      'id': 'Bar',
+                      'data': [
+                        ...state
+                            .map(
+                              (e) =>
+                                  {"domain": e.name, "measure": e.totalQuantity},
+                            )
+                            .toList()
+                      ],
+                    },
+                  ],
+                  yAxisTitle: 'Quantidade',
+                  xAxisTitle: 'Produtos',
+                  measureMin: 0,
+                  measureMax: 31,
+                  minimumPaddingBetweenLabel: 1,
+                  domainLabelPaddingToAxisLine: 16,
+                  axisLineTick: 2,
+                  axisLinePointTick: 2,
+                  axisLinePointWidth: 10,
+                  axisLineColor: Colors.green,
+                  measureLabelPaddingToAxisLine: 16,
+                  verticalDirection: false,
+                  domainLabelRotation: 0,
+                  barColor: (barData, index, id) => barData['measure'] >= 4
+                      ? Colors.green.shade300
+                      : Colors.green.shade700,
+                  barValue: (barData, index) => '${barData['measure']}',
+                  showBarValue: true,
+                  barValuePosition: BarValuePosition.inside,
+                  showDomainLine: false,
+                 
+
+                ),
+              ),
+            ],
+          ),
         )
       ],
     );
