@@ -30,27 +30,27 @@ class DashboardRepositoryDummyImpl implements DashboardRepository {
 
     return [
       ItemsSold(
-        id: "a8sda-da9sdi-asddaw-123a",
+        id: "a8sda-da9sdi-as1d3w-a8sda",
         name: "Peixada de Carapeba",
         totalQuantity: 13,
       ),
       ItemsSold(
-        id: "a8sda-da9sdi-asddaw-113d",
+        id: "a8sda-da9sdi-asd1da-113d",
         name: "Peixada de Arabaiana",
         totalQuantity: 31,
       ),
       ItemsSold(
-        id: "a8sda-da9sdi-asddaw-131a",
+        id: "a8sda-da9sdi-131a-131a",
         name: "Peixada de Cavala",
         totalQuantity: 18,
       ),
       ItemsSold(
-        id: "a8sda-da9sdi-asddaw-131a",
+        id: "a8sda-da9sdi-a8sda-131a",
         name: "Peixada ao Molho de Camarão",
         totalQuantity: 16,
       ),
       ItemsSold(
-        id: "a8sda-da9sdi-asddaw-131a",
+        id: "a8sda-da9sdi-da9sdi-131a",
         name: "Camarãozada",
         totalQuantity: 22,
       ),

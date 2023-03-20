@@ -1,2 +1,2 @@
-export 'basic_statistics.dart';
-export 'items_sold.dart';
+export 'category.dart';
+export 'product.dart';
