@@ -1,5 +1,5 @@
-name: dashboard
-description: dashboard module.
+name: statistics
+description: statistics module.
 publish_to: "none"
 version: 1.0.0+1
 

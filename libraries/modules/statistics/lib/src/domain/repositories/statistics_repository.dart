@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 import '../entities/entities.dart';
 import '../enums/frequency.dart';
 
-abstract class DashboardRepository {
+abstract class StatisticsRepository {
   Future<Either<Failure, BasicStatistics>> getBasicStatistics(
       Frequency frequency);
   Future<List<ItemsSold>> getMostSoldProducts(Frequency frequency);

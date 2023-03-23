@@ -1,19 +1,20 @@
-import 'package:dashboard/src/presenter/widgets/most_sold_products/most_sold_products_page.dart';
-import 'package:dashboard/src/presenter/widgets/most_sold_products/most_sold_products_store.dart';
+
+import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:design_system/design_system.dart';
 
 import '../../widgets/basic_statistics/basic_statistics_page.dart';
+import '../../widgets/most_sold_products/most_sold_products_page.dart';
+import '../../widgets/most_sold_products/most_sold_products_store.dart';
 
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+class StatisticsPage extends StatefulWidget {
+  const StatisticsPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  State<StatisticsPage> createState() => _StatisticsPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class _StatisticsPageState extends State<StatisticsPage> {
   final store = Modular.get<MostSoldProductsStore>();
   @override
   Widget build(BuildContext context) {

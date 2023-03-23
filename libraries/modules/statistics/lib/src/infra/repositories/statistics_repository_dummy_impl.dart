@@ -1,12 +1,11 @@
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dashboard/src/domain/entities/basic_statistics.dart';
-import 'package:dashboard/src/domain/entities/items_sold.dart';
-import 'package:dashboard/src/domain/enums/frequency.dart';
+import '../../domain/entities/entities.dart';
+import '../../domain/enums/frequency.dart';
 
-import '../../domain/repositories/dashboard_repository.dart';
+import '../../domain/repositories/statistics_repository.dart';
 
-class DashboardRepositoryDummyImpl implements DashboardRepository {
+class StatisticsRepositoryDummyImpl implements StatisticsRepository {
   @override
   Future<Either<Failure, BasicStatistics>> getBasicStatistics(
     Frequency frequency,

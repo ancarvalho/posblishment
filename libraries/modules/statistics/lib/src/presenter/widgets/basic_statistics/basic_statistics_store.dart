@@ -1,7 +1,7 @@
 import 'package:core/core.dart';
-import 'package:dashboard/src/domain/entities/basic_statistics.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
+import '../../../domain/entities/basic_statistics.dart';
 import '../../../domain/enums/frequency.dart';
 import '../../../domain/use_cases/get_basic_statistics.dart';
 
