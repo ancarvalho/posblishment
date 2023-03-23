@@ -14,4 +14,12 @@ class Product {
     required this.unitValue,
     this.variations,
   });
+
+  factory Product.empty() {
+    return Product(
+      id: "",
+      name: "",
+      unitValue: 0,
+    );
+  }
 }

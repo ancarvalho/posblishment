@@ -21,8 +21,11 @@ dependencies:
   design_system:
     path: libraries/design_system
 
-  dashboard:
-    path: libraries/modules/dashboard
+  statistics:
+    path: libraries/modules/statistics
+  
+  management:
+    path: libraries/modules/management
     
   cupertino_icons: ^1.0.2
 

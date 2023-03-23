@@ -128,13 +128,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.10.1"
-  dashboard:
-    dependency: "direct main"
-    description:
-      path: "libraries/modules/dashboard"
-      relative: true
-    source: path
-    version: "1.0.0+1"
   dependencies:
     dependency: "direct main"
     description:
@@ -292,6 +285,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  management:
+    dependency: "direct main"
+    description:
+      path: "libraries/modules/management"
+      relative: true
+    source: path
+    version: "1.0.0+1"
   matcher:
     dependency: transitive
     description:
@@ -545,6 +545,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.0"
+  statistics:
+    dependency: "direct main"
+    description:
+      path: "libraries/modules/statistics"
+      relative: true
+    source: path
+    version: "1.0.0+1"
   stream_channel:
     dependency: transitive
     description:
