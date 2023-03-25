@@ -35,7 +35,6 @@ class StatisticsModule extends Module {
 
   @override
   final List<ModularRoute> routes = [
-    // ChildRoute('/', child: (_, args) => const MoviePage()),
-    ChildRoute('/home', child: (_, args) => const StatisticsPage())
+    ChildRoute('/', child: (_, args) => const StatisticsPage())
   ];
 }
