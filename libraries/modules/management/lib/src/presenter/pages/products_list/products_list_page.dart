@@ -5,6 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/entities/entities.dart' as e;
+import '../../widgets/item/item_widget.dart';
 import 'products_list_store.dart';
 
 class ProductsListPage extends StatefulWidget {
@@ -52,7 +53,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
           ],
         ),
         body: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: Sizes.width(context)*.02),
+          padding: EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
           child: RefreshIndicator(
             onRefresh: () async {
               await reload();
@@ -64,38 +65,19 @@ class _ProductsListPageState extends State<ProductsListPage> {
                 return ListView.builder(
                   itemCount: state.length,
                   itemBuilder: (context, index) {
-                    return TextButton(
-                      onPressed: () {
-                        Modular.to.pushNamed(
-                          './product',
-                          arguments: state[index],
-                        );
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.all(Sizes.dp10(context)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: Sizes.width(context) * .06,
-                              child: Text("${state[index].code ?? ""}"),
-                            ),
-                            SizedBox(
-                              width: Sizes.width(context) * .60,
-                              child: Column(
-                                children: [
-                                  Text(state[index].name),
-                                  Text(state[index].description ?? "")
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: Sizes.width(context) * .14,
-                              child: Text(
-                                "R\$ ${state[index].unitValue}",
-                              ),
-                            ),
-                          ],
+                    return Container(
+                      margin:
+                          EdgeInsets.symmetric(vertical: Sizes.dp4(context)),
+                      height: Sizes.height(context) / 10,
+                      child: GestureDetector(
+                        onTap: () {
+                          Modular.to.pushNamed(
+                            './product',
+                            arguments: state[index],
+                          );
+                        },
+                        child: ItemWidget(
+                          product: state[index],
                         ),
                       ),
                     );

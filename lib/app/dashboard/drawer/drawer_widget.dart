@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 enum Pages {
-  dashboard(name: "Dashboard", route: "/dashboard/statistics/"),
+  dashboard(name: "Dashboard", route: "/dashboard/statistics"),
   managementProducts(name: "Management Products", route: "/dashboard/management/all_products"),
-  managementCategories(name: "Management Categories", route: "/dashboard/management/all_categories");
+  managementCategories(name: "Management Categories", route: "/dashboard/management/all_categories"),
+  stockControl(name: "Stock Control", route: "/dashboard/stock");
 
   const Pages({required this.name, required this.route});
 

@@ -97,31 +97,43 @@ class ManagementRepositoryDummyImpl implements ManagementRepository {
         id: "1f13d370-bee8-4abe-9eee-240e3b2cd9ee",
         name: "Peixada de Arabaiana",
         unitValue: 20.5,
+        code: 2,
+        description: "Pirão, arroz, vinagrete, farofa, ",
       ),
       Product(
         id: "58cd0050-2842-42c9-92c7-0eaf6f36c436",
         name: "Peixada de Cavala",
         unitValue: 20.5,
+        code: 2,
+        description: "Pirão, arroz, vinagrete, farofa, ",
       ),
       Product(
         id: "afe3d0da-47d2-423a-8358-028a7d4b0bd7",
         name: "Peixada de Carapeba",
         unitValue: 20.5,
+        code: 2,
+        description: "Pirão, arroz, vinagrete, farofa, ",
       ),
       Product(
         id: "2ce46f70-80a3-49cd-993f-c57726027fe5",
         name: "Peixada ao molho de camarão",
         unitValue: 20.5,
+        code: 2,
+        description: "Pirão, arroz, vinagrete, farofa, ",
       ),
       Product(
         id: "8b6b6cbd-7110-4284-ab26-3116cba3d5b1",
         name: "Cacao completo",
         unitValue: 20.5,
+        code: 2,
+        description: "Pirão, arroz, vinagrete, farofa, ",
       ),
       Product(
         id: "0e35236e-8603-4e3a-adeb-4c95be887e7e",
         name: "Sirizada",
         unitValue: 20.5,
+        code: 2,
+        description: "Pirão, arroz, vinagrete, farofa, ",
       ),
     ]);
   }

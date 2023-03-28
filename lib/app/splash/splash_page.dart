@@ -21,7 +21,7 @@ class _SplashPageState extends State<SplashPage> {
       Modular.isModuleReady<AppModule>(),
       Future.delayed(const Duration(seconds: 2)),
     ]).then(
-      (value) => Modular.to.navigate('/dashboard/statistics'),
+      (value) => Modular.to.navigate('/dashboard/statistics/'),
     );
   }
 

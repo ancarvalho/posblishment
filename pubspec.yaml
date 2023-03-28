@@ -26,6 +26,8 @@ dependencies:
   
   management:
     path: libraries/modules/management
+  stock:
+    path: libraries/modules/stock
     
   cupertino_icons: ^1.0.2
 

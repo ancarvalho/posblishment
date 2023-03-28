@@ -11,6 +11,9 @@ class StockControlRepositoryDummyImpl implements StockControlRepository {
 
     return Right([
       ProductStock(name: "Peixada de Arabaiana", totalAvailable: 15),
+      ProductStock(name: "Peixada de Cavala", totalAvailable: 15),
+      ProductStock(name: "Peixada ao Molho de Camarão", totalAvailable: 15),
+      ProductStock(name: "Peixada de Carapeba", totalAvailable: 15),
     ]);
   }
 
