@@ -4,7 +4,7 @@ import 'package:management/management.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:statistics/statistics.dart';
 import 'package:stock/stock.dart';
-
+import 'package:internal_database/internal_database.dart';
 import 'dashboard/dashboard_module.dart';
 import 'splash/splash_module.dart';
 
@@ -21,13 +21,13 @@ class AppModule extends Module {
     Bind.lazySingleton<SharedPrefHelper>((i) => SharedPrefHelper(preferences: i())),
     AsyncBind<SharedPreferences>((i) => SharedPreferences.getInstance()),
 
+     Bind.lazySingleton<AppDatabase>((i) => AppDatabase(),)
   ];
 
   @override
   final List<ModularRoute> routes = [
     ModuleRoute('/', module: SplashModule()),
     ModuleRoute('/dashboard', module: DashboardModule()),
-    // ModuleRoute('/statistics', module: StatisticsModule()),
-    // ModuleRoute('/management', module: ManagementModule()),
+
   ];
 }

@@ -1,11 +1,13 @@
 import 'package:drift/drift.dart';
 import "package:uuid/uuid.dart";
-// part 'category.g.dart';
+import 'tables.dart';
+// part 'request.g.dart';
 
-class Category extends Table {
+class Request extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
-  TextColumn get name => text().unique()();
-  TextColumn get description => text().nullable()();
+  TextColumn get observation => text().nullable()();
+  TextColumn get billId => text().references(Bill, #id)();
+
   DateTimeColumn get createdAt =>
       dateTime().withDefault(Constant(DateTime.now()))();
   DateTimeColumn get updatedAt =>

@@ -28,6 +28,9 @@ dependencies:
     path: libraries/modules/management
   stock:
     path: libraries/modules/stock
+
+  internal_database:
+    path: libraries/internal_database
     
   cupertino_icons: ^1.0.2
 

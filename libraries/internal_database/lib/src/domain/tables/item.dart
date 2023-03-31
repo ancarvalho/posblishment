@@ -1,9 +1,9 @@
-import 'package:core/core.dart';
 import 'package:drift/drift.dart';
 import "package:uuid/uuid.dart";
 
-import 'enum_converter.dart';
-// part 'item.g.dart';
+import '../utils/enum_converter.dart';
+import 'tables.dart';
+
 
 enum ItemStatus {
   preparing,
