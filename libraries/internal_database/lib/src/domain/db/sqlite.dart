@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:internal_database/src/domain/repositories/category_repository.dart';
 import 'package:internal_database/src/domain/repositories/product_repository.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../entities/entities.dart';
 import '../tables/tables.dart' as t;
+import '../utils/adapters/category_adapter.dart';
 import '../utils/adapters/product_adapter.dart';
 
 part 'sqlite.g.dart';
@@ -39,7 +41,8 @@ DatabaseConnection connect() {
     t.Request
   ],
 )
-class AppDatabase extends _$AppDatabase implements ProductRepository {
+class AppDatabase extends _$AppDatabase
+    implements ProductRepository, CategoryRepository {
   AppDatabase() : super(connect());
 
   AppDatabase.forTesting(DatabaseConnection connection) : super(connection);
@@ -47,6 +50,8 @@ class AppDatabase extends _$AppDatabase implements ProductRepository {
   @override
   int get schemaVersion => 3;
 
+
+    // ------------------------Product---------------------------
   @override
   Future<Product> getProduct(String id) {
     return (select(product)..where((p) => p.id.equals(id)))
@@ -73,5 +78,48 @@ class AppDatabase extends _$AppDatabase implements ProductRepository {
   Future<int> updateProduct(Product newProduct) {
     return (update(product)..where((t) => t.id.equals(newProduct.id)))
         .write(ProductAdapter.toProductCompanion(newProduct));
+  }
+
+  // ------------------------Category---------------------------
+  @override
+  Future<int> createCategory(Category newCategory) {
+    return into(category).insert(CategoryAdapter.toCategoryData(newCategory));
+  }
+
+  @override
+  Future<List<Category>> getCategories() {
+    return select(category).map(CategoryAdapter.fromCategoryData).get();
+  }
+
+  @override
+  Future<List<CategorizedProduct>> getCategorizedProducts() {
+    final query = select(category).join(
+      [leftOuterJoin(product, product.categoryId.equalsExp(category.id))],
+    );
+
+    return query.map((r) {
+      return CategorizedProduct(
+        category: CategoryAdapter.fromCategoryData(r.readTable(category)),
+        product: ProductAdapter.fromProductData(r.readTable(product)),
+      );
+    }).get();
+  }
+
+  @override
+  Future<Category> getCategory(String id) {
+    return (select(category)..where((tbl) => tbl.id.equals(id)))
+        .map(CategoryAdapter.fromCategoryData)
+        .getSingle();
+  }
+
+  @override
+  Future<int> updateCategory(Category newCategory) {
+    return (update(category)..where((t) => t.id.equals(newCategory.id)))
+        .write(CategoryAdapter.toCategoryCompanion(newCategory));
+  }
+
+  @override
+  Future<int> deleteCategory(String id) {
+    return (delete(category)..where((tbl) => tbl.id.equals(id))).go();
   }
 }

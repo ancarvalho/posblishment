@@ -8,7 +8,7 @@ class Category {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  const Category( {
+  const Category({
     required this.id,
     required this.name,
     this.description,
@@ -16,4 +16,10 @@ class Category {
     required this.createdAt,
     required this.updatedAt,
   });
+}
+
+class CategorizedProduct {
+  Category category;
+  Product product;
+  CategorizedProduct({required this.category, required this.product});
 }
