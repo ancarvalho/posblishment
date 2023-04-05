@@ -14,6 +14,10 @@ dependencies:
     path: "../../dependencies"
   core:
     path: "../../core"
+
+  internal_database:
+    path: "../../internal_database"
+    
   design_system:
     path: "../../design_system"
   cupertino_icons: ^1.0.2

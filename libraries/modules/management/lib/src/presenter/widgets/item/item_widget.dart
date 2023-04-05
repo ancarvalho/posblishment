@@ -1,9 +1,9 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import '../../../domain/entities/entities.dart' as e;
+import "package:core/core.dart";
 
 class ItemWidget extends StatelessWidget {
-  final e.Product product;
+  final Product product;
   const ItemWidget({super.key, required this.product});
 
   @override
@@ -13,7 +13,7 @@ class ItemWidget extends StatelessWidget {
         height: Sizes.height(context) / 10,
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: Sizes.dp8(context), vertical: Sizes.dp9(context)),
+              horizontal: Sizes.dp8(context), vertical: Sizes.dp9(context),),
           child: Stack(
             alignment: AlignmentDirectional.center,
             children: [
@@ -49,7 +49,7 @@ class ItemWidget extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    product.unitValue.toString(),
+                    product.price.toString(),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,

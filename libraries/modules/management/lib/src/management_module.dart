@@ -23,7 +23,7 @@ class ManagementModule extends Module {
     Bind.lazySingleton((i) => ProductListStore(i()),export: true,),
     Bind.lazySingleton((i) => CategoriesListStore(i()),export: true,),
 
-    Bind.lazySingleton<ManagementRepository>((_) => ManagementRepositoryDummyImpl(),),
+    Bind.lazySingleton<ManagementRepository>((i) => ManagementRepositoryDummyImpl(i()),),
 
 
     Bind.lazySingleton<IListAllProducts>((i) => ListAllProducts(i()),),

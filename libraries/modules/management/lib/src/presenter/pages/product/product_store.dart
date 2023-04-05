@@ -1,15 +1,16 @@
 import 'package:core/core.dart';
 import 'package:flutter_triple/flutter_triple.dart';
-import '../../../domain/entities/entities.dart' as e;
-import '../../../domain/use_cases/create_product.dart';
+import 'package:internal_database/internal_database.dart';
+import 'package:management/src/domain/use_cases/list_all_categories.dart';
 
-class ProductStore extends StreamStore<Failure, e.Product> {
-  final ICreateProduct _createProduct;
 
-  ProductStore(this._createProduct) : super(e.Product.empty());
+class ProductStore extends StreamStore<Failure, List<Category>> {
+  final IListAllCategories _listAllCategories;
 
-  // void loadMovieTrailer(String frequency) => execute(_getProduct( frequency));
-  Future<void> create(e.Product product) async => executeEither(
-        () => DartzEitherAdapter.adapter(_createProduct(product)),
+
+  ProductStore(this._listAllCategories, ) : super([]);
+
+  Future<void> load() async => executeEither(
+        () => DartzEitherAdapter.adapter(_listAllCategories()),
       );
 }

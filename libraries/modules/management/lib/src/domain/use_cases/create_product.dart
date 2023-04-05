@@ -1,11 +1,11 @@
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
+import 'package:internal_database/internal_database.dart';
 
-import '../entities/entities.dart' as e;
 import '../repositories/management_repository.dart';
 
 abstract class ICreateProduct {
-  Future<Either<Failure, e.Product>> call(e.Product product);
+  Future<Either<Failure, int>> call(Product product);
 }
 
 class CreateProduct implements ICreateProduct {
@@ -14,7 +14,7 @@ class CreateProduct implements ICreateProduct {
   CreateProduct(this.repository);
 
   @override
-  Future<Either<Failure, e.Product>> call(e.Product product) async {
+  Future<Either<Failure, int>> call(Product product) async {
     return repository.createProduct(product);
   }
 }

@@ -3,8 +3,8 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
+import 'package:internal_database/internal_database.dart';
 
-import '../../../domain/entities/entities.dart' as e;
 import 'categories_list_store.dart';
 
 class CategoriesListPage extends StatefulWidget {
@@ -45,7 +45,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
               onPressed: () {
                 Modular.to.pushNamed(
                         './category',
-                        arguments: e.Category.empty(),
+                        arguments: Category.empty(),
                       );
               },
             ),
@@ -53,7 +53,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
-          child: ScopedBuilder<CategoriesListStore, Failure, List<e.Category>>(
+          child: ScopedBuilder<CategoriesListStore, Failure, List<Category>>(
             onLoading: (context) => const CircularProgressIndicator(),
             store: store,
             onState: (context, state) {

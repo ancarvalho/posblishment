@@ -1,6 +1,5 @@
-import 'package:internal_database/src/domain/entities/entities.dart';
+import "package:core/core.dart";
 
-import '../db/sqlite.dart';
 
 abstract class CategoryRepository {
   Future<List<Category>> getCategories();

@@ -1,21 +1,27 @@
-import 'package:internal_database/src/domain/entities/entities.dart';
+import "package:core/core.dart";
 
 class Category {
-  final String id;
+  final String? id;
   final String name;
   final String? description;
   final List<Product>? products;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const Category({
-    required this.id,
+    this.id,
     required this.name,
     this.description,
     this.products,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
+
+  factory Category.empty() {
+    return const Category(
+      name: "",
+    );
+  }
 }
 
 class CategorizedProduct {

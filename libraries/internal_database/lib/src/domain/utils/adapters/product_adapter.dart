@@ -1,6 +1,7 @@
+import "package:core/core.dart";
 import 'package:drift/drift.dart';
 import 'package:internal_database/src/domain/db/sqlite.dart';
-import 'package:internal_database/src/domain/entities/product.dart';
+import "package:uuid/uuid.dart";
 
 class ProductAdapter {
   static Product fromProductData(ProductData product) {
@@ -16,16 +17,16 @@ class ProductAdapter {
     );
   }
 
-  static ProductData toProductData(Product product) {
+  static ProductData createProductData(Product product) {
     return ProductData(
-      id: product.id,
+      id: const Uuid().v4(),
       name: product.name,
       description: product.description,
       price: product.price,
       preparable: product.preparable,
-      categoryId: product.categoryId,
-      createdAt: product.createdAt,
-      updatedAt: product.updatedAt,
+      categoryId: product.categoryId!,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
   }
 
@@ -35,7 +36,7 @@ class ProductAdapter {
       description: Value(product.description),
       price: Value(product.price),
       preparable: Value(product.preparable),
-      categoryId: Value(product.categoryId),
+      categoryId: Value(product.categoryId!),
       updatedAt: Value(DateTime.now()),
     );
   }

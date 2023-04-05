@@ -1,4 +1,4 @@
-import '../entities/entities.dart';
+import "package:core/core.dart";
 
 abstract class BillRepository {
   Future<List<Bill>> getActiveBills();

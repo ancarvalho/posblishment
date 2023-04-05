@@ -1,11 +1,11 @@
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
+import 'package:internal_database/internal_database.dart';
 
-import '../entities/entities.dart' as e;
 import '../repositories/management_repository.dart';
 
 abstract class IListAllProducts {
-  Future<Either<Failure, List<e.Product>>> call();
+  Future<Either<Failure, List<Product>>> call();
 }
 
 class ListAllProducts implements IListAllProducts {
@@ -14,7 +14,7 @@ class ListAllProducts implements IListAllProducts {
   ListAllProducts(this.repository);
 
   @override
-  Future<Either<Failure, List<e.Product>>> call() async {
+  Future<Either<Failure, List<Product>>> call() async {
     return repository.listAllProducts();
   }
 }

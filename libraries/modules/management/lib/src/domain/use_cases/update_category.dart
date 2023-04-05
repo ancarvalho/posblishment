@@ -1,11 +1,11 @@
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
+import 'package:internal_database/internal_database.dart';
 
-import '../entities/entities.dart' as e;
 import '../repositories/management_repository.dart';
 
 abstract class IUpdateCategory {
-  Future<Either<Failure, e.Category>> call(e.Category category);
+  Future<Either<Failure, int>> call(Category category);
 }
 
 class UpdateCategory implements IUpdateCategory {
@@ -14,7 +14,7 @@ class UpdateCategory implements IUpdateCategory {
   UpdateCategory(this.repository);
 
   @override
-  Future<Either<Failure, e.Category>> call(e.Category category) async {
+  Future<Either<Failure, int>> call(Category category) async {
     return repository.createCategory(category);
   }
 }

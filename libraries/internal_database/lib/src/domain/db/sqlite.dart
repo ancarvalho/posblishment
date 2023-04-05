@@ -1,12 +1,12 @@
 import 'dart:io';
 
+import "package:core/core.dart";
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:internal_database/src/domain/repositories/category_repository.dart';
 import 'package:internal_database/src/domain/repositories/product_repository.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../entities/entities.dart';
 import '../tables/tables.dart' as t;
 import '../utils/adapters/category_adapter.dart';
 import '../utils/adapters/product_adapter.dart';
@@ -50,8 +50,7 @@ class AppDatabase extends _$AppDatabase
   @override
   int get schemaVersion => 3;
 
-
-    // ------------------------Product---------------------------
+  // ------------------------Product---------------------------
   @override
   Future<Product> getProduct(String id) {
     return (select(product)..where((p) => p.id.equals(id)))
@@ -66,7 +65,7 @@ class AppDatabase extends _$AppDatabase
 
   @override
   Future<int> createProduct(Product newProduct) {
-    return into(product).insert(ProductAdapter.toProductData(newProduct));
+    return into(product).insert(ProductAdapter.createProductData(newProduct));
   }
 
   @override
@@ -74,9 +73,13 @@ class AppDatabase extends _$AppDatabase
     return (delete(product)..where((tbl) => tbl.id.equals(id))).go();
   }
 
+// TODO Modify
   @override
   Future<int> updateProduct(Product newProduct) {
-    return (update(product)..where((t) => t.id.equals(newProduct.id)))
+    if (newProduct.id == null) {
+      throw Error();
+    }
+    return (update(product)..where((t) => t.id.equals(newProduct.id!)))
         .write(ProductAdapter.toProductCompanion(newProduct));
   }
 
@@ -114,7 +117,11 @@ class AppDatabase extends _$AppDatabase
 
   @override
   Future<int> updateCategory(Category newCategory) {
-    return (update(category)..where((t) => t.id.equals(newCategory.id)))
+    if (newCategory.id == null) {
+      throw Error();
+    }
+
+    return (update(category)..where((t) => t.id.equals(newCategory.id!)))
         .write(CategoryAdapter.toCategoryCompanion(newCategory));
   }
 

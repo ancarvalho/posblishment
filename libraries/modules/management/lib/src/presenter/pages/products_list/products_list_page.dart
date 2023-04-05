@@ -3,8 +3,9 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
+import 'package:internal_database/internal_database.dart';
 
-import '../../../domain/entities/entities.dart' as e;
+
 import '../../widgets/item/item_widget.dart';
 import 'products_list_store.dart';
 
@@ -46,7 +47,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
               onPressed: () {
                 Modular.to.pushNamed(
                   './product',
-                  arguments: e.Product.empty(),
+                  arguments: Product.empty(),
                 );
               },
             ),
@@ -58,7 +59,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
             onRefresh: () async {
               await reload();
             },
-            child: ScopedBuilder<ProductListStore, Failure, List<e.Product>>(
+            child: ScopedBuilder<ProductListStore, Failure, List<Product>>(
               onLoading: (context) => const CircularProgressIndicator(),
               store: store,
               onState: (context, state) {

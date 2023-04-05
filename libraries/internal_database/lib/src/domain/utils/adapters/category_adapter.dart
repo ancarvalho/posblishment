@@ -1,6 +1,7 @@
+import "package:core/core.dart";
 import 'package:drift/drift.dart';
 import 'package:internal_database/src/domain/db/sqlite.dart';
-import 'package:internal_database/src/domain/entities/category.dart';
+import "package:uuid/uuid.dart";
 
 class CategoryAdapter {
   static Category fromCategoryData(CategoryData category) {
@@ -15,11 +16,11 @@ class CategoryAdapter {
 
   static CategoryData toCategoryData(Category category) {
     return CategoryData(
-      id: category.id,
+      id: const Uuid().v4(),
       name: category.name,
       description: category.description,
-      createdAt: category.createdAt,
-      updatedAt: category.updatedAt,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
   }
 

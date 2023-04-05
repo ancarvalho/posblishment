@@ -1,11 +1,13 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import "package:core/core.dart";
 
-import '../../../domain/entities/entities.dart' as e;
 import '../../widgets/custom_text_form_field/custom_text_form_field_widget.dart';
+import 'category_controller.dart';
 
 class CategoryPage extends StatefulWidget {
-  final e.Category category;
+  final Category category;
   const CategoryPage({super.key, required this.category});
 
   @override
@@ -13,19 +15,7 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
-  final TextEditingController _nameTextController = TextEditingController();
-  final TextEditingController _descriptionTextController =
-      TextEditingController();
-  final TextEditingController _priceTextController = TextEditingController();
-  final TextEditingController _variationTextController =
-      TextEditingController();
-
-  void resetFields() {
-    _nameTextController.clear();
-    _descriptionTextController.clear();
-    _priceTextController.clear();
-    _variationTextController.clear();
-  }
+  final controller = Modular.get<CategoryController>();
 
   @override
   Widget build(BuildContext context) {
@@ -38,28 +28,32 @@ class _CategoryPageState extends State<CategoryPage> {
             IconButton(
               icon: const Icon(Icons.clear),
               tooltip: 'Reset Fields',
-              onPressed: resetFields,
+              onPressed: () {
+                controller.resetFields(widget.category);
+              },
             ),
           ],
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomTextFormField(
-                  controller: _nameTextController,
-                  decorationName: "Nome",
-                  value: widget.category.name,
-                ),
-                CustomTextFormField(
-                  controller: _descriptionTextController,
-                  decorationName: "Description",
-                  value: widget.category.description,
-                ),
-
-              ],
+            child: Form(
+              key: controller.formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomTextFormField(
+                    controller: controller.nameTextController,
+                    decorationName: "Nome",
+                    value: widget.category.name,
+                  ),
+                  CustomTextFormField(
+                    controller: controller.descriptionTextController,
+                    decorationName: "Description",
+                    value: widget.category.description,
+                  ),
+                ],
+              ),
             ),
             // ScopedBuilder<ProductStore, Failure, e.Product>(),
           ),
