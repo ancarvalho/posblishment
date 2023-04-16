@@ -16,10 +16,13 @@ dependencies:
   shared_preferences: ^2.0.18
   flutterando_analysis: ^0.0.2
   dartz: ^0.10.1
-  path_provider: ^2.0.13
   uuid: ^3.0.7
-  drift: ^2.5.0
   d_chart: ^2.2.11
+  intl: ^0.17.0
+  drift: ^2.6.0
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.0.0
+  path: ^1.8.2
   
 dev_dependencies:
   flutter_test:

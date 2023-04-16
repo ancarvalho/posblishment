@@ -22,12 +22,12 @@ class StatisticsRepositoryDummyImpl implements StatisticsRepository {
   }
 
   @override
-  Future<List<ItemsSold>> getMostSoldProducts(
+  Future<Either<Failure, List<ItemsSold>>> getMostSoldProducts(
     Frequency frequency,
   ) async {
     await Future.delayed(const Duration(seconds: 1));
 
-    return [
+    return Right([
       ItemsSold(
         id: "a8sda-da9sdi-as1d3w-a8sda",
         name: "Peixada de Carapeba",
@@ -53,7 +53,7 @@ class StatisticsRepositoryDummyImpl implements StatisticsRepository {
         name: "Camarãozada",
         totalQuantity: 22,
       ),
-    ];
+    ]);
   }
 
   @override

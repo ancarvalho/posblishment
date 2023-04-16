@@ -12,6 +12,7 @@ class MostSoldProductsStore extends StreamStore<Failure, List<ItemsSold>> {
 
   // void loadMovieTrailer(String frequency) => execute(_getMostSoldProducts( frequency));
 
-  Future<void> load(Frequency frequency) async =>
-      execute(() => _getMostSoldProducts(frequency));
+  Future<void> load(Frequency frequency) async => executeEither(
+        () => DartzEitherAdapter.adapter(_getMostSoldProducts(frequency)),
+      );
 }

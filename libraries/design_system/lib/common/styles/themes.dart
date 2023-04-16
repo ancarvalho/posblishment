@@ -18,9 +18,10 @@ class Themes {
         fontWeight: FontWeight.bold,
       ),
     ),
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.deepOrange,
-    ).copyWith(background: ColorPalettes.lightBG),
+    colorScheme: ColorScheme.light(
+      // primary: ColorPalettes.lightPrimary,
+      background: ColorPalettes.lightBG,
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(

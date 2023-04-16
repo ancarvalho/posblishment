@@ -23,16 +23,18 @@ class CategoryController extends Disposable {
 
   void saveChanges(String? id) {
     if (formKey.currentState!.validate() && id != null) {
+      print("Updating ...");
       updateProduct(id);
     } else if (formKey.currentState!.validate()) {
+      print("Creating ...");
       createProduct();
     } else {
-      print("Invalid Fields");
+      print("Invalid Fields"); // trow error
     }
   }
 
-  void createProduct() {
-    _createCategory(
+  Future<void> createProduct() async {
+    await _createCategory(
       Category(
         name: nameTextController.text,
         description: descriptionTextController.text,
@@ -40,8 +42,8 @@ class CategoryController extends Disposable {
     );
   }
 
-  void updateProduct(String id) {
-    _updateCategory(
+  Future<void> updateProduct(String id) async {
+   await _updateCategory(
       Category(
         id: id,
         name: nameTextController.text,

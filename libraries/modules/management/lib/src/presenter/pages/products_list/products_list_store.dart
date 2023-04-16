@@ -1,6 +1,5 @@
 import 'package:core/core.dart';
 import 'package:flutter_triple/flutter_triple.dart';
-import 'package:internal_database/internal_database.dart';
 import '../../../domain/use_cases/list_all_products.dart';
 
 class ProductListStore extends StreamStore<Failure, List<Product>> {

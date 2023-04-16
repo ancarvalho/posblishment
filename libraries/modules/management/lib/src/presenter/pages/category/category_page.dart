@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import "package:core/core.dart";
 
 import '../../widgets/custom_text_form_field/custom_text_form_field_widget.dart';
+import '../categories_list/categories_list_store.dart';
 import 'category_controller.dart';
 
 class CategoryPage extends StatefulWidget {
@@ -16,6 +17,7 @@ class CategoryPage extends StatefulWidget {
 
 class _CategoryPageState extends State<CategoryPage> {
   final controller = Modular.get<CategoryController>();
+  final store = Modular.get<CategoriesListStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +59,14 @@ class _CategoryPageState extends State<CategoryPage> {
             ),
             // ScopedBuilder<ProductStore, Failure, e.Product>(),
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            controller.saveChanges(widget.category.id);
+            store.list();
+            Navigator.of(context).pop();
+          },
+          child: const Icon(Icons.save),
         ),
       ),
     );

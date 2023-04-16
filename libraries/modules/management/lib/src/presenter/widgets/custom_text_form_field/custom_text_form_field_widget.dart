@@ -42,8 +42,9 @@ class CustomTextFormField extends StatelessWidget {
         // errorText: errorText,
         errorStyle: const TextStyle(color: Colors.black),
         labelStyle: const TextStyle(color: Colors.black),
-        errorBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+        errorBorder:  UnderlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).cardColor),
+          // borderSide: BorderSide(color: Colors.black),
         ),
         focusedErrorBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.black),

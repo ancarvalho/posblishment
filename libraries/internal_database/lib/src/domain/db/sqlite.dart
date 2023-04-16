@@ -1,15 +1,13 @@
 import 'dart:io';
 
-import "package:core/core.dart";
+// import "package:core/core.dart" as c;
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:internal_database/src/domain/repositories/category_repository.dart';
-import 'package:internal_database/src/domain/repositories/product_repository.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
-import '../tables/tables.dart' as t;
-import '../utils/adapters/category_adapter.dart';
-import '../utils/adapters/product_adapter.dart';
+import '../tables/tables.dart';
+import "../utils/utils.dart";
 
 part 'sqlite.g.dart';
 
@@ -31,18 +29,11 @@ DatabaseConnection connect() {
 }
 
 @DriftDatabase(
-  tables: [
-    t.Product,
-    t.Category,
-    t.Bill,
-    t.Item,
-    t.Payment,
-    t.ProductVariation,
-    t.Request
-  ],
+  tables: [Product, Category, Bill, Item, Payment, ProductVariation, Request],
 )
 class AppDatabase extends _$AppDatabase
-    implements ProductRepository, CategoryRepository {
+    // implements ProductRepository, CategoryRepository 
+    {
   AppDatabase() : super(connect());
 
   AppDatabase.forTesting(DatabaseConnection connection) : super(connection);
@@ -51,82 +42,82 @@ class AppDatabase extends _$AppDatabase
   int get schemaVersion => 3;
 
   // ------------------------Product---------------------------
-  @override
-  Future<Product> getProduct(String id) {
-    return (select(product)..where((p) => p.id.equals(id)))
-        .map(ProductAdapter.fromProductData)
-        .getSingle();
-  }
+//   @override
+//   Future<c.Product> getProduct(String id) {
+//     return (select(product)..where((p) => p.id.equals(id)))
+//         .map(ProductAdapter.fromProductData)
+//         .getSingle();
+//   }
 
-  @override
-  Future<List<Product>> getProducts() {
-    return select(product).map(ProductAdapter.fromProductData).get();
-  }
+//   @override
+//   Future<List<c.Product>> getProducts() {
+//     return select(product).map(ProductAdapter.fromProductData).get();
+//   }
 
-  @override
-  Future<int> createProduct(Product newProduct) {
-    return into(product).insert(ProductAdapter.createProductData(newProduct));
-  }
+//   @override
+//   Future<int> createProduct(c.Product newProduct) {
+//     return into(product).insert(ProductAdapter.createProductData(newProduct));
+//   }
 
-  @override
-  Future<int> deleteProduct(String id) {
-    return (delete(product)..where((tbl) => tbl.id.equals(id))).go();
-  }
+//   @override
+//   Future<int> deleteProduct(String id) {
+//     return (delete(product)..where((tbl) => tbl.id.equals(id))).go();
+//   }
 
-// TODO Modify
-  @override
-  Future<int> updateProduct(Product newProduct) {
-    if (newProduct.id == null) {
-      throw Error();
-    }
-    return (update(product)..where((t) => t.id.equals(newProduct.id!)))
-        .write(ProductAdapter.toProductCompanion(newProduct));
-  }
+// // TODO Modify
+//   @override
+//   Future<int> updateProduct(c.Product newProduct) {
+//     if (newProduct.id == null) {
+//       throw Error();
+//     }
+//     return (update(product)..where((t) => t.id.equals(newProduct.id!)))
+//         .write(ProductAdapter.toProductCompanion(newProduct));
+//   }
 
   // ------------------------Category---------------------------
-  @override
-  Future<int> createCategory(Category newCategory) {
-    return into(category).insert(CategoryAdapter.toCategoryData(newCategory));
-  }
+  // @override
+  // Future<int> createCategory(c.Category newCategory) {
+  //   return into(category).insert(CategoryAdapter.toCategoryData(newCategory));
+  // }
 
-  @override
-  Future<List<Category>> getCategories() {
-    return select(category).map(CategoryAdapter.fromCategoryData).get();
-  }
+  // @override
+  // Future<List<c.Category>> getCategories() {
+  //   return select(category).map(CategoryAdapter.fromCategoryData).get();
+  // }
 
-  @override
-  Future<List<CategorizedProduct>> getCategorizedProducts() {
-    final query = select(category).join(
-      [leftOuterJoin(product, product.categoryId.equalsExp(category.id))],
-    );
+  // @override
+  // Future<List<c.CategorizedProduct>> getCategorizedProducts() {
+  //   final query = select(category).join(
+  //     [leftOuterJoin(product, product.categoryId.equalsExp(category.id))],
+  //   );
 
-    return query.map((r) {
-      return CategorizedProduct(
-        category: CategoryAdapter.fromCategoryData(r.readTable(category)),
-        product: ProductAdapter.fromProductData(r.readTable(product)),
-      );
-    }).get();
-  }
+  //   return query.map((r) {
+  //     return c.CategorizedProduct(
+  //       category: CategoryAdapter.fromCategoryData(r.readTable(category)),
+  //       product: ProductAdapter.fromProductData(r.readTable(product)),
+  //     );
+  //   }).get();
+  // }
 
-  @override
-  Future<Category> getCategory(String id) {
-    return (select(category)..where((tbl) => tbl.id.equals(id)))
-        .map(CategoryAdapter.fromCategoryData)
-        .getSingle();
-  }
+  // @override
+  // Future<c.Category> getCategory(String id) {
+  //   return (select(category)..where((tbl) => tbl.id.equals(id)))
+  //       .map(CategoryAdapter.fromCategoryData)
+  //       .getSingle();
+  // }
 
-  @override
-  Future<int> updateCategory(Category newCategory) {
-    if (newCategory.id == null) {
-      throw Error();
-    }
+  // @override
+  // Future<int> updateCategory(c.Category newCategory) {
+  //   if (newCategory.id == null) {
+  //     throw Error();
+  //   }
 
-    return (update(category)..where((t) => t.id.equals(newCategory.id!)))
-        .write(CategoryAdapter.toCategoryCompanion(newCategory));
-  }
+  //   return (update(category)..where((t) => t.id.equals(newCategory.id!)))
+  //       .write(CategoryAdapter.toCategoryCompanion(newCategory));
+  // }
 
-  @override
-  Future<int> deleteCategory(String id) {
-    return (delete(category)..where((tbl) => tbl.id.equals(id))).go();
-  }
+  // @override
+  // Future<int> deleteCategory(String id) {
+  //   return (delete(category)..where((tbl) => tbl.id.equals(id))).go();
+  // }
 }

@@ -35,7 +35,7 @@ class StockControlRepositoryDummyImpl implements StockControlRepository {
 
   @override
   Future<Either<Failure, ProductStock>> increaseProductStock(
-      String id, int quantity) async {
+      String id, int quantity,) async {
     await Future.delayed(const Duration(seconds: 2));
 
     return Right(

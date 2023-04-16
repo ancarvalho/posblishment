@@ -6,7 +6,7 @@ import '../enums/frequency.dart';
 import '../repositories/statistics_repository.dart';
 
 abstract class IGetMostSoldProducts {
-  Future<List<ItemsSold>> call(Frequency frequency);
+  Future<Either<Failure,List<ItemsSold>>> call(Frequency frequency);
 }
 
 class GetMostSoldProducts implements IGetMostSoldProducts  {
@@ -15,7 +15,7 @@ class GetMostSoldProducts implements IGetMostSoldProducts  {
   GetMostSoldProducts(this.repository);
 
  @override
-  Future<List<ItemsSold>> call(Frequency frequency) async {
+  Future<Either<Failure,List<ItemsSold>>> call(Frequency frequency) async {
     return repository.getMostSoldProducts(frequency);
   }
 }

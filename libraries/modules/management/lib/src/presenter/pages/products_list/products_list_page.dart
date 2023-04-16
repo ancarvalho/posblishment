@@ -3,9 +3,10 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
-import 'package:internal_database/internal_database.dart';
+// import 'package:internal_database/internal_database.dart';
+import 'package:management/src/presenter/pages/products_list/products_list_controller.dart';
 
-
+import '../../widgets/dialog/custom_cancel_dialog.dart';
 import '../../widgets/item/item_widget.dart';
 import 'products_list_store.dart';
 
@@ -18,6 +19,8 @@ class ProductsListPage extends StatefulWidget {
 
 class _ProductsListPageState extends State<ProductsListPage> {
   final store = Modular.get<ProductListStore>();
+  final controller = Modular.get<ProductsListController>();
+
   Future<void> reload() async {
     await store.list();
   }
@@ -56,9 +59,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
           child: RefreshIndicator(
-            onRefresh: () async {
-              await reload();
-            },
+            onRefresh: reload,
             child: ScopedBuilder<ProductListStore, Failure, List<Product>>(
               onLoading: (context) => const CircularProgressIndicator(),
               store: store,
@@ -75,6 +76,18 @@ class _ProductsListPageState extends State<ProductsListPage> {
                           Modular.to.pushNamed(
                             './product',
                             arguments: state[index],
+                          );
+                        },
+                        onDoubleTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return CustomCancelDialog(
+                                delete: controller.deleteProduct,
+                                id: state[index].id!,
+                                name: state[index].name,
+                              );
+                            },
                           );
                         },
                         child: ItemWidget(

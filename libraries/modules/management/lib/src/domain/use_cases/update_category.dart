@@ -15,6 +15,6 @@ class UpdateCategory implements IUpdateCategory {
 
   @override
   Future<Either<Failure, int>> call(Category category) async {
-    return repository.createCategory(category);
+    return repository.updateCategory(category);
   }
 }

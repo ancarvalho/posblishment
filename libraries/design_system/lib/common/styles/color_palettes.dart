@@ -15,7 +15,7 @@ class ColorPalettes {
   static Color whiteSemiTransparent = const Color.fromARGB(179, 255, 255, 255);
   static Color grey = const Color.fromARGB(255, 158, 158, 158);
   static Color greyBg = const Color(0xfff0f0f0);
-  static Color red = const Color.fromARGB(255, 244, 67, 54);
+  static Color red = Color.fromARGB(255, 165, 22, 12);
   static Color yellow = const Color.fromARGB(255, 255, 235, 59);
   static Color green = const Color.fromARGB(255, 76, 175, 80);
   static Color setActive = const Color(0xFF9E9E9E);
