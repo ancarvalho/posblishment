@@ -5,7 +5,7 @@ import 'tables.dart';
 
 class Product extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
-  TextColumn get name => text().unique()();
+  TextColumn get name => text().withLength(min: 6).unique()();
   TextColumn get description => text().nullable()();
   RealColumn get price => real()();
   BoolColumn get preparable => boolean().withDefault(const Constant(false))();

@@ -19,9 +19,33 @@ class ProductPage extends StatefulWidget {
 
 // TODO Instanciate usecases, controller, and store on module
 class _ProductPageState extends State<ProductPage> {
-  final controller = Modular.get<ProductController>();
+  // final controller = Modular.get<ProductController>();
+
+  final controller = ProductController();
   final store = Modular.get<ProductStore>();
   final productsStore = Modular.get<ProductListStore>();
+
+  @override
+  void initState() {
+    store.observer(
+      onError: (error) {
+        print("Error");
+        // TODO replace by some instance
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString()),
+          ),
+        );
+      },
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

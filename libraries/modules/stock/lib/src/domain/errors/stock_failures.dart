@@ -1,7 +1,5 @@
 import 'package:core/core.dart';
 
-class NoDataFound extends Failure {}
-
 abstract class NoInternetConnection extends Failure {
   NoInternetConnection() : super(errorMessage: 'No Internet Connection');
 }

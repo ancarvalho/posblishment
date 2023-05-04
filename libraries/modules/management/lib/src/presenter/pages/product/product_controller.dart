@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 // import 'package:flutter_triple/flutter_triple.dart';
 import "package:core/core.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../domain/use_cases/create_product.dart';
-import '../../../domain/use_cases/update_product.dart';
+import 'product_store.dart';
 
 class ProductController extends Disposable {
-  final ICreateProduct _createProduct;
-  final IUpdateProduct _updateProduct;
 
-  ProductController(this._createProduct, this._updateProduct);
+  // avoiding inject dependency because disposable state
+  final store = Modular.get<ProductStore>();
+
+  ProductController();
 
   final formKey = GlobalKey<FormState>();
 
@@ -33,12 +33,12 @@ class ProductController extends Disposable {
     } else if (formKey.currentState!.validate()) {
       createProduct();
     } else {
-      print("Invalid Fields");
+      // print("Invalid Fields");
     }
   }
 
   void createProduct() {
-    _createProduct(
+    store.createProduct(
       Product(
         name: nameTextController.text,
         description: descriptionTextController.text,
@@ -49,7 +49,7 @@ class ProductController extends Disposable {
   }
 
   void updateProduct(String id) {
-    _updateProduct(
+    store.updateProduct(
       Product(
         id: id,
         name: nameTextController.text,

@@ -2,39 +2,38 @@ import "package:core/core.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../domain/use_cases/create_category.dart';
-import '../../../domain/use_cases/update_category.dart';
+import 'category_store.dart';
 
 class CategoryController extends Disposable {
-  final ICreateCategory _createCategory;
-  final IUpdateCategory _updateCategory;
+  // avoiding inject dependency because disposable state
+  final store = Modular.get<CategoryStore>();
 
   final formKey = GlobalKey<FormState>();
 
   final nameTextController = TextEditingController();
   final descriptionTextController = TextEditingController();
 
-  CategoryController(this._createCategory, this._updateCategory);
+  CategoryController();
 
   void resetFields(Category category) {
     nameTextController.text = category.name;
     descriptionTextController.text = category.description ?? "";
   }
 
-  void saveChanges(String? id) {
+  Future<void> saveChanges(String? id) async {
     if (formKey.currentState!.validate() && id != null) {
-      print("Updating ...");
-      updateProduct(id);
+      // print("Updating ...");
+      await updateProduct(id);
     } else if (formKey.currentState!.validate()) {
-      print("Creating ...");
-      createProduct();
+      // print("Creating ...");
+      await createProduct();
     } else {
-      print("Invalid Fields"); // trow error
+      // print("Invalid Fields");
     }
   }
 
   Future<void> createProduct() async {
-    await _createCategory(
+    await store.createCategory(
       Category(
         name: nameTextController.text,
         description: descriptionTextController.text,
@@ -43,7 +42,7 @@ class CategoryController extends Disposable {
   }
 
   Future<void> updateProduct(String id) async {
-   await _updateCategory(
+    await store.updateCategory(
       Category(
         id: id,
         name: nameTextController.text,

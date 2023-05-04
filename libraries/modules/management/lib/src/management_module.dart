@@ -12,36 +12,44 @@ import 'domain/use_cases/list_all_categories.dart';
 import 'domain/use_cases/list_all_products.dart';
 import 'domain/use_cases/update_category.dart';
 import 'domain/use_cases/update_product.dart';
-import 'infra/repositories/management_repository_dummy_impl.dart';
-// all categories
-import 'presenter/pages/categories_list/categories_list_controller.dart';
+//
+import 'infra/data_source/management_data_source_internal.dart';
+import 'infra/repositories/management_repository_impl.dart';
+import 'internal/data_source/management_data_source_internal_impl.dart';
+//
+//category
 import 'presenter/pages/categories_list/categories_list_page.dart';
 import 'presenter/pages/categories_list/categories_list_store.dart';
-//category
 import 'presenter/pages/category/category_page.dart';
-//product
+import 'presenter/pages/category/category_store.dart';
+//products
 import 'presenter/pages/product/product_controller.dart';
 import 'presenter/pages/product/product_page.dart';
-// all products 
-import 'presenter/pages/products_list/products_list_controller.dart';
 import 'presenter/pages/products_list/products_list_page.dart';
 import 'presenter/pages/products_list/products_list_store.dart';
+// all categories
+import 'presenter/widgets/category_card/category_card_store.dart';
+// all products 
+import 'presenter/widgets/item/item_store.dart';
 
 class ManagementModule extends Module {
   @override
   final List<Bind> binds = [
 
     Bind.lazySingleton((i) => ProductListStore(i()),export: true,),
-    Bind.lazySingleton((i) => ProductStore(i()),export: true,),
+    Bind.lazySingleton((i) => ProductStore(i(), i(), i()),export: true,),
     Bind.lazySingleton((i) => CategoriesListStore(i()),export: true,),
+  Bind.lazySingleton((i) => CategoryStore(i(), i()),export: true,),
 
-    Bind.lazySingleton((i) => ProductController(i(), i()),export: true,),
-    Bind.lazySingleton((i) => CategoryController(i(), i()),export: true,),
-    Bind.lazySingleton((i) => CategoriesListController(i(), ),export: true,),
-    Bind.lazySingleton((i) => ProductsListController(i(), ),export: true,),
 
-    Bind.lazySingleton<ManagementRepository>((i) => ManagementRepositoryDummyImpl(i()),),
+    Bind.lazySingleton((i) => ProductController(),export: true,),
+    Bind.lazySingleton((i) => CategoryController(),export: true,),
+    Bind.lazySingleton((i) => CategoryCardStore(i(), ),export: true,),
+    Bind.lazySingleton((i) => ItemStore(i(), ),export: true,),
 
+    Bind.lazySingleton<ManagementRepository>((i) => ManagementRepositoryImpl(i()),),
+
+   Bind.lazySingleton<ManagementDataSource>((i) => ManagementDataSourceInternalImpl(i()),),
 
     Bind.lazySingleton<IListAllProducts>((i) => ListAllProducts(i()),),
     Bind.lazySingleton<ICreateProduct>((i) => CreateProduct(i()),),

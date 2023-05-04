@@ -3,10 +3,9 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
-import 'package:internal_database/internal_database.dart';
-import 'package:management/src/presenter/pages/categories_list/categories_list_controller.dart';
+import 'package:management/src/presenter/widgets/category_card/category_card_store.dart';
 
-import '../../widgets/dialog/custom_cancel_dialog.dart';
+import '../../widgets/category_card/category_card_widget.dart';
 import 'categories_list_store.dart';
 
 class CategoriesListPage extends StatefulWidget {
@@ -18,7 +17,7 @@ class CategoriesListPage extends StatefulWidget {
 
 class _CategoriesListPageState extends State<CategoriesListPage> {
   final store = Modular.get<CategoriesListStore>();
-  final controller = Modular.get<CategoriesListController>();
+  final controller = Modular.get<CategoryCardStore>();
 
   Future<void> reload() async {
     await store.list();
@@ -67,45 +66,9 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
                 return ListView.builder(
                   itemCount: state.length,
                   itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Modular.to.pushNamed(
-                          './category',
-                          arguments: state[index],
-                        );
-                      },
-                      onDoubleTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return CustomCancelDialog(
-                              delete: () async {
-                                await controller.deleteCategory(state[index].id!);
-                                await reload();
-                              },
-                              id: state[index].id!,
-                              name: state[index].name,
-                            );
-                          },
-                        );
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.all(Sizes.dp10(context)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: Sizes.width(context) * .60,
-                              child: Column(
-                                children: [
-                                  Text(state[index].name),
-                                  Text(state[index].description ?? "")
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+
+                    return CategoryCardWidget(
+                      category: state[index],
                     );
                   },
                 );

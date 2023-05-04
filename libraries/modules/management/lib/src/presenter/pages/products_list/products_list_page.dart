@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 // import 'package:internal_database/internal_database.dart';
-import 'package:management/src/presenter/pages/products_list/products_list_controller.dart';
 
-import '../../widgets/dialog/custom_cancel_dialog.dart';
 import '../../widgets/item/item_widget.dart';
 import 'products_list_store.dart';
 
@@ -19,7 +17,7 @@ class ProductsListPage extends StatefulWidget {
 
 class _ProductsListPageState extends State<ProductsListPage> {
   final store = Modular.get<ProductListStore>();
-  final controller = Modular.get<ProductsListController>();
+  // final controller = Modular.get<ProductsListController>();
 
   Future<void> reload() async {
     await store.list();
@@ -67,32 +65,13 @@ class _ProductsListPageState extends State<ProductsListPage> {
                 return ListView.builder(
                   itemCount: state.length,
                   itemBuilder: (context, index) {
+                    //TODO Analyze way to remove this container
                     return Container(
                       margin:
                           EdgeInsets.symmetric(vertical: Sizes.dp4(context)),
                       height: Sizes.height(context) / 10,
-                      child: GestureDetector(
-                        onTap: () {
-                          Modular.to.pushNamed(
-                            './product',
-                            arguments: state[index],
-                          );
-                        },
-                        onDoubleTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return CustomCancelDialog(
-                                delete: controller.deleteProduct,
-                                id: state[index].id!,
-                                name: state[index].name,
-                              );
-                            },
-                          );
-                        },
-                        child: ItemWidget(
-                          product: state[index],
-                        ),
+                      child: ItemWidget(
+                        product: state[index],
                       ),
                     );
                   },

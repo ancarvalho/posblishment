@@ -20,6 +20,11 @@ abstract class Failure implements Exception {
   }
 }
 
+class NoDataFound extends Failure {
+  NoDataFound() : super(errorMessage: 'No data found OR no internet');
+}
+
+
 class UnknownError extends Failure {
   final dynamic exception;
   final StackTrace? stackTrace;

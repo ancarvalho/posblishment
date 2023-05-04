@@ -5,7 +5,7 @@ import 'tables.dart';
 
 class ProductVariation extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
-  TextColumn get name => text().unique()();
+  TextColumn get name => text().withLength(min: 5).unique()();
   RealColumn get price => real()();
   BoolColumn get priceVariation =>
       boolean().withDefault(const Constant(false))();
