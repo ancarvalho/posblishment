@@ -6,7 +6,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'product_store.dart';
 
 class ProductController extends Disposable {
-
   // avoiding inject dependency because disposable state
   final store = Modular.get<ProductStore>();
 
@@ -18,6 +17,8 @@ class ProductController extends Disposable {
   final descriptionTextController = TextEditingController();
   final priceTextController = TextEditingController();
   final variationTextController = TextEditingController();
+
+  final ValueNotifier<String?> categoryID = ValueNotifier(null);
 
   void resetFields(Product product) {
     nameTextController.text = product.name;

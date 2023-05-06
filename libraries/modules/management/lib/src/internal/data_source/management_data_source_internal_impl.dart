@@ -1,6 +1,8 @@
 import 'package:core/core.dart';
+import 'package:flutter/material.dart';
 import 'package:internal_database/internal_database.dart';
 import 'package:management/src/domain/errors/management_failures.dart';
+import "package:drift/drift.dart";
 
 import '../../infra/data_source/management_data_source_internal.dart';
 
@@ -45,6 +47,12 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
           .into(appDatabase.product)
           .insert(ProductAdapter.createProductData(product));
       return created;
+    } on InvalidDataException catch (e, s) {
+      throw InternalDatabaseErrorDataException(
+          s,
+          'ManagementDataSource-createProduct-DataExeption',
+          e.message,
+          e.message);
     } catch (e, stackTrace) {
       throw ManagementError(
         stackTrace,
@@ -116,6 +124,14 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
           .insert(CategoryAdapter.toCategoryData(category));
 
       return created;
+    } on InvalidDataException catch (e, s) {
+      // print(e.message.split("\n").last);
+      throw InternalDatabaseErrorDataException(
+        s,
+        'ManagementDataSource-createCategory-DataException',
+        e.message,
+        e.message.split("•").last.trim(),
+      );
     } catch (e, stackTrace) {
       throw ManagementError(
         stackTrace,

@@ -1,11 +1,12 @@
 import 'package:core/core.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 import 'package:management/src/domain/use_cases/list_all_categories.dart';
 
 import '../../../domain/use_cases/create_product.dart';
 import '../../../domain/use_cases/update_product.dart';
 
-class ProductStore extends StreamStore<Failure, List<Category>> {
+class ProductStore extends StreamStore<Failure, List<Category> > {
   final IListAllCategories _listAllCategories;
   final ICreateProduct _createProduct;
   final IUpdateProduct _updateProduct;
@@ -32,23 +33,13 @@ class ProductStore extends StreamStore<Failure, List<Category>> {
   //   }
   // }
 
-  Future<void> createProduct(Product product) async {
-    try {
-      await _createProduct(
-        product,
+  Future<void> createProduct(Product product) async  => executeEither(
+        () => DartzEitherAdapter.adapter(_createProduct(product) as Future<Either<Failure, List<Category>>>),
       );
-    } on Failure catch (e) {
-      setError(e, force: true);
-    }
-  }
+    
+  
 
-  Future<void> updateProduct(Product product) async {
-    try {
-      await _updateProduct(
-        product,
+  Future<void> updateProduct(Product product) async => executeEither(
+        () =>  DartzEitherAdapter.adapter(_updateProduct(product) as Future<Either<Failure, List<Category>>>),
       );
-    } on Failure catch (e) {
-      setError(e);
-    }
-  }
 }

@@ -2,6 +2,7 @@ import "package:core/core.dart";
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../widgets/custom_text_form_field/custom_text_form_field_widget.dart';
 import '../categories_list/categories_list_store.dart';
@@ -23,30 +24,30 @@ class _CategoryPageState extends State<CategoryPage> {
   final categoriesStore = Modular.get<CategoriesListStore>();
   final store = Modular.get<CategoryStore>();
 
+  late Disposer _disposer;
+
   @override
   void initState() {
-    super.initState();
-    store.observer(
-      //  TODO Check if isn`t error to pop of
-      // onState: (i) {
-      //   Navigator.of(context).pop();
-      // },
+    _disposer = store.observer(
+      onState: (i) {
+        //TODO analyse error because context does not exist due widget was disposed
+        Navigator.of(context).pop();
+      },
       onError: (error) {
-        // TODO replace by some instance
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("error"),
-          ),
-        );
+        //TODO analyse error because context does not exist due widget was disposed
+        displayMessageOnSnackbar(context, error.errorMessage);
       },
     );
+    super.initState();
   }
 
-  // @override
-  // void dispose() {
-  //   controller.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    controller.dispose();
+    //solves 1st error but couses the observer to error
+    _disposer();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +79,13 @@ class _CategoryPageState extends State<CategoryPage> {
                     controller: controller.nameTextController,
                     decorationName: "Nome",
                     value: widget.category.name,
+                    validator: (value) {
+                      if (value == null || value.isEmpty || value.length < 6) {
+                        return 'Invalid Name';
+                      }
+
+                      return null;
+                    },
                   ),
                   CustomTextFormField(
                     controller: controller.descriptionTextController,
@@ -90,11 +98,11 @@ class _CategoryPageState extends State<CategoryPage> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            controller.saveChanges(widget.category.id);
-            categoriesStore.list();
+          onPressed: () async {
+            await controller.saveChanges(widget.category.id);
+            await categoriesStore.list();
             // .then((value) => Navigator.of(context).pop());
-            Navigator.of(context).pop();
+            // Navigator.of(context).pop();
           },
           child: const Icon(Icons.save),
         ),
