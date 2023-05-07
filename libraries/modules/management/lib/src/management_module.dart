@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:management/src/domain/use_cases/delete_category.dart';
 import 'package:management/src/domain/use_cases/delete_product.dart';
 import 'package:management/src/presenter/pages/category/category_controller.dart';
+import 'package:management/src/presenter/stores/categories_load_store.dart';
 import 'package:management/src/presenter/pages/product/product_store.dart';
 
 import 'domain/repositories/management_repository.dart';
@@ -37,7 +38,8 @@ class ManagementModule extends Module {
   final List<Bind> binds = [
 
     Bind.lazySingleton((i) => ProductListStore(i()),export: true,),
-    Bind.lazySingleton((i) => ProductStore(i(), i(), i()),export: true,),
+    Bind.lazySingleton((i) => ProductStore(i(), i()),export: true,),
+    Bind.lazySingleton((i) => CategoriesLoadStore( i()),export: true,),
     Bind.lazySingleton((i) => CategoriesListStore(i()),export: true,),
   Bind.lazySingleton((i) => CategoryStore(i(), i()),export: true,),
 

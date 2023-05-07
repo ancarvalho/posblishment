@@ -7,7 +7,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/entities/entities.dart';
 import '../../../domain/enums/frequency.dart';
-import '../../../domain/errors/dashboard_failures.dart';
+import '../error/error_widget.dart';
 import 'most_sold_products_store.dart';
 
 class MostSoldProductsPage extends StatefulWidget {
@@ -73,22 +73,12 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
         ScopedBuilder<MostSoldProductsStore, Failure,
             List<ItemsSold>>.transition(
           store: store,
-          onError: (context, error) {
-            if (error is NoDataFound) {
-              return const Center(child: Text('No Data'));
-            }
-            if (error is DashboardNoInternetConnection) {
-              return Center(
-                child: NoInternetWidget(
-                  message: AppConstant.noInternetConnection,
-                  onPressed: () {
-                    store.load(_frequency);
-                  },
-                ),
-              );
-            }
-            return CustomErrorWidget(message: error?.errorMessage);
-          },
+          onError: (context, error) => DashboardErrorWidget(
+            error: error,
+            reload: () {
+              reload(_frequency);
+            },
+          ),
           onLoading: (context) => const CircularProgressIndicator(),
           onState: (context, state) => Column(
             children: [

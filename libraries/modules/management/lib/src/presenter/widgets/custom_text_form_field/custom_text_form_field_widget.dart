@@ -40,14 +40,15 @@ class CustomTextFormField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: decorationName,
         // errorText: errorText,
-        errorStyle: const TextStyle(color: Colors.black),
+        errorStyle: const TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
         labelStyle: const TextStyle(color: Colors.black),
-        errorBorder:  UnderlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).cardColor),
+        errorBorder:  const UnderlineInputBorder(
+          borderSide: BorderSide(color: Color.fromARGB(255, 166, 24, 24)),
+
           // borderSide: BorderSide(color: Colors.black),
         ),
         focusedErrorBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+          borderSide: BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
         ),
         enabledBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.black),

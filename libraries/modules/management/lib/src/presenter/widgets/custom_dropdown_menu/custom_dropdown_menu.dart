@@ -8,23 +8,27 @@ class CustomDropDown extends StatelessWidget {
     this.value,
     this.isExpanded = true,
     required this.labelText,
+    this.validator,
   }) : super(key: key);
   final Map<String, String> items;
-  final void Function(String? id) setValue;
+  final void Function(String? value) setValue;
   final String? value;
   final bool isExpanded;
   final String labelText;
-
+  final String? Function(String?)? validator;
 
   List<DropdownMenuItem<String>> generateDropdownMenuItems(
-      Map<String, String> items) {
+    Map<String, String> items,
+  ) {
     return items.entries
-        .map((e) => DropdownMenuItem(
-              value: e.key,
-              child: Text(
-                e.value.toString(),
-              ),
-            ))
+        .map(
+          (e) => DropdownMenuItem(
+            value: e.key,
+            child: Text(
+              e.value,
+            ),
+          ),
+        )
         .toList();
   }
 
@@ -36,7 +40,7 @@ class CustomDropDown extends StatelessWidget {
       onChanged: setValue,
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
-
+      validator: validator,
       style: const TextStyle(color: Colors.blue),
       decoration: InputDecoration(
         labelText: labelText,

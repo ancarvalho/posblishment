@@ -60,7 +60,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
           child: RefreshIndicator(
             onRefresh: reload,
             child: ScopedBuilder<CategoriesListStore, Failure, List<Category>>(
-              onLoading: (context) => const CircularProgressIndicator(),
+              onLoading: (context) => const LoadingWidget(),
               store: store,
               onState: (context, state) {
                 return ListView.builder(

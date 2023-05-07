@@ -7,6 +7,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 import '../../../domain/entities/entities.dart';
 import '../../../domain/enums/frequency.dart';
 import '../../../domain/errors/dashboard_failures.dart';
+import '../error/error_widget.dart';
 import '../invoicing/invoicing_widget.dart';
 import '../invoicing_dialog/invoicing_dialog_widget.dart';
 import 'basic_statistics_store.dart';
@@ -73,23 +74,13 @@ class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
         ),
         ScopedBuilder<BasicStatsStore, Failure, BasicStatistics>.transition(
           store: store,
-          onError: (context, error) {
-            if (error is NoDataFound) {
-              return const Center(child: Text('No Data'));
-            }
-            if (error is DashboardNoInternetConnection) {
-              return Center(
-                child: NoInternetWidget(
-                  message: AppConstant.noInternetConnection,
-                  onPressed: () {
-                    store.load(_frequency);
-                  },
-                ),
-              );
-            }
-            return CustomErrorWidget(message: error?.errorMessage);
-          },
-          onLoading: (context) => const CircularProgressIndicator(),
+          onError: (context, error) => DashboardErrorWidget(
+            error: error,
+            reload: () {
+              reload(_frequency);
+            },
+          ),
+          onLoading: (context) => const LoadingWidget(),
           onState: (context, state) => Padding(
             padding: EdgeInsets.all(Sizes.dp9(context)),
             child: Row(

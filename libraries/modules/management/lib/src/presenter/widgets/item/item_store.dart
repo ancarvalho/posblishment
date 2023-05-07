@@ -7,11 +7,6 @@ class ItemStore extends StreamStore<Failure, int> {
 
   ItemStore(this._deleteProduct) : super(0);
 
-  Future<void> deleteProduct(String id) async {
-    try {
-      await _deleteProduct(id);
-    } on Failure catch (e) {
-      setError(e);
-    }
-  }
+  Future<void> deleteProduct(String id) async =>
+      executeEither(() => DartzEitherAdapter.adapter(_deleteProduct(id)));
 }

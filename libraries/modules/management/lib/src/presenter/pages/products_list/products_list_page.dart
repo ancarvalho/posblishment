@@ -6,6 +6,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 import 'package:management/src/domain/errors/management_failures.dart';
 // import 'package:internal_database/internal_database.dart';
 
+import '../../widgets/error/error_widget.dart';
 import '../../widgets/item/item_widget.dart';
 import 'products_list_store.dart';
 
@@ -60,22 +61,13 @@ class _ProductsListPageState extends State<ProductsListPage> {
           child: RefreshIndicator(
             onRefresh: reload,
             child: ScopedBuilder<ProductListStore, Failure, List<Product>>(
-              onLoading: (context) => const CircularProgressIndicator(),
-              onError: (context, error) {
-            if (error is NoDataFound) {
-              return const Center(child: Text('No Data'));
-            }
-            if (error is ManagementNoInternetConnection) {
-              return Center(
-                child: NoInternetWidget(
-                  message: AppConstant.noInternetConnection,
-                  onPressed: reload,
-                ),
-              );
-            }
-            return CustomErrorWidget(message: error?.errorMessage);
-          },
               store: store,
+              onLoading: (context) => const LoadingWidget(),
+              onError: (context, error) => ManagementErrorWidget(
+                  error: error,
+                  reload: reload,
+                )
+              ,
               onState: (context, state) {
                 return ListView.builder(
                   itemCount: state.length,

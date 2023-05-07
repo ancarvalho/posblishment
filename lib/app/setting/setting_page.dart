@@ -36,9 +36,7 @@ class _SettingPageState extends State<SettingPage> {
                 builder: (context) {
                   return ScopedBuilder<SettingStore, Failure, bool>.transition(
                     store: SettingStore(),
-                    onLoading: (context) => const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    ),
+                    onLoading: (context) => const LoadingWidget(),
                     onState: (context, state) => CustomDialog(
                       groupValue: state,
                       isDark: false,

@@ -6,6 +6,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/entities/product_stock.dart';
 import '../../../domain/errors/stock_failures.dart';
+import '../../widgets/error/error_widget.dart';
 import '../../widgets/product_stock/product_stock_widget.dart';
 import 'products_stock_store.dart';
 
@@ -45,21 +46,9 @@ class _ProductsStockPageState extends State<ProductsStockPage> {
         body: ScopedBuilder<ProductsStockStore, Failure,
             List<ProductStock>>.transition(
           store: store,
-          onError: (context, error) {
-            if (error is NoDataFound) {
-              return const Center(child: Text('No Data'));
-            }
-            if (error is StockNoInternetConnection) {
-              return Center(
-                child: NoInternetWidget(
-                  message: AppConstant.noInternetConnection,
-                  onPressed: store.load,
-                ),
-              );
-            }
-            return CustomErrorWidget(message: error?.errorMessage);
-          },
-          onLoading: (context) => const CircularProgressIndicator.adaptive(),
+          onError: (context, error) =>
+              StockControlErrorWidget(error: error, reload: store.load),
+          onLoading: (context) => const LoadingWidget(),
           onState: (context, state) {
             return Padding(
               padding: EdgeInsets.all(Sizes.width(context) * .02),

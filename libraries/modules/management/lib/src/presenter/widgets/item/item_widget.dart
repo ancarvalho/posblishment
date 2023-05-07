@@ -3,6 +3,7 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../pages/products_list/products_list_store.dart';
 import '../dialog/custom_cancel_dialog.dart';
 import 'item_store.dart';
 
@@ -16,18 +17,23 @@ class ItemWidget extends StatefulWidget {
 
 class _ItemWidgetState extends State<ItemWidget> {
   final store = Modular.get<ItemStore>();
+  final productsStore = Modular.get<ProductListStore>();
 
   @override
   void initState() {
     store.observer(
       onError: (error) {
-         // TODO replace by some instance
+        // TODO replace by some instance
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error.toString()),
           ),
         );
       },
+      onState: (error) {
+        productsStore.list();
+      },
+      
     );
     super.initState();
   }
@@ -46,7 +52,10 @@ class _ItemWidgetState extends State<ItemWidget> {
           context: context,
           builder: (context) {
             return CustomCancelDialog(
-              delete: store.deleteProduct,
+              delete: () {
+                store.deleteProduct(widget.product.id!);
+                
+              },
               name: widget.product.name,
             );
           },
@@ -94,9 +103,11 @@ class _ItemWidgetState extends State<ItemWidget> {
                       ],
                     ),
                     Text(
-                      widget.product.price.toString(),
+                      CurrencyInputFormatter.formatRealCurrency(
+                        widget.product.price,
+                      ),
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 17,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

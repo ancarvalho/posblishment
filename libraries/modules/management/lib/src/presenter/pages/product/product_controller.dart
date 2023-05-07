@@ -1,5 +1,6 @@
 // import 'package:flutter_triple/flutter_triple.dart';
 import "package:core/core.dart";
+import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -18,7 +19,7 @@ class ProductController extends Disposable {
   final priceTextController = TextEditingController();
   final variationTextController = TextEditingController();
 
-  final ValueNotifier<String?> categoryID = ValueNotifier(null);
+  final ValueNotifier<String?> _categoryID = ValueNotifier(null);
 
   void resetFields(Product product) {
     nameTextController.text = product.name;
@@ -38,26 +39,38 @@ class ProductController extends Disposable {
     }
   }
 
+  double? parseCurrency(String value) {
+    return CurrencyInputFormatter.formatToDouble(value);
+  }
+
   void createProduct() {
     store.createProduct(
       Product(
-        name: nameTextController.text,
-        description: descriptionTextController.text,
-        price: double.tryParse(priceTextController.text) ?? 0.0,
-        variations: variationTextController.text.split(","),
-      ),
+          name: nameTextController.text,
+          description: descriptionTextController.text,
+          price: parseCurrency(priceTextController.text) ?? 0.0,
+          variations: variationTextController.text.split(","),
+          categoryId: categoryID),
     );
+  }
+
+
+
+  String? get categoryID => _categoryID.value;
+
+  set categoryID(String? value) {
+    _categoryID.value = value;
   }
 
   void updateProduct(String id) {
     store.updateProduct(
       Product(
-        id: id,
-        name: nameTextController.text,
-        description: descriptionTextController.text,
-        price: double.tryParse(priceTextController.text) ?? 0.0,
-        variations: variationTextController.text.split(","),
-      ),
+          id: id,
+          name: nameTextController.text,
+          description: descriptionTextController.text,
+          price: parseCurrency(priceTextController.text) ?? 0.0,
+          variations: variationTextController.text.split(","),
+          categoryId: categoryID),
     );
   }
 

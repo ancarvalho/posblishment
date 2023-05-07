@@ -4,11 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
+import 'package:management/src/domain/validators/validators.dart';
 import 'package:management/src/presenter/pages/product/product_controller.dart';
 import 'package:management/src/presenter/pages/product/product_store.dart';
+import 'package:management/src/presenter/stores/categories_load_store.dart';
 
-import '../../../domain/errors/management_failures.dart';
+import '../../../domain/adapters/adapters.dart';
+import '../../widgets/custom_dropdown_menu/custom_dropdown_menu.dart';
 import '../../widgets/custom_text_form_field/custom_text_form_field_widget.dart';
+import '../../widgets/error/error_widget.dart';
 import '../products_list/products_list_store.dart';
 
 class ProductPage extends StatefulWidget {
@@ -24,14 +28,9 @@ class _ProductPageState extends State<ProductPage> {
   final controller = ProductController();
   final store = Modular.get<ProductStore>();
   final productsStore = Modular.get<ProductListStore>();
+  final categoriesLoadStore = Modular.get<CategoriesLoadStore>();
 
   late Disposer _disposer;
-
-  void checkCategoryID() {
-    if (widget.product.categoryId != null) {
-      controller.categoryID.value = widget.product.categoryId!;
-    }
-  }
 
   @override
   void initState() {
@@ -40,18 +39,13 @@ class _ProductPageState extends State<ProductPage> {
         displayMessageOnSnackbar(context, error.errorMessage);
       },
       onState: (i) {
-        // Navigator.of(context).pop();
+        productsStore.list();
+        Navigator.of(context).pop();
       },
     );
-    store.load();
+    categoriesLoadStore.load();
+    controller.categoryID = widget.product.categoryId;
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    _disposer();
-    super.dispose();
   }
 
   @override
@@ -76,22 +70,12 @@ class _ProductPageState extends State<ProductPage> {
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
           child: SingleChildScrollView(
-            child: ScopedBuilder<ProductStore, Failure, List<Category>>(
-              store: store,
-              onError: (context, error) {
-                if (error is NoDataFound) {
-                  return const Center(child: Text('No Data'));
-                }
-                if (error is ManagementNoInternetConnection) {
-                  return Center(
-                    child: NoInternetWidget(
-                      message: AppConstant.noInternetConnection,
-                      onPressed: store.load,
-                    ),
-                  );
-                }
-                return CustomErrorWidget(message: error?.errorMessage);
-              },
+            child: ScopedBuilder<CategoriesLoadStore, Failure, List<Category>>(
+              store: categoriesLoadStore,
+              onError: (context, error) => ManagementErrorWidget(
+                error: error,
+                reload: categoriesLoadStore.load,
+              ),
               onState: (context, state) {
                 return Form(
                   key: controller.formKey,
@@ -102,56 +86,39 @@ class _ProductPageState extends State<ProductPage> {
                         controller: controller.nameTextController,
                         decorationName: "Nome",
                         value: widget.product.name,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Informe um Nome';
-                          }
-                          return null;
-                        },
+                        validator: validateNome,
                       ),
                       CustomTextFormField(
                         controller: controller.descriptionTextController,
                         decorationName: "Description",
                         value: widget.product.description,
+                        validator: validateDescription,
                       ),
                       CustomTextFormField(
                         controller: controller.priceTextController,
                         decorationName: "Price",
-                        value: widget.product.price.toString(),
+                        value: CurrencyInputFormatter.formatRealCurrency(widget.product.price),
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           CurrencyInputFormatter(),
                         ],
-                        validator: (value) {
-                          if (value == null ||
-                              value.isEmpty ||
-                              CurrencyInputFormatter.formatToDouble(value) ==
-                                  0) {
-                            return 'Informe um Valor';
-                          }
-                          return null;
-                        },
+                        validator: validateCurrency,
                       ),
                       CustomTextFormField(
                         controller: controller.variationTextController,
                         decorationName: "Variações",
                         value: widget.product.variations?.join(","),
                       ),
-                      DropdownButtonFormField(
-                        items: state
-                            .map(
-                              (e) => DropdownMenuItem(
-                                value: e.id,
-                                child: Text(e.name),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          controller.categoryID.value = value;
+                      CustomDropDown(
+                        items: categoriesToMap(state),
+                        setValue: (value) {
+                          controller.categoryID = value;
                         },
-                        value: controller.categoryID.value,
-                      )
+                        value: controller.categoryID,
+                        labelText: "Categorias",
+                        validator: validateID,
+                      ),
                     ],
                   ),
                 );
@@ -164,12 +131,17 @@ class _ProductPageState extends State<ProductPage> {
           // TODO Check here
           onPressed: () {
             controller.saveChanges(widget.product.id);
-            productsStore.list();
-            // Navigator.of(context).pop();
           },
           child: const Icon(Icons.save),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    _disposer();
+    super.dispose();
   }
 }
