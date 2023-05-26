@@ -14,7 +14,7 @@ class CategoryAdapter {
     );
   }
 
-  static CategoryData toCategoryData(Category category) {
+  static CategoryData createCategory(Category category) {
     return CategoryData(
       id: const Uuid().v4(),
       name: category.name,

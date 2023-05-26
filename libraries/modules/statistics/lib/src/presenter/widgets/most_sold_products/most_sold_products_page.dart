@@ -109,7 +109,12 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
                   axisLineTick: 2,
                   axisLinePointTick: 2,
                   axisLinePointWidth: 10,
-                  axisLineColor: Colors.green,
+                  axisLineColor: Theme.of(context).colorScheme.secondary,
+                  //TODO Modify color to a visible on theme
+                  domainLabelColor: Theme.of(context).textTheme.headlineSmall?.color,
+                  measureLabelColor: Theme.of(context).textTheme.headlineSmall?.color,
+                  measureAxisTitleColor: Theme.of(context).colorScheme.secondary,
+                  domainAxisTitleColor: Theme.of(context).colorScheme.secondary,
                   measureLabelPaddingToAxisLine: 16,
                   verticalDirection: false,
                   domainLabelRotation: 0,

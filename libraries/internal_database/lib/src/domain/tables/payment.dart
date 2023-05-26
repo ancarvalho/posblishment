@@ -1,16 +1,10 @@
+// ignore: implementation_imports
+import "package:core/src/enums/enums.dart";
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 import '../utils/enum_converter.dart';
 import 'tables.dart';
 
-
-
-enum PaymentType {
-  creditCard,
-  debitCard,
-  cash,
-  pix,
-}
 
 
 class Payment extends Table {

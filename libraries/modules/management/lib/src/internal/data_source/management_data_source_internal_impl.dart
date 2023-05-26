@@ -45,7 +45,7 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
     try {
       final created = await appDatabase
           .into(appDatabase.product)
-          .insert(ProductAdapter.createProductData(product));
+          .insert(ProductAdapter.createProduct(product));
       return created;
     } on InvalidDataException catch (e, s) {
       throw InternalDatabaseErrorDataException(
@@ -121,7 +121,7 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
     try {
       final created = await appDatabase
           .into(appDatabase.category)
-          .insert(CategoryAdapter.toCategoryData(category));
+          .insert(CategoryAdapter.createCategory(category));
 
       return created;
     } on InvalidDataException catch (e, s) {

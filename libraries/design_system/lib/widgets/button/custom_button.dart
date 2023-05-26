@@ -21,13 +21,13 @@ class _CustomButtonState extends State<CustomButton> {
       height: Sizes.width(context) / 12,
       child: TextButton(
         style: TextButton.styleFrom(
-          foregroundColor: ColorPalettes.darkAccent,
+          foregroundColor: Theme.of(context).colorScheme.secondary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
               Sizes.dp10(context),
             ),
             side: BorderSide(
-              color: ColorPalettes.darkAccent,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
         ),

@@ -41,12 +41,16 @@ class CustomDropDown extends StatelessWidget {
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       validator: validator,
-      style: const TextStyle(color: Colors.blue),
+      // TODO check this color
+      style:  TextStyle(color: Theme.of(context).colorScheme.primary),
+      
       decoration: InputDecoration(
+
         labelText: labelText,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 50, 0, 58)),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.blueAccent),
+        
+        // labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+        enabledBorder:  UnderlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
         ),
       ),
       value: value,

@@ -1,50 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../design_system.dart';
+import 'color_palettes.dart';
 
-class Themes {
-  // static ThemeData lightTheme = ThemeData(
-  //   fontFamily: 'IBMPlexSans',
-  //   primaryColor: ColorPalettes.lightPrimary,
-  //   textSelectionTheme: TextSelectionThemeData(
-  //     cursorColor: ColorPalettes.lightAccent,
-  //   ),
-  //   dividerColor: ColorPalettes.darkBG,
-  //   scaffoldBackgroundColor: ColorPalettes.lightBG,
-  //   appBarTheme: AppBarTheme(
-  //     toolbarTextStyle: TextStyle(
-  //       color: ColorPalettes.darkBG,
-  //       fontSize: 18,
-  //       fontWeight: FontWeight.bold,
-  //     ),
-  //   ),
-  //   colorScheme: ColorScheme.light(
-  //     // primary: ColorPalettes.lightPrimary,
-  //     background: ColorPalettes.lightBG,
-  //   ),
-  // );
-
-  static ThemeData darkTheme = ThemeData(
-    fontFamily: 'IBMPlexSans',
-    brightness: Brightness.dark,
-    primaryColor: ColorPalettes.darkPrimary,
-    dividerColor: ColorPalettes.lightPrimary,
-    scaffoldBackgroundColor: ColorPalettes.darkBG,
-    textSelectionTheme: TextSelectionThemeData(
-      cursorColor: ColorPalettes.darkAccent,
-    ),
-    appBarTheme: AppBarTheme(
-      color: ColorPalettes.darkPrimary,
-      toolbarTextStyle: TextStyle(
-        color: ColorPalettes.lightBG,
-        fontSize: 18,
-        fontWeight: FontWeight.w700,
-      ),
-    ),
-    colorScheme: ColorScheme.dark(background: ColorPalettes.darkBG),
-  );
-
-  static ThemeData solarizedLightTheme = ThemeData.light().copyWith(
+class SolarizedTheme {
+  static ThemeData lightTheme = ThemeData.light().copyWith(
     brightness: Brightness.light,
     primaryColor: SolarizedColors.blue,
     scaffoldBackgroundColor: SolarizedColors.base3,
@@ -113,7 +72,7 @@ class Themes {
         .copyWith(background: SolarizedColors.base3),
   );
 
-   static ThemeData lightTheme = ThemeData.dark().copyWith(
+  static ThemeData darkTheme = ThemeData.dark().copyWith(
     brightness: Brightness.dark,
     primaryColor: SolarizedColors.blue,
     scaffoldBackgroundColor: SolarizedColors.base03,
@@ -179,6 +138,5 @@ class Themes {
     colorScheme: ColorScheme.fromSwatch()
         .copyWith(secondary: SolarizedColors.yellow)
         .copyWith(background: SolarizedColors.base03),
-        
   );
 }

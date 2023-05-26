@@ -1,4 +1,3 @@
-import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -25,27 +24,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Theme(
-        data: Theme.of(context).copyWith(
-          canvasColor: Theme.of(context).primaryColor,
-          primaryColor: Theme.of(context).colorScheme.secondary,
-          textTheme: Theme.of(context)
-              .textTheme
-              .copyWith(bodySmall: TextStyle(color: ColorPalettes.setActive)),
-        ),
-        child: Column(
-          children: [
-            ...Pages.values.map(
-              (e) => TextButton(
-                onPressed: () {
-                  Modular.to.navigate(e.route);
-                  Navigator.of(context).pop();
-                },
-                child: Text(e.name),
-              ),
-            )
-          ],
-        ),
+      child: Column(
+        children: [
+          ...Pages.values.map(
+            (e) => TextButton(
+              onPressed: () {
+                Modular.to.navigate(e.route);
+                Navigator.of(context).pop();
+              },
+              child: Text(e.name),
+            ),
+          )
+        ],
       ),
     );
   }

@@ -20,7 +20,7 @@ class Category {
   factory Category.empty() {
     return const Category(
       name: "",
-      description: "" //TODO needed because not disposing text editor
+      description: "", //TODO needed because not disposing text editor
     );
   }
 }

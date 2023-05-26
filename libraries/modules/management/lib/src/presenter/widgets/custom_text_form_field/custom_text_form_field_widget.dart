@@ -41,23 +41,23 @@ class CustomTextFormField extends StatelessWidget {
         labelText: decorationName,
         // errorText: errorText,
         errorStyle: const TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
-        labelStyle: const TextStyle(color: Colors.black),
+        // labelStyle: const TextStyle(color: Colors.black),
         errorBorder:  const UnderlineInputBorder(
           borderSide: BorderSide(color: Color.fromARGB(255, 166, 24, 24)),
 
           // borderSide: BorderSide(color: Colors.black),
         ),
-        focusedErrorBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+        // focusedErrorBorder: const UnderlineInputBorder(
+        //   borderSide: BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+        // ),
+        enabledBorder:  UnderlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
         ),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
-        ),
+        // focusedBorder: const UnderlineInputBorder(
+        //   borderSide: BorderSide(color: Colors.black),
+        // ),
       ),
-      style: const TextStyle(color: Colors.black),
+      // style: Theme.of(context).colorScheme,
     );
   }
 }

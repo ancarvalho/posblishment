@@ -20,7 +20,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(title: const Text("Estatísticas"), centerTitle: true,),
         body: SingleChildScrollView(
           child: Padding(
             padding:  EdgeInsets.symmetric(horizontal: Sizes.width(context)*.02),

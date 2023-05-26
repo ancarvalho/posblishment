@@ -6,6 +6,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 import 'package:management/src/presenter/widgets/category_card/category_card_store.dart';
 
 import '../../widgets/category_card/category_card_widget.dart';
+import '../../widgets/error/error_widget.dart';
 import 'categories_list_store.dart';
 
 class CategoriesListPage extends StatefulWidget {
@@ -61,12 +62,15 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
             onRefresh: reload,
             child: ScopedBuilder<CategoriesListStore, Failure, List<Category>>(
               onLoading: (context) => const LoadingWidget(),
+              onError: (context, error) => ManagementErrorWidget(
+                error: error,
+                reload: reload,
+              ),
               store: store,
               onState: (context, state) {
                 return ListView.builder(
                   itemCount: state.length,
                   itemBuilder: (context, index) {
-
                     return CategoryCardWidget(
                       category: state[index],
                     );

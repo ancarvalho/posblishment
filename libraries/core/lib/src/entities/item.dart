@@ -1,10 +1,4 @@
-
-
-enum ItemStatus {
-  preparing,
-  delivered,
-  canceled,
-}
+import '../enums/enums.dart';
 
 class Item {
   final String id;
@@ -17,7 +11,6 @@ class Item {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  
   const Item({
     required this.id,
     required this.price,
@@ -28,5 +21,15 @@ class Item {
     required this.requestId,
     required this.createdAt,
     required this.updatedAt,
+  });
+}
+
+class NewItem {
+  final int quantity;
+  final String productId;
+
+  const NewItem({
+    required this.quantity,
+    required this.productId,
   });
 }

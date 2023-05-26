@@ -1,14 +1,17 @@
+// ignore: implementation_imports
+import "package:core/src/enums/enums.dart";
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
+
 import '../utils/enum_converter.dart';
 
-enum BillStatus {
-  open,
-  closed,
-  paid,
-  paidWithoutCommission,
-  canceled,
-}
+// enum BillStatus {
+//   open,
+//   closed,
+//   paid,
+//   paidWithoutCommission,
+//   canceled,
+// }
 
 class Bill extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();

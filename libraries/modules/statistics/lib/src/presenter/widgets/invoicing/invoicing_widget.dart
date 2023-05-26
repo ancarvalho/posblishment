@@ -13,7 +13,7 @@ class InvoicingWidget extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(
           width: Sizes.dp4(context),
-          color: ColorPalettes.grey,
+          color: Theme.of(context).colorScheme.secondary,
         ),
         borderRadius: const BorderRadius.all(Radius.circular(20)),
       ),

@@ -330,9 +330,13 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
   static const VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
   @override
-  late final GeneratedColumn<String> description = GeneratedColumn<String>(
-      'description', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+  late final GeneratedColumn<String> description =
+      GeneratedColumn<String>('description', aliasedName, true,
+          additionalChecks: GeneratedColumn.checkTextLength(
+            minTextLength: 15,
+          ),
+          type: DriftSqlType.string,
+          requiredDuringInsert: false);
   static const VerificationMeta _priceMeta = const VerificationMeta('price');
   @override
   late final GeneratedColumn<double> price = GeneratedColumn<double>(
@@ -1097,6 +1101,12 @@ class $RequestTable extends Request with TableInfo<$RequestTable, RequestData> {
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES bill (id)'));
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumnWithTypeConverter<RequestStatus, int> status =
+      GeneratedColumn<int>('status', aliasedName, false,
+              type: DriftSqlType.int, requiredDuringInsert: true)
+          .withConverter<RequestStatus>($RequestTable.$converterstatus);
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -1115,7 +1125,7 @@ class $RequestTable extends Request with TableInfo<$RequestTable, RequestData> {
       defaultValue: Constant(DateTime.now()));
   @override
   List<GeneratedColumn> get $columns =>
-      [id, observation, billId, createdAt, updatedAt];
+      [id, observation, billId, status, createdAt, updatedAt];
   @override
   String get aliasedName => _alias ?? 'request';
   @override
@@ -1140,6 +1150,7 @@ class $RequestTable extends Request with TableInfo<$RequestTable, RequestData> {
     } else if (isInserting) {
       context.missing(_billIdMeta);
     }
+    context.handle(_statusMeta, const VerificationResult.success());
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -1163,6 +1174,9 @@ class $RequestTable extends Request with TableInfo<$RequestTable, RequestData> {
           .read(DriftSqlType.string, data['${effectivePrefix}observation']),
       billId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}bill_id'])!,
+      status: $RequestTable.$converterstatus.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -1174,18 +1188,23 @@ class $RequestTable extends Request with TableInfo<$RequestTable, RequestData> {
   $RequestTable createAlias(String alias) {
     return $RequestTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<RequestStatus, int, int> $converterstatus =
+      JsonAwareIntEnumConverter(RequestStatus.values);
 }
 
 class RequestData extends DataClass implements Insertable<RequestData> {
   final String id;
   final String? observation;
   final String billId;
+  final RequestStatus status;
   final DateTime createdAt;
   final DateTime updatedAt;
   const RequestData(
       {required this.id,
       this.observation,
       required this.billId,
+      required this.status,
       required this.createdAt,
       required this.updatedAt});
   @override
@@ -1196,6 +1215,10 @@ class RequestData extends DataClass implements Insertable<RequestData> {
       map['observation'] = Variable<String>(observation);
     }
     map['bill_id'] = Variable<String>(billId);
+    {
+      final converter = $RequestTable.$converterstatus;
+      map['status'] = Variable<int>(converter.toSql(status));
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -1208,6 +1231,7 @@ class RequestData extends DataClass implements Insertable<RequestData> {
           ? const Value.absent()
           : Value(observation),
       billId: Value(billId),
+      status: Value(status),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -1220,6 +1244,8 @@ class RequestData extends DataClass implements Insertable<RequestData> {
       id: serializer.fromJson<String>(json['id']),
       observation: serializer.fromJson<String?>(json['observation']),
       billId: serializer.fromJson<String>(json['billId']),
+      status: $RequestTable.$converterstatus
+          .fromJson(serializer.fromJson<int>(json['status'])),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -1231,6 +1257,8 @@ class RequestData extends DataClass implements Insertable<RequestData> {
       'id': serializer.toJson<String>(id),
       'observation': serializer.toJson<String?>(observation),
       'billId': serializer.toJson<String>(billId),
+      'status':
+          serializer.toJson<int>($RequestTable.$converterstatus.toJson(status)),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -1240,12 +1268,14 @@ class RequestData extends DataClass implements Insertable<RequestData> {
           {String? id,
           Value<String?> observation = const Value.absent(),
           String? billId,
+          RequestStatus? status,
           DateTime? createdAt,
           DateTime? updatedAt}) =>
       RequestData(
         id: id ?? this.id,
         observation: observation.present ? observation.value : this.observation,
         billId: billId ?? this.billId,
+        status: status ?? this.status,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -1255,6 +1285,7 @@ class RequestData extends DataClass implements Insertable<RequestData> {
           ..write('id: $id, ')
           ..write('observation: $observation, ')
           ..write('billId: $billId, ')
+          ..write('status: $status, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1263,7 +1294,7 @@ class RequestData extends DataClass implements Insertable<RequestData> {
 
   @override
   int get hashCode =>
-      Object.hash(id, observation, billId, createdAt, updatedAt);
+      Object.hash(id, observation, billId, status, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1271,6 +1302,7 @@ class RequestData extends DataClass implements Insertable<RequestData> {
           other.id == this.id &&
           other.observation == this.observation &&
           other.billId == this.billId &&
+          other.status == this.status &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -1279,6 +1311,7 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
   final Value<String> id;
   final Value<String?> observation;
   final Value<String> billId;
+  final Value<RequestStatus> status;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -1286,6 +1319,7 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
     this.id = const Value.absent(),
     this.observation = const Value.absent(),
     this.billId = const Value.absent(),
+    this.status = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1294,14 +1328,17 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
     this.id = const Value.absent(),
     this.observation = const Value.absent(),
     required String billId,
+    required RequestStatus status,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
-  }) : billId = Value(billId);
+  })  : billId = Value(billId),
+        status = Value(status);
   static Insertable<RequestData> custom({
     Expression<String>? id,
     Expression<String>? observation,
     Expression<String>? billId,
+    Expression<int>? status,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -1310,6 +1347,7 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
       if (id != null) 'id': id,
       if (observation != null) 'observation': observation,
       if (billId != null) 'bill_id': billId,
+      if (status != null) 'status': status,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -1320,6 +1358,7 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
       {Value<String>? id,
       Value<String?>? observation,
       Value<String>? billId,
+      Value<RequestStatus>? status,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
       Value<int>? rowid}) {
@@ -1327,6 +1366,7 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
       id: id ?? this.id,
       observation: observation ?? this.observation,
       billId: billId ?? this.billId,
+      status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -1344,6 +1384,10 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
     }
     if (billId.present) {
       map['bill_id'] = Variable<String>(billId.value);
+    }
+    if (status.present) {
+      final converter = $RequestTable.$converterstatus;
+      map['status'] = Variable<int>(converter.toSql(status.value));
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -1363,6 +1407,7 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
           ..write('id: $id, ')
           ..write('observation: $observation, ')
           ..write('billId: $billId, ')
+          ..write('status: $status, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')

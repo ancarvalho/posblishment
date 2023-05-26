@@ -4,10 +4,10 @@ abstract class NoInternetConnection extends Failure {
   NoInternetConnection() : super(errorMessage: 'No Internet Connection');
 }
 
-class ManagementNoInternetConnection extends NoInternetConnection {}
+class AdministrationNoInternetConnection extends NoInternetConnection {}
 
-class ManagementError extends Failure {
-  ManagementError(
+class AdministrationError extends Failure {
+  AdministrationError(
     StackTrace stackTrace,
     String label,
     dynamic exception,

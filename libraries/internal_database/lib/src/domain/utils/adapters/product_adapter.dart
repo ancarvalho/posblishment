@@ -17,7 +17,7 @@ class ProductAdapter {
     );
   }
 
-  static ProductData createProductData(Product product) {
+  static ProductData createProduct(Product product) {
     return ProductData(
       id: const Uuid().v4(),
       name: product.name,
