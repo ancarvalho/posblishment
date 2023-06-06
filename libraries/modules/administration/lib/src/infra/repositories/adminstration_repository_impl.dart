@@ -21,7 +21,7 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   @override
   Future<Either<Failure, int>> cancelRequest(String id) async {
     try {
-      final txID = await _administrationDataSource.cancelRequest(id);
+      final txID = await _administrationDataSource.changeRequestStatus(id, RequestStatus.canceled, ItemStatus.canceled);
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -115,7 +115,7 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   @override
   Future<Either<Failure, int>> setItemDelivered(String id) async {
     try {
-      final txID = await _administrationDataSource.setItemDelivered(id);
+      final txID = await _administrationDataSource.changeItemStatus(id, ItemStatus.delivered);
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -125,7 +125,7 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   @override
   Future<Either<Failure, int>> setRequestDelivered(String id) async {
     try {
-      final txID = await _administrationDataSource.setRequestDelivered(id);
+      final txID = await _administrationDataSource.changeRequestStatus(id, RequestStatus.delivered, ItemStatus.delivered);
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -133,9 +133,9 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   }
 
   @override
-  Future<Either<Failure, int>> createBill(Bill bill, NewRequest request) async {
+  Future<Either<Failure, Request>> createBill(NewBill bill, NewRequest request) async {
     try {
-      final txID = await _administrationDataSource.createBill(bill, request);
+      final txID = await _administrationDataSource.handleBillCreationOrUpdate(bill, request);
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);

@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 abstract class AdministrationRepository {
   Future<Either<Failure, List<Product>>> getAllProducts();
 
-  Future<Either<Failure, int>> createBill(Bill bill, NewRequest request);
+  Future<Either<Failure, Request>> createBill(NewBill bill, NewRequest request);
   Future<Either<Failure, List<Bill>>> getActiveBills();
   Future<Either<Failure, List<Bill>>> getLastPaidBills();
   Future<Either<Failure, Bill>> getBill(String id);

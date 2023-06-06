@@ -15,7 +15,7 @@ class BillAdapter {
     );
   }
 
-  static BillData createBill(Bill bill) {
+  static BillData createBill(NewBill bill) {
     return BillData(
       id: const Uuid().v4(),
       table: bill.table,

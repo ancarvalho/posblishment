@@ -16,3 +16,14 @@ class Bill {
     required this.updatedAt,
   });
 }
+
+
+
+class NewBill {
+  final int? table;
+  final String? customerName;
+  const NewBill({
+    this.table,
+    this.customerName,
+  });
+}

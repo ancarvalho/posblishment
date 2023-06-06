@@ -11,6 +11,79 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
 
   AdministrationDataSourceInternalImpl(this._internalDatabase);
 
+  // Bills
+
+  Future<Request> createBill(NewBill bill, NewRequest request) async {
+    try {
+      final bi = await _internalDatabase
+          .into(_internalDatabase.bill)
+          .insertReturning(BillAdapter.createBill(bill));
+
+      return await createRequest(request, bi.id);
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-createBill",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  // Handle bill Insertion (create or update bill)
+
+  Future<BillData?> checkBillExist(NewBill newBill) async {
+    try {
+      return (_internalDatabase.select(_internalDatabase.bill)
+            ..where(
+              (tbl) =>
+                  tbl.status.isIn([
+                    BillStatus.open.index,
+                    BillStatus.closed.index,
+                    BillStatus.partiallyPaid.index,
+                  ]) &
+                  (tbl.table.equals(newBill.table!) |
+                      tbl.customerName.equals(
+                        newBill.customerName!,
+                      )), // TODO somehow request one to be required
+            ))
+          .getSingleOrNull();
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-checkBillExist",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<Request> handleBillCreationOrUpdate(
+    NewBill newBill,
+    NewRequest newRequest,
+  ) async {
+    try {
+      final bill = await checkBillExist(newBill);
+      if (bill != null) {
+        return createBill(newBill, newRequest);
+        // final request = await createBill(newBill, newRequest);
+        // return request;
+      } else {
+        return createRequest(newRequest, bill!.id);
+        // final request = await createRequest(newRequest, bill!.id);
+        // return request;
+      }
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-handleBillCreationOrUpdate",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
   @override
   Future<int> cancelBill(String id) {
     try {
@@ -21,28 +94,13 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           status: BillStatus.canceled,
         ),
       );
+      // Cancel requests and items
+
       return txID;
     } catch (e, s) {
       throw AdministrationError(
         s,
         "InternalDatabase-Administration-cancelBill",
-        e,
-        e.toString(),
-      );
-    }
-  }
-
-  // TODO change name and modify request to have a status
-  Future<int> cancelAllItems(String requestID) {
-    try {
-      final txID = (_internalDatabase.update(_internalDatabase.item)
-            ..where((tbl) => tbl.requestId.equals(requestID)))
-          .write(const ItemCompanion(status: Value(ItemStatus.canceled)));
-      return txID;
-    } catch (e, s) {
-      throw AdministrationError(
-        s,
-        "InternalDatabase-Administration-cancelRequest",
         e,
         e.toString(),
       );
@@ -73,40 +131,46 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
-  Future<int> updateBillStatus(String billID) async {
-    final billTotal = await getBillTotal(billID);
-    final totalPayment = await getTotalBillPayments(billID);
-    // TODO create types for bill mode
-    // final bill = await getBill(billID);
+  //TODO make it work
+  Future<int> updateBillStatus(String billID, BillStatus status) async {
+    final txID = (_internalDatabase.update(_internalDatabase.bill)
+          ..where((tbl) => tbl.id.equals(billID)))
+        .write(BillCompanion(status: Value(status)));
 
-    if (totalPayment < billTotal) {
-      print(BillStatus.partiallyPaid);
-    } else if (totalPayment == billTotal) {
-      print(BillStatus.paidWithoutCommission);
-    } else {
-      print(BillStatus.paid);
-    }
-
-    return 0;
+    return txID;
   }
 
+// TODO COmplete Solution
   @override
   Future<int> finalizeBill(List<Payment> payments, String billID) async {
     try {
-      await Future.wait([
-        ...payments
-            .map(
-              (e) => _internalDatabase
-                  .into(_internalDatabase.payment)
-                  .insert(PaymentAdapter.createPayment(e, billID)),
-            )
-            .toList()
-      ]);
-      return 0;
+      final billTotal = await getBillTotal(billID);
+
+      await _internalDatabase.batch(
+        (batch) => batch.insertAll(
+          _internalDatabase.item,
+          payments.map((e) => PaymentAdapter.createPayment(e, billID)),
+        ),
+      );
+
+      final totalPayment = payments.fold(
+        0.0,
+        (previousValue, element) => previousValue + element.value,
+      );
+      // TODO get more data
+      double subtotal = 123.12;
+
+      if (totalPayment >= billTotal) {
+        return updateBillStatus(billID, BillStatus.paid);
+      } else if (totalPayment >= subtotal) {
+        return updateBillStatus(billID, BillStatus.paidWithoutCommission);
+      } else {
+        return updateBillStatus(billID, BillStatus.partiallyPaid);
+      }
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-cancelBill",
+        "InternalDatabase-Administration-finalizeBill",
         e,
         e.toString(),
       );
@@ -138,24 +202,6 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   }
 
   @override
-  Future<List<Product>> getAllProducts() {
-    try {
-      final products = _internalDatabase
-          .select(_internalDatabase.product)
-          .map(ProductAdapter.fromProductData)
-          .get();
-      return products;
-    } catch (e, s) {
-      throw AdministrationError(
-        s,
-        "InternalDatabase-Administration-getAllProducts",
-        e,
-        e.toString(),
-      );
-    }
-  }
-
-  @override
   Future<Bill> getBill(String billID) {
     try {
       final bill = (_internalDatabase.select(_internalDatabase.bill)
@@ -173,79 +219,55 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
-  Future<Product> getProduct(String productID) {
+  // TODO Calculate real total
+  Future<double> calculateBillTotal(double subtotal, String billID) async {
+    // final bill = await getBill(billID);
+
+    return subtotal * 1.1;
+  }
+
+  // TODO Get total, subtotal, comission
+  Future<double> getBillTotal(String billID) async {
     try {
-      final product = (_internalDatabase.select(_internalDatabase.product)
-            ..where((tbl) => tbl.id.equals(productID)))
-          .map(ProductAdapter.fromProductData)
-          .getSingle();
-      return product;
+      final items = (_internalDatabase.select(_internalDatabase.request).join([
+        leftOuterJoin(
+          _internalDatabase.item,
+          _internalDatabase.item.requestId
+              .equalsExp(_internalDatabase.request.id),
+        )
+      ])
+            ..where(
+              _internalDatabase.request.billId.equals(billID) &
+                  _internalDatabase.item.status.isIn(
+                      [ItemStatus.preparing.index, ItemStatus.delivered.index]),
+            ))
+          .get();
+
+      final subtotal = await items
+          .then(
+            (value) =>
+                value.map((e) => e.readTable(_internalDatabase.item)).toList(),
+          )
+          .then((value) => value.fold(
+              0.0,
+              (previousValue, element) =>
+                  previousValue + (element.price * element.quantity)));
+
+      // final subtotal = items.fold(
+      //   0.0,
+      //   (previousValue, element) =>
+      //       previousValue + (element.price * element.quantity),
+      // );
+
+      return calculateBillTotal(subtotal, billID);
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-getProduct",
+        "InternalDatabase-Administration-getBillTotal",
         e,
         e.toString(),
       );
     }
-  }
-
-  Future<double> getBillTotal(String billID) async {
-    final _query = (_internalDatabase.select(_internalDatabase.request)
-          ..where((tbl) => tbl.billId.equals(billID)))
-        .join([
-      leftOuterJoin(
-        _internalDatabase.item,
-        _internalDatabase.item.requestId
-            .equalsExp(_internalDatabase.request.id),
-      )
-    ]);
-
-    // ignore: cascade_invocations
-    _query.where(
-      _internalDatabase.item.status.equals(ItemStatus.preparing.index) |
-          _internalDatabase.item.status.equals(ItemStatus.delivered.index),
-    );
-
-    final _result = await _query.get();
-    final items =
-        _result.map((row) => row.readTable(_internalDatabase.item)).toList();
-
-    final total = items.fold(
-      0.0,
-      (previousValue, element) =>
-          previousValue + (element.price * element.quantity),
-    );
-
-    return total;
-  }
-
-  // TODO
-  @override
-  Future<List<Request>> getBillValidRequests(String billID) async {
-    final _query =
-        await (_internalDatabase.select(_internalDatabase.request).join([
-      leftOuterJoin(
-        _internalDatabase.item,
-        _internalDatabase.item.requestId
-            .equalsExp(_internalDatabase.request.id),
-      )
-    ])
-              ..where(
-                _internalDatabase.bill.id.equals(billID) &
-                    _internalDatabase.item.status.isIn([
-                      ItemStatus.preparing.index,
-                      ItemStatus.delivered.index,
-                    ]),
-              ))
-            .get();
-
-    final requests =
-        _query.map((e) => e.readTable(_internalDatabase.request)).toList();
-    final items =
-        _query.map((e) => e.readTable(_internalDatabase.item)).toList();
-
-    return [];
   }
 
   @override
@@ -272,33 +294,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
-  @override
-  Future<List<Request>> getLastRequests() async {
-    final _query =
-        await (_internalDatabase.select(_internalDatabase.request).join([
-      leftOuterJoin(
-        _internalDatabase.item,
-        _internalDatabase.item.requestId
-            .equalsExp(_internalDatabase.request.id),
-      )
-    ])
-              ..where(
-                _internalDatabase.item.status.isNotIn([
-                  ItemStatus.canceled.index,
-                ]),
-              ))
-            .get();
-
-    //TODO Review COde
-    final requests = _query
-        .map(
-          (e) => RequestAdapter.fromRequestData(
-              e.readTable(_internalDatabase.request), []),
-        )
-        .toList();
-    return requests;
-  }
-
+  // Items
   Future<Item> createItem(NewItem item, String requestID) async {
     try {
       final product = await getProduct(item.productId);
@@ -310,7 +306,141 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-makeRequest",
+        "InternalDatabase-Administration-createItem",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  // Future<int> cancelAllItems(String requestID) {
+  //   try {
+  //     final txID = (_internalDatabase.update(_internalDatabase.item)
+  //           ..where((tbl) => tbl.requestId.equals(requestID)))
+  //         .write(const ItemCompanion(status: Value(ItemStatus.canceled)));
+  //     return txID;
+  //   } catch (e, s) {
+  //     throw AdministrationError(
+  //       s,
+  //       "InternalDatabase-Administration-cancelAllItems",
+  //       e,
+  //       e.toString(),
+  //     );
+  //   }
+  // }
+
+  @override
+  Future<int> changeItemStatus(String id, ItemStatus status) {
+    try {
+      final txID = (_internalDatabase.update(_internalDatabase.item)
+            ..where((tbl) => tbl.id.equals(id)))
+          .write(ItemCompanion(status: Value(status)));
+
+      return txID;
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-setItemDelivered",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  // Future<int> setAllItemsDelivered(String requestID) {
+  //   try {
+  //     final txID = (_internalDatabase.update(_internalDatabase.item)
+  //           ..where((tbl) => tbl.requestId.equals(requestID)))
+  //         .write(const ItemCompanion(status: Value(ItemStatus.delivered)));
+
+  //     return txID;
+  //   } catch (e, s) {
+  //     throw AdministrationError(
+  //       s,
+  //       "InternalDatabase-Administration-setAllItemsDelivered",
+  //       e,
+  //       e.toString(),
+  //     );
+  //   }
+  // }
+
+  Future<int> changeAllItemsStatus(String requestID, ItemStatus status) {
+    try {
+      final txID = (_internalDatabase.update(_internalDatabase.item)
+            ..where((tbl) => tbl.requestId.equals(requestID)))
+          .write(ItemCompanion(status: Value(status)));
+
+      return txID;
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-setAllItemsDelivered",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  //Requests
+
+  // @override
+  // Future<int> cancelRequest(String requestID) async {
+  //   try {
+  //     final txID = await (_internalDatabase.update(_internalDatabase.request)
+  //           ..where((tbl) => tbl.id.equals(requestID)))
+  //         .write(
+  //       const RequestCompanion(status: Value(RequestStatus.canceled)),
+  //     );
+  //     final _ = await cancelAllItems(requestID);
+  //     return txID;
+  //   } catch (e, s) {
+  //     throw AdministrationError(
+  //       s,
+  //       "InternalDatabase-Administration-cancelRequest",
+  //       e,
+  //       e.toString(),
+  //     );
+  //   }
+  // }
+
+  // @override
+  // Future<int> setRequestDelivered(String requestID) async {
+  //   try {
+  //     final txID = await (_internalDatabase.update(_internalDatabase.request)
+  //           ..where((tbl) => tbl.id.equals(requestID)))
+  //         .write(
+  //       const RequestCompanion(status: Value(RequestStatus.delivered)),
+  //     );
+  //     final _ = await setAllItemsDelivered(requestID);
+  //     return txID;
+  //   } catch (e, s) {
+  //     throw AdministrationError(
+  //       s,
+  //       "InternalDatabase-Administration-setRequestDelivered",
+  //       e,
+  //       e.toString(),
+  //     );
+  //   }
+  // }
+
+  @override
+  Future<int> changeRequestStatus(
+    String requestID,
+    RequestStatus status,
+    ItemStatus itemStatus,
+  ) async {
+    try {
+      final txID = await (_internalDatabase.update(_internalDatabase.request)
+            ..where((tbl) => tbl.id.equals(requestID)))
+          .write(
+        RequestCompanion(status: Value(status)),
+      );
+      final _ = await changeAllItemsStatus(requestID, itemStatus);
+      return txID;
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-setRequestDelivered",
         e,
         e.toString(),
       );
@@ -324,15 +454,16 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           .into(_internalDatabase.request)
           .insertReturning(RequestAdapter.createRequest(request, billID));
 
+      // Change to batch (return items currently not supported by drift)
       final items = await Future.wait(
         request.items.map((e) => createItem(e, req.id)).toList(),
       );
 
-      return RequestAdapter.fromRequestData(req, items);
+      return RequestAdapter.fromRequestDataWithItems(req, items);
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-makeRequest",
+        "InternalDatabase-Administration-createRequest",
         e,
         e.toString(),
       );
@@ -340,34 +471,91 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   }
 
   @override
-  Future<int> setItemDelivered(String id) {
+  Future<List<Request>> getLastRequests() async {
     try {
-      final txID = (_internalDatabase.update(_internalDatabase.item)
-            ..where((tbl) => tbl.id.equals(id)))
-          .write(const ItemCompanion(status: Value(ItemStatus.delivered)));
+      final _query =
+          await (_internalDatabase.select(_internalDatabase.request).join([
+        leftOuterJoin(
+          _internalDatabase.item,
+          _internalDatabase.item.requestId
+              .equalsExp(_internalDatabase.request.id),
+        )
+      ])
+                ..where(
+                  _internalDatabase.item.status.isNotIn([
+                        ItemStatus.canceled.index,
+                      ]) &
+                      _internalDatabase.request.status
+                          .isNotIn([RequestStatus.canceled.index]),
+                ))
+              .get();
 
-      return txID;
+      final requests =
+          _query.map((e) => e.readTable(_internalDatabase.request)).toList();
+      final items =
+          _query.map((e) => e.readTable(_internalDatabase.item)).toList();
+
+      return RequestAdapter.groupRequesWithItems(requests, items);
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-setItemDelivered",
+        "InternalDatabase-Administration-getLastRequests",
         e,
         e.toString(),
       );
     }
   }
 
-  Future<int> setAllItemsDelivered(String requestID) {
+  // TODO
+  @override
+  Future<List<Request>> getBillValidRequests(String billID) async {
     try {
-      final txID = (_internalDatabase.update(_internalDatabase.item)
-            ..where((tbl) => tbl.requestId.equals(requestID)))
-          .write(const ItemCompanion(status: Value(ItemStatus.delivered)));
+      final _query =
+          await (_internalDatabase.select(_internalDatabase.request).join([
+        leftOuterJoin(
+          _internalDatabase.item,
+          _internalDatabase.item.requestId
+              .equalsExp(_internalDatabase.request.id),
+        )
+      ])
+                ..where(
+                  _internalDatabase.bill.id.equals(billID) &
+                      _internalDatabase.item.status.isIn([
+                        ItemStatus.preparing.index,
+                        ItemStatus.delivered.index,
+                      ]),
+                ))
+              .get();
 
-      return txID;
+      final requests =
+          _query.map((e) => e.readTable(_internalDatabase.request)).toList();
+      final items =
+          _query.map((e) => e.readTable(_internalDatabase.item)).toList();
+
+      return RequestAdapter.groupRequesWithItems(requests, items);
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-setItemDelivered",
+        "InternalDatabase-Administration-getBillValidRequests",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  // Products
+
+  Future<Product> getProduct(String productID) {
+    try {
+      final product = (_internalDatabase.select(_internalDatabase.product)
+            ..where((tbl) => tbl.id.equals(productID)))
+          .map(ProductAdapter.fromProductData)
+          .getSingle();
+      return product;
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-getProduct",
         e,
         e.toString(),
       );
@@ -375,61 +563,17 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   }
 
   @override
-  Future<int> setRequestDelivered(String requestID) async {
+  Future<List<Product>> getAllProducts() {
     try {
-      final txID = await (_internalDatabase.update(_internalDatabase.request)
-            ..where((tbl) => tbl.id.equals(requestID)))
-          .write(
-        const RequestCompanion(status: Value(RequestStatus.delivered)),
-      );
-      final _ = await setAllItemsDelivered(requestID);
-      return txID;
+      final products = _internalDatabase
+          .select(_internalDatabase.product)
+          .map(ProductAdapter.fromProductData)
+          .get();
+      return products;
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-cancelRequest",
-        e,
-        e.toString(),
-      );
-    }
-  }
-
-  @override
-  Future<int> cancelRequest(String requestID) async {
-    try {
-      final txID = await (_internalDatabase.update(_internalDatabase.request)
-            ..where((tbl) => tbl.id.equals(requestID)))
-          .write(
-        const RequestCompanion(status: Value(RequestStatus.canceled)),
-      );
-      final _ = await cancelAllItems(requestID);
-      return txID;
-    } catch (e, s) {
-      throw AdministrationError(
-        s,
-        "InternalDatabase-Administration-cancelRequest",
-        e,
-        e.toString(),
-      );
-    }
-  }
-
-  // Handle bill Insertion (create or update bill)
-
-  @override
-  Future<int> createBill(Bill bill, NewRequest request) async {
-    try {
-      final bi = await _internalDatabase
-          .into(_internalDatabase.bill)
-          .insertReturning(BillAdapter.createBill(bill));
-
-      await createRequest(request, bi.id);
-
-      return 0;
-    } catch (e, s) {
-      throw AdministrationError(
-        s,
-        "InternalDatabase-Administration-createBill",
+        "InternalDatabase-Administration-getAllProducts",
         e,
         e.toString(),
       );
