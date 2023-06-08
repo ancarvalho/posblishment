@@ -24,7 +24,7 @@ class CategoryAdapter {
     );
   }
 
-  static CategoryCompanion toCategoryCompanion(Category category) {
+  static CategoryCompanion updateCategory(Category category) {
     return CategoryCompanion(
       name: Value(category.name),
       description: Value(category.description),

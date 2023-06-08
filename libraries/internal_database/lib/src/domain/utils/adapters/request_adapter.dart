@@ -28,18 +28,6 @@ class RequestAdapter {
     );
   }
 
-  // static Request fromRequestData(
-  //   RequestData requestData,
-  // ) {
-  //   return Request(
-  //     id: requestData.id,
-  //     billId: requestData.billId,
-  //     observation: requestData.observation,
-  //     status: requestData.status,
-  //     createdAt: requestData.createdAt,
-  //     updatedAt: requestData.updatedAt,
-  //   );
-  // }
 
   static List<Request> groupRequesWithItems(
     List<RequestData> requestData,

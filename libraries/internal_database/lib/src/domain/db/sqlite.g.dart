@@ -737,6 +737,381 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
   }
 }
 
+class $BillTypeTable extends BillType
+    with TableInfo<$BillTypeTable, BillTypeData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BillTypeTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: Constant(const Uuid().v4()));
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedColumn<int> value = GeneratedColumn<int>(
+      'value', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumnWithTypeConverter<BillTypes, int> type =
+      GeneratedColumn<int>('type', aliasedName, false,
+              type: DriftSqlType.int, requiredDuringInsert: true)
+          .withConverter<BillTypes>($BillTypeTable.$convertertype);
+  static const VerificationMeta _defaultValueMeta =
+      const VerificationMeta('defaultValue');
+  @override
+  late final GeneratedColumn<bool> defaultValue =
+      GeneratedColumn<bool>('default_value', aliasedName, false,
+          type: DriftSqlType.bool,
+          requiredDuringInsert: false,
+          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
+            SqlDialect.sqlite: 'CHECK ("default_value" IN (0, 1))',
+            SqlDialect.mysql: '',
+            SqlDialect.postgres: '',
+          }),
+          defaultValue: const Constant(false));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: Constant(DateTime.now()));
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: Constant(DateTime.now()));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, value, name, type, defaultValue, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? 'bill_type';
+  @override
+  String get actualTableName => 'bill_type';
+  @override
+  VerificationContext validateIntegrity(Insertable<BillTypeData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+          _valueMeta, value.isAcceptableOrUnknown(data['value']!, _valueMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    }
+    context.handle(_typeMeta, const VerificationResult.success());
+    if (data.containsKey('default_value')) {
+      context.handle(
+          _defaultValueMeta,
+          defaultValue.isAcceptableOrUnknown(
+              data['default_value']!, _defaultValueMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  BillTypeData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BillTypeData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      value: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}value']),
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name']),
+      type: $BillTypeTable.$convertertype.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}type'])!),
+      defaultValue: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}default_value'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $BillTypeTable createAlias(String alias) {
+    return $BillTypeTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<BillTypes, int, int> $convertertype =
+      JsonAwareIntEnumConverter(BillTypes.values);
+}
+
+class BillTypeData extends DataClass implements Insertable<BillTypeData> {
+  final String id;
+  final int? value;
+  final String? name;
+  final BillTypes type;
+  final bool defaultValue;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const BillTypeData(
+      {required this.id,
+      this.value,
+      this.name,
+      required this.type,
+      required this.defaultValue,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || value != null) {
+      map['value'] = Variable<int>(value);
+    }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    {
+      final converter = $BillTypeTable.$convertertype;
+      map['type'] = Variable<int>(converter.toSql(type));
+    }
+    map['default_value'] = Variable<bool>(defaultValue);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  BillTypeCompanion toCompanion(bool nullToAbsent) {
+    return BillTypeCompanion(
+      id: Value(id),
+      value:
+          value == null && nullToAbsent ? const Value.absent() : Value(value),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      type: Value(type),
+      defaultValue: Value(defaultValue),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory BillTypeData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BillTypeData(
+      id: serializer.fromJson<String>(json['id']),
+      value: serializer.fromJson<int?>(json['value']),
+      name: serializer.fromJson<String?>(json['name']),
+      type: $BillTypeTable.$convertertype
+          .fromJson(serializer.fromJson<int>(json['type'])),
+      defaultValue: serializer.fromJson<bool>(json['defaultValue']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'value': serializer.toJson<int?>(value),
+      'name': serializer.toJson<String?>(name),
+      'type':
+          serializer.toJson<int>($BillTypeTable.$convertertype.toJson(type)),
+      'defaultValue': serializer.toJson<bool>(defaultValue),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  BillTypeData copyWith(
+          {String? id,
+          Value<int?> value = const Value.absent(),
+          Value<String?> name = const Value.absent(),
+          BillTypes? type,
+          bool? defaultValue,
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      BillTypeData(
+        id: id ?? this.id,
+        value: value.present ? value.value : this.value,
+        name: name.present ? name.value : this.name,
+        type: type ?? this.type,
+        defaultValue: defaultValue ?? this.defaultValue,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('BillTypeData(')
+          ..write('id: $id, ')
+          ..write('value: $value, ')
+          ..write('name: $name, ')
+          ..write('type: $type, ')
+          ..write('defaultValue: $defaultValue, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, value, name, type, defaultValue, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BillTypeData &&
+          other.id == this.id &&
+          other.value == this.value &&
+          other.name == this.name &&
+          other.type == this.type &&
+          other.defaultValue == this.defaultValue &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
+  final Value<String> id;
+  final Value<int?> value;
+  final Value<String?> name;
+  final Value<BillTypes> type;
+  final Value<bool> defaultValue;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const BillTypeCompanion({
+    this.id = const Value.absent(),
+    this.value = const Value.absent(),
+    this.name = const Value.absent(),
+    this.type = const Value.absent(),
+    this.defaultValue = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BillTypeCompanion.insert({
+    this.id = const Value.absent(),
+    this.value = const Value.absent(),
+    this.name = const Value.absent(),
+    required BillTypes type,
+    this.defaultValue = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : type = Value(type);
+  static Insertable<BillTypeData> custom({
+    Expression<String>? id,
+    Expression<int>? value,
+    Expression<String>? name,
+    Expression<int>? type,
+    Expression<bool>? defaultValue,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (value != null) 'value': value,
+      if (name != null) 'name': name,
+      if (type != null) 'type': type,
+      if (defaultValue != null) 'default_value': defaultValue,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BillTypeCompanion copyWith(
+      {Value<String>? id,
+      Value<int?>? value,
+      Value<String?>? name,
+      Value<BillTypes>? type,
+      Value<bool>? defaultValue,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<int>? rowid}) {
+    return BillTypeCompanion(
+      id: id ?? this.id,
+      value: value ?? this.value,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      defaultValue: defaultValue ?? this.defaultValue,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<int>(value.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (type.present) {
+      final converter = $BillTypeTable.$convertertype;
+      map['type'] = Variable<int>(converter.toSql(type.value));
+    }
+    if (defaultValue.present) {
+      map['default_value'] = Variable<bool>(defaultValue.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BillTypeCompanion(')
+          ..write('id: $id, ')
+          ..write('value: $value, ')
+          ..write('name: $name, ')
+          ..write('type: $type, ')
+          ..write('defaultValue: $defaultValue, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -766,6 +1141,15 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
       GeneratedColumn<int>('status', aliasedName, false,
               type: DriftSqlType.int, requiredDuringInsert: true)
           .withConverter<BillStatus>($BillTable.$converterstatus);
+  static const VerificationMeta _billTypeIDMeta =
+      const VerificationMeta('billTypeID');
+  @override
+  late final GeneratedColumn<String> billTypeID = GeneratedColumn<String>(
+      'bill_type_i_d', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES bill_type (id)'));
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -784,7 +1168,7 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
       defaultValue: Constant(DateTime.now()));
   @override
   List<GeneratedColumn> get $columns =>
-      [id, table, customerName, status, createdAt, updatedAt];
+      [id, table, customerName, status, billTypeID, createdAt, updatedAt];
   @override
   String get aliasedName => _alias ?? 'bill';
   @override
@@ -808,6 +1192,14 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
               data['customer_name']!, _customerNameMeta));
     }
     context.handle(_statusMeta, const VerificationResult.success());
+    if (data.containsKey('bill_type_i_d')) {
+      context.handle(
+          _billTypeIDMeta,
+          billTypeID.isAcceptableOrUnknown(
+              data['bill_type_i_d']!, _billTypeIDMeta));
+    } else if (isInserting) {
+      context.missing(_billTypeIDMeta);
+    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -833,6 +1225,8 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
           .read(DriftSqlType.string, data['${effectivePrefix}customer_name']),
       status: $BillTable.$converterstatus.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
+      billTypeID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bill_type_i_d'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -854,6 +1248,7 @@ class BillData extends DataClass implements Insertable<BillData> {
   final int? table;
   final String? customerName;
   final BillStatus status;
+  final String billTypeID;
   final DateTime createdAt;
   final DateTime updatedAt;
   const BillData(
@@ -861,6 +1256,7 @@ class BillData extends DataClass implements Insertable<BillData> {
       this.table,
       this.customerName,
       required this.status,
+      required this.billTypeID,
       required this.createdAt,
       required this.updatedAt});
   @override
@@ -877,6 +1273,7 @@ class BillData extends DataClass implements Insertable<BillData> {
       final converter = $BillTable.$converterstatus;
       map['status'] = Variable<int>(converter.toSql(status));
     }
+    map['bill_type_i_d'] = Variable<String>(billTypeID);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -891,6 +1288,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           ? const Value.absent()
           : Value(customerName),
       status: Value(status),
+      billTypeID: Value(billTypeID),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -905,6 +1303,7 @@ class BillData extends DataClass implements Insertable<BillData> {
       customerName: serializer.fromJson<String?>(json['customerName']),
       status: $BillTable.$converterstatus
           .fromJson(serializer.fromJson<int>(json['status'])),
+      billTypeID: serializer.fromJson<String>(json['billTypeID']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -918,6 +1317,7 @@ class BillData extends DataClass implements Insertable<BillData> {
       'customerName': serializer.toJson<String?>(customerName),
       'status':
           serializer.toJson<int>($BillTable.$converterstatus.toJson(status)),
+      'billTypeID': serializer.toJson<String>(billTypeID),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -928,6 +1328,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           Value<int?> table = const Value.absent(),
           Value<String?> customerName = const Value.absent(),
           BillStatus? status,
+          String? billTypeID,
           DateTime? createdAt,
           DateTime? updatedAt}) =>
       BillData(
@@ -936,6 +1337,7 @@ class BillData extends DataClass implements Insertable<BillData> {
         customerName:
             customerName.present ? customerName.value : this.customerName,
         status: status ?? this.status,
+        billTypeID: billTypeID ?? this.billTypeID,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -946,6 +1348,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           ..write('table: $table, ')
           ..write('customerName: $customerName, ')
           ..write('status: $status, ')
+          ..write('billTypeID: $billTypeID, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -953,8 +1356,8 @@ class BillData extends DataClass implements Insertable<BillData> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, table, customerName, status, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+      id, table, customerName, status, billTypeID, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -963,6 +1366,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           other.table == this.table &&
           other.customerName == this.customerName &&
           other.status == this.status &&
+          other.billTypeID == this.billTypeID &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -972,6 +1376,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
   final Value<int?> table;
   final Value<String?> customerName;
   final Value<BillStatus> status;
+  final Value<String> billTypeID;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -980,6 +1385,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
     this.table = const Value.absent(),
     this.customerName = const Value.absent(),
     this.status = const Value.absent(),
+    this.billTypeID = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -989,15 +1395,18 @@ class BillCompanion extends UpdateCompanion<BillData> {
     this.table = const Value.absent(),
     this.customerName = const Value.absent(),
     required BillStatus status,
+    required String billTypeID,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
-  }) : status = Value(status);
+  })  : status = Value(status),
+        billTypeID = Value(billTypeID);
   static Insertable<BillData> custom({
     Expression<String>? id,
     Expression<int>? table,
     Expression<String>? customerName,
     Expression<int>? status,
+    Expression<String>? billTypeID,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -1007,6 +1416,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
       if (table != null) 'table': table,
       if (customerName != null) 'customer_name': customerName,
       if (status != null) 'status': status,
+      if (billTypeID != null) 'bill_type_i_d': billTypeID,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -1018,6 +1428,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
       Value<int?>? table,
       Value<String?>? customerName,
       Value<BillStatus>? status,
+      Value<String>? billTypeID,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
       Value<int>? rowid}) {
@@ -1026,6 +1437,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
       table: table ?? this.table,
       customerName: customerName ?? this.customerName,
       status: status ?? this.status,
+      billTypeID: billTypeID ?? this.billTypeID,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -1048,6 +1460,9 @@ class BillCompanion extends UpdateCompanion<BillData> {
       final converter = $BillTable.$converterstatus;
       map['status'] = Variable<int>(converter.toSql(status.value));
     }
+    if (billTypeID.present) {
+      map['bill_type_i_d'] = Variable<String>(billTypeID.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -1067,6 +1482,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
           ..write('table: $table, ')
           ..write('customerName: $customerName, ')
           ..write('status: $status, ')
+          ..write('billTypeID: $billTypeID, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -2198,402 +2614,19 @@ class PaymentCompanion extends UpdateCompanion<PaymentData> {
   }
 }
 
-class $ProductVariationTable extends ProductVariation
-    with TableInfo<$ProductVariationTable, ProductVariationData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $ProductVariationTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: Constant(const Uuid().v4()));
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
-  late final GeneratedColumn<String> name =
-      GeneratedColumn<String>('name', aliasedName, false,
-          additionalChecks: GeneratedColumn.checkTextLength(
-            minTextLength: 5,
-          ),
-          type: DriftSqlType.string,
-          requiredDuringInsert: true,
-          defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
-  static const VerificationMeta _priceMeta = const VerificationMeta('price');
-  @override
-  late final GeneratedColumn<double> price = GeneratedColumn<double>(
-      'price', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _priceVariationMeta =
-      const VerificationMeta('priceVariation');
-  @override
-  late final GeneratedColumn<bool> priceVariation =
-      GeneratedColumn<bool>('price_variation', aliasedName, false,
-          type: DriftSqlType.bool,
-          requiredDuringInsert: false,
-          defaultConstraints: GeneratedColumn.constraintsDependsOnDialect({
-            SqlDialect.sqlite: 'CHECK ("price_variation" IN (0, 1))',
-            SqlDialect.mysql: '',
-            SqlDialect.postgres: '',
-          }),
-          defaultValue: const Constant(false));
-  static const VerificationMeta _productIdMeta =
-      const VerificationMeta('productId');
-  @override
-  late final GeneratedColumn<String> productId = GeneratedColumn<String>(
-      'product_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES product (id)'));
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
-  @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, price, priceVariation, productId, createdAt, updatedAt];
-  @override
-  String get aliasedName => _alias ?? 'product_variation';
-  @override
-  String get actualTableName => 'product_variation';
-  @override
-  VerificationContext validateIntegrity(
-      Insertable<ProductVariationData> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
-    } else if (isInserting) {
-      context.missing(_nameMeta);
-    }
-    if (data.containsKey('price')) {
-      context.handle(
-          _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
-    } else if (isInserting) {
-      context.missing(_priceMeta);
-    }
-    if (data.containsKey('price_variation')) {
-      context.handle(
-          _priceVariationMeta,
-          priceVariation.isAcceptableOrUnknown(
-              data['price_variation']!, _priceVariationMeta));
-    }
-    if (data.containsKey('product_id')) {
-      context.handle(_productIdMeta,
-          productId.isAcceptableOrUnknown(data['product_id']!, _productIdMeta));
-    } else if (isInserting) {
-      context.missing(_productIdMeta);
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => const {};
-  @override
-  ProductVariationData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ProductVariationData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      price: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
-      priceVariation: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}price_variation'])!,
-      productId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}product_id'])!,
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
-    );
-  }
-
-  @override
-  $ProductVariationTable createAlias(String alias) {
-    return $ProductVariationTable(attachedDatabase, alias);
-  }
-}
-
-class ProductVariationData extends DataClass
-    implements Insertable<ProductVariationData> {
-  final String id;
-  final String name;
-  final double price;
-  final bool priceVariation;
-  final String productId;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  const ProductVariationData(
-      {required this.id,
-      required this.name,
-      required this.price,
-      required this.priceVariation,
-      required this.productId,
-      required this.createdAt,
-      required this.updatedAt});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['name'] = Variable<String>(name);
-    map['price'] = Variable<double>(price);
-    map['price_variation'] = Variable<bool>(priceVariation);
-    map['product_id'] = Variable<String>(productId);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    return map;
-  }
-
-  ProductVariationCompanion toCompanion(bool nullToAbsent) {
-    return ProductVariationCompanion(
-      id: Value(id),
-      name: Value(name),
-      price: Value(price),
-      priceVariation: Value(priceVariation),
-      productId: Value(productId),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-    );
-  }
-
-  factory ProductVariationData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ProductVariationData(
-      id: serializer.fromJson<String>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
-      price: serializer.fromJson<double>(json['price']),
-      priceVariation: serializer.fromJson<bool>(json['priceVariation']),
-      productId: serializer.fromJson<String>(json['productId']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'name': serializer.toJson<String>(name),
-      'price': serializer.toJson<double>(price),
-      'priceVariation': serializer.toJson<bool>(priceVariation),
-      'productId': serializer.toJson<String>(productId),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-    };
-  }
-
-  ProductVariationData copyWith(
-          {String? id,
-          String? name,
-          double? price,
-          bool? priceVariation,
-          String? productId,
-          DateTime? createdAt,
-          DateTime? updatedAt}) =>
-      ProductVariationData(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        price: price ?? this.price,
-        priceVariation: priceVariation ?? this.priceVariation,
-        productId: productId ?? this.productId,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
-  @override
-  String toString() {
-    return (StringBuffer('ProductVariationData(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('price: $price, ')
-          ..write('priceVariation: $priceVariation, ')
-          ..write('productId: $productId, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-      id, name, price, priceVariation, productId, createdAt, updatedAt);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is ProductVariationData &&
-          other.id == this.id &&
-          other.name == this.name &&
-          other.price == this.price &&
-          other.priceVariation == this.priceVariation &&
-          other.productId == this.productId &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
-}
-
-class ProductVariationCompanion extends UpdateCompanion<ProductVariationData> {
-  final Value<String> id;
-  final Value<String> name;
-  final Value<double> price;
-  final Value<bool> priceVariation;
-  final Value<String> productId;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
-  final Value<int> rowid;
-  const ProductVariationCompanion({
-    this.id = const Value.absent(),
-    this.name = const Value.absent(),
-    this.price = const Value.absent(),
-    this.priceVariation = const Value.absent(),
-    this.productId = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  ProductVariationCompanion.insert({
-    this.id = const Value.absent(),
-    required String name,
-    required double price,
-    this.priceVariation = const Value.absent(),
-    required String productId,
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  })  : name = Value(name),
-        price = Value(price),
-        productId = Value(productId);
-  static Insertable<ProductVariationData> custom({
-    Expression<String>? id,
-    Expression<String>? name,
-    Expression<double>? price,
-    Expression<bool>? priceVariation,
-    Expression<String>? productId,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (name != null) 'name': name,
-      if (price != null) 'price': price,
-      if (priceVariation != null) 'price_variation': priceVariation,
-      if (productId != null) 'product_id': productId,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  ProductVariationCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? name,
-      Value<double>? price,
-      Value<bool>? priceVariation,
-      Value<String>? productId,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
-      Value<int>? rowid}) {
-    return ProductVariationCompanion(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      price: price ?? this.price,
-      priceVariation: priceVariation ?? this.priceVariation,
-      productId: productId ?? this.productId,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (price.present) {
-      map['price'] = Variable<double>(price.value);
-    }
-    if (priceVariation.present) {
-      map['price_variation'] = Variable<bool>(priceVariation.value);
-    }
-    if (productId.present) {
-      map['product_id'] = Variable<String>(productId.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ProductVariationCompanion(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('price: $price, ')
-          ..write('priceVariation: $priceVariation, ')
-          ..write('productId: $productId, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $CategoryTable category = $CategoryTable(this);
   late final $ProductTable product = $ProductTable(this);
+  late final $BillTypeTable billType = $BillTypeTable(this);
   late final $BillTable bill = $BillTable(this);
   late final $RequestTable request = $RequestTable(this);
   late final $ItemTable item = $ItemTable(this);
   late final $PaymentTable payment = $PaymentTable(this);
-  late final $ProductVariationTable productVariation =
-      $ProductVariationTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [category, product, bill, request, item, payment, productVariation];
+      [category, product, billType, bill, request, item, payment];
 }

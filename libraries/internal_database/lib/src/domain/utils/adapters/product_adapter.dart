@@ -30,7 +30,7 @@ class ProductAdapter {
     );
   }
 
-  static ProductCompanion toProductCompanion(Product product) {
+  static ProductCompanion updateProduct(Product product) {
     return ProductCompanion(
       name: Value(product.name),
       description: Value(product.description),

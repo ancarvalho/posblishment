@@ -1,8 +1,7 @@
 import 'package:core/core.dart';
-import 'package:flutter/material.dart';
+import "package:drift/drift.dart";
 import 'package:internal_database/internal_database.dart';
 import 'package:management/src/domain/errors/management_failures.dart';
-import "package:drift/drift.dart";
 
 import '../../infra/data_source/management_data_source_internal.dart';
 
@@ -86,7 +85,7 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
     try {
       final updated = await (appDatabase.update(appDatabase.product)
             ..where((t) => t.id.equals(product.id!)))
-          .write(ProductAdapter.toProductCompanion(product));
+          .write(ProductAdapter.updateProduct(product));
       return updated;
     } catch (e, stackTrace) {
       throw ManagementError(
@@ -164,7 +163,7 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
     try {
       final updated = await (appDatabase.update(appDatabase.category)
             ..where((t) => t.id.equals(category.id!)))
-          .write(CategoryAdapter.toCategoryCompanion(category));
+          .write(CategoryAdapter.updateCategory(category));
       return updated;
     } catch (e, stackTrace) {
       throw ManagementError(

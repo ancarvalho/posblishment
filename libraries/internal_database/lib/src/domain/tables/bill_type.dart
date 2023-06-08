@@ -4,17 +4,16 @@ import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
 import '../utils/enum_converter.dart';
-import 'bill_type.dart';
 
-class Bill extends Table {
+class BillType extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
-  IntColumn get table => integer().nullable()();
-  TextColumn get customerName => text().nullable()();
+  IntColumn get value => integer().nullable()(); // 
+  TextColumn get name => text().nullable()();
 
-  IntColumn get status =>
-      integer().map(JsonAwareIntEnumConverter(BillStatus.values))();
+  IntColumn get type =>
+      integer().map(JsonAwareIntEnumConverter(BillTypes.values))();
+  BoolColumn get defaultValue => boolean().withDefault(const Constant(false))();
 
-  TextColumn get billTypeID => text().references(BillType, #id)();
   DateTimeColumn get createdAt =>
       dateTime().withDefault(Constant(DateTime.now()))();
   DateTimeColumn get updatedAt =>

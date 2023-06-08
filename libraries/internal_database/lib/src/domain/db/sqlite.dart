@@ -2,7 +2,6 @@ import 'dart:io';
 
 // ignore: implementation_imports
 import "package:core/src/enums/enums.dart";
-// import "package:core/core.dart" as c;
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
@@ -31,7 +30,7 @@ DatabaseConnection connect() {
 }
 
 @DriftDatabase(
-  tables: [Product, Category, Bill, Item, Payment, ProductVariation, Request],
+  tables: [Product, Category, Bill, Item, Payment,  Request, BillType],
 )
 class AppDatabase extends _$AppDatabase
     // implements ProductRepository, CategoryRepository 
