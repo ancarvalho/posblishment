@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
-import '../../widgets/custom_text_form_field/custom_text_form_field_widget.dart';
+import '../../../domain/validators/validators.dart';
 import '../categories_list/categories_list_store.dart';
 import 'category_controller.dart';
 import 'category_store.dart';
@@ -79,18 +79,13 @@ class _CategoryPageState extends State<CategoryPage> {
                     controller: controller.nameTextController,
                     decorationName: "Nome",
                     value: widget.category.name,
-                    validator: (value) {
-                      if (value == null || value.isEmpty || value.length < 6) {
-                        return 'Invalid Name';
-                      }
-
-                      return null;
-                    },
+                    validator: validateNome,
                   ),
                   CustomTextFormField(
                     controller: controller.descriptionTextController,
                     decorationName: "Description",
                     value: widget.category.description,
+                    validator: validateDescription,
                   ),
                 ],
               ),

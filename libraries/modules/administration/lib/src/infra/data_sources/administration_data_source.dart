@@ -1,5 +1,7 @@
 import 'package:core/core.dart';
 
+import '../../domain/entities/bill_total.dart';
+
 abstract class AdministrationDataSource {
   Future<List<Product>> getAllProducts();
 
@@ -10,6 +12,7 @@ abstract class AdministrationDataSource {
   Future<Bill> getBill(String billID);
   Future<int> cancelBill(String billID);
   Future<int> finalizeBill(List<Payment> payments, String billID);
+  Future<BillTotal> getBillTotal(String billID);
 
   // Requests
   Future<Request> createRequest(NewRequest request, String billID);
@@ -19,4 +22,5 @@ abstract class AdministrationDataSource {
   Future<List<Request>> getLastRequests();
 
   Future<int> changeItemStatus(String id, ItemStatus status);
+  Future<List<Item>> getBillValidItems(String billID);
 }

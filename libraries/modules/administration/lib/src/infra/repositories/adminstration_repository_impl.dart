@@ -1,3 +1,4 @@
+import 'package:administration/src/domain/entities/bill_total.dart';
 import 'package:administration/src/domain/repositories/administration_repository.dart';
 import 'package:administration/src/infra/data_sources/administration_data_source.dart';
 import 'package:core/core.dart';
@@ -137,6 +138,26 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
     try {
       final txID = await _administrationDataSource.handleBillCreationOrUpdate(bill, request);
       return Right(txID);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, BillTotal>> getBillTotal(String billID) async {
+     try {
+      final billTotal = await _administrationDataSource.getBillTotal(billID);
+      return Right(billTotal);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Item>>> getBillValidItems(String billID) async{
+    try {
+      final items = await _administrationDataSource.getBillValidItems(billID);
+      return Right(items);
     } on Failure catch (e) {
       return Left(e);
     }

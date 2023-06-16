@@ -10,8 +10,6 @@ import 'package:management/src/presenter/pages/product/product_store.dart';
 import 'package:management/src/presenter/stores/categories_load_store.dart';
 
 import '../../../domain/adapters/adapters.dart';
-import '../../widgets/custom_dropdown_menu/custom_dropdown_menu.dart';
-import '../../widgets/custom_text_form_field/custom_text_form_field_widget.dart';
 import '../../widgets/error/error_widget.dart';
 import '../products_list/products_list_store.dart';
 

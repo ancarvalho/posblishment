@@ -5,8 +5,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 import 'setting/setting_store.dart';
 
-class AppWidget extends StatelessWidget {
-  const AppWidget({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {

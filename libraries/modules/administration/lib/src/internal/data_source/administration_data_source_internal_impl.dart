@@ -1,5 +1,5 @@
 import 'package:administration/src/domain/entities/bill_total.dart';
-import 'package:administration/src/domain/utils/calculate_total.dart';
+import 'package:administration/src/domain/utils/calculate_bill_total.dart';
 import 'package:administration/src/infra/data_sources/administration_data_source.dart';
 import 'package:core/core.dart';
 
@@ -127,19 +127,46 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
-  Future<int> updateBillStatus(String billID, BillStatus status) async {
-    final txID = (_internalDatabase.update(_internalDatabase.bill)
-          ..where((tbl) => tbl.id.equals(billID)))
-        .write(BillCompanion(status: Value(status)));
+  Future<BillTotal> getBillTotalWithPaidAmount(String billID) async {
+    try {
+      final billTotal = await getBillTotal(billID);
+      final amountPaid = await getTotalBillPayments(billID);
 
-    return txID;
+      billTotal.payment = amountPaid;
+
+      return billTotal;
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-getBillTotalWithPaidAmount",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  Future<int> updateBillStatus(String billID, BillStatus status) async {
+    try {
+      final txID = await (_internalDatabase.update(_internalDatabase.bill)
+            ..where((tbl) => tbl.id.equals(billID)))
+          .write(BillCompanion(status: Value(status)));
+
+      return txID;
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-updateBillStatus",
+        e,
+        e.toString(),
+      );
+    }
   }
 
 // TODO COmplete Solution
   @override
   Future<int> finalizeBill(List<Payment> payments, String billID) async {
     try {
-      final billTotal = await getBillTotal(billID);
+      final billTotal = await getBillTotalWithPaidAmount(billID);
 
       await _internalDatabase.batch(
         (batch) => batch.insertAll(
@@ -152,11 +179,13 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
         0.0,
         (previousValue, element) => previousValue + element.value,
       );
-  
 
-      if (totalPayment >= billTotal.total) {
+      final total = billTotal.total - billTotal.payment!;
+      final subtotal = billTotal.subtotal - billTotal.payment!;
+
+      if (totalPayment >= total) {
         return updateBillStatus(billID, BillStatus.paid);
-      } else if (totalPayment >= billTotal.subtotal) {
+      } else if (totalPayment >= subtotal) {
         return updateBillStatus(billID, BillStatus.paidWithoutCommission);
       } else {
         return updateBillStatus(billID, BillStatus.partiallyPaid);
@@ -227,10 +256,10 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     final billType = bill.readTable(_internalDatabase.billType);
 
     return calculateTotal(subtotal, billType.type, billType.value);
-
   }
 
   // TODO Get total, subtotal, comission
+  @override
   Future<BillTotal> getBillTotal(String billID) async {
     try {
       final items = (_internalDatabase.select(_internalDatabase.request).join([
@@ -305,6 +334,40 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       throw AdministrationError(
         s,
         "InternalDatabase-Administration-createItem",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<List<Item>> getBillValidItems(String billID) async {
+    try {
+      final _query =
+          await (_internalDatabase.select(_internalDatabase.request).join([
+        leftOuterJoin(
+          _internalDatabase.item,
+          _internalDatabase.item.requestId
+              .equalsExp(_internalDatabase.request.id),
+        )
+      ])
+                ..where(
+                  _internalDatabase.bill.id.equals(billID) &
+                      _internalDatabase.item.status.isIn([
+                        ItemStatus.preparing.index,
+                        ItemStatus.delivered.index,
+                      ]),
+                ))
+              .get();
+
+      final items =
+          _query.map((e) => e.readTable(_internalDatabase.item)).toList();
+
+      return items.map(ItemAdapter.toItem).toList();
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-getBillValidItems",
         e,
         e.toString(),
       );
