@@ -1,13 +1,10 @@
-import 'dart:math';
-
 import 'package:administration/src/presenter/widgets/bill_total/bill_total_store.dart';
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import "package:flutter_triple/flutter_triple.dart";
-import '../../../domain/entities/bill_total.dart';
-import '../../../domain/errors/administration_error_widgetd.dart';
+import '../../../domain/errors/administration_error_widget.dart';
 
 class BillTotalWidget extends StatefulWidget {
   final String billID;

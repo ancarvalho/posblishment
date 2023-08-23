@@ -7,7 +7,7 @@ import '../../../domain/use_cases/get_not_paid_bills.dart';
 class NotPaidBillsStore extends StreamStore<Failure, List<Bill>> {
   final GetNotPaidBills _getNotPaidBills;
 
-  NotPaidBillsStore(super.initialState, this._getNotPaidBills) : super();
+  NotPaidBillsStore( this._getNotPaidBills) : super([]);
 
   Future<void> getNotPaidBills() async => executeEither(
         () => DartzEitherAdapter.adapter(_getNotPaidBills()),

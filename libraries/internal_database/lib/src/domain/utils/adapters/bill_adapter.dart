@@ -1,6 +1,7 @@
 import 'package:core/core.dart';
 import "package:drift/drift.dart";
 import 'package:internal_database/src/domain/db/sqlite.dart';
+import 'package:internal_database/src/domain/utils/adapters/bill_type_adapter.dart';
 import "package:uuid/uuid.dart";
 
 class BillAdapter {
@@ -10,7 +11,18 @@ class BillAdapter {
       status: bill.status,
       customerName: bill.customerName,
       table: bill.table,
-      billTypeID: bill.billTypeID,
+      createdAt: bill.createdAt,
+      updatedAt: bill.updatedAt,
+    );
+  }
+
+  static Bill convertToBillWithType(BillData bill, List<BillTypeData> billTypes) {
+    return Bill(
+      id: bill.id,
+      status: bill.status,
+      customerName: bill.customerName,
+      table: bill.table,
+      billType: BillTypeAdapter.filterBillType(billTypes, bill.billTypeID),
       createdAt: bill.createdAt,
       updatedAt: bill.updatedAt,
     );

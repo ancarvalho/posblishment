@@ -129,6 +129,15 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
 
   Future<BillTotal> getBillTotalWithPaidAmount(String billID) async {
     try {
+      //TODO Benchmark results
+      
+      // late BillTotal billTotal;
+      // late double amountPaid;
+      // final v = await Future.wait([
+      //    getBillTotal(billID).then((value) => billTotal = value),
+      //   getTotalBillPayments(billID).then((value) => amountPaid = value)
+      // ]);
+
       final billTotal = await getBillTotal(billID);
       final amountPaid = await getTotalBillPayments(billID);
 
@@ -200,9 +209,18 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
+  Future<List<BillTypeData>> getBillTypes() {
+    final billTypes = _internalDatabase
+        .select(_internalDatabase.billType)
+        // .map(BillTypeAdapter.convertToBillType)
+        .get();
+    return billTypes;
+  }
+
   @override
-  Future<List<Bill>> getActiveBills() {
+  Future<List<Bill>> getActiveBills() async {
     try {
+      final billTypes = await getBillTypes();
       final bill = (_internalDatabase.select(_internalDatabase.bill)
             ..where(
               (tbl) => tbl.status.isIn([
@@ -211,7 +229,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
                 BillStatus.closed.index,
               ]),
             ))
-          .map(BillAdapter.convertToBill)
+          .map((bill) => BillAdapter.convertToBillWithType(bill, billTypes))
           .get();
       return bill;
     } catch (e, s) {
@@ -223,6 +241,34 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       );
     }
   }
+
+  // @override
+  // Future<Bill> getBill(String billID) async {
+  //   try {
+  //     final billWithType = await  (_internalDatabase.select(_internalDatabase.bill)
+  //           .join([
+  //             leftOuterJoin(
+  //               _internalDatabase.billType,
+  //               _internalDatabase.billType.id
+  //                   .equalsExp(_internalDatabase.bill.id),
+  //             )
+  //           ])
+  //           ..where(_internalDatabase.bill.id.equals(billID)))
+  //         // .map(BillAdapter.convertToBill)
+  //         .getSingle();
+
+  //       final bill = billWithType.readTable(_internalDatabase.bill);
+  //       final billType = billWithType.readTable(_internalDatabase.billType);
+  //     return BillAdapter.convertToBillWithType(bill, billType);
+  //   } catch (e, s) {
+  //     throw AdministrationError(
+  //       s,
+  //       "InternalDatabase-Administration-getBill",
+  //       e,
+  //       e.toString(),
+  //     );
+  //   }
+  // }
 
   @override
   Future<Bill> getBill(String billID) {
@@ -324,7 +370,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   // Items
   Future<Item> createItem(NewItem item, String requestID) async {
     try {
-      final product = await getProduct(item.productId);
+      final product = await getProduct(item.productId!);
       final createdItem = await _internalDatabase
           .into(_internalDatabase.item)
           .insertReturning(ItemAdapter.createItem(item, product, requestID));
@@ -385,7 +431,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-setItemDelivered",
+        "InternalDatabase-Administration-changeItemStatus",
         e,
         e.toString(),
       );
@@ -402,7 +448,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-setAllItemsDelivered",
+        "InternalDatabase-Administration-changeAllItemsStatus",
         e,
         e.toString(),
       );
@@ -428,16 +474,18 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-setRequestDelivered",
+        "InternalDatabase-Administration-changeRequestStatus",
         e,
         e.toString(),
       );
     }
   }
 
+
   @override
   Future<Request> createRequest(NewRequest request, String billID) async {
     try {
+      // Maybe wait all , need generate id for reference to items
       final req = await _internalDatabase
           .into(_internalDatabase.request)
           .insertReturning(RequestAdapter.createRequest(request, billID));

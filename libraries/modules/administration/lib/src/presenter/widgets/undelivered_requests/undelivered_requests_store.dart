@@ -5,7 +5,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 class UndeliveredRequestsStore extends StreamStore<Failure, List<Request>> {
   final GetLastRequests _getLastRequests;
 
-  UndeliveredRequestsStore(super.initialState, this._getLastRequests) : super();
+  UndeliveredRequestsStore( this._getLastRequests) : super([]);
 
   Future<void> getUndeliveredRequests() async => executeEither(
         () => DartzEitherAdapter.adapter(_getLastRequests()),

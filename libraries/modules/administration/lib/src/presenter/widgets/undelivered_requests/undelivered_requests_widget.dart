@@ -14,7 +14,7 @@ class LastRequestsWidgets extends StatefulWidget {
 }
 
 class _LastRequestsWidgetsState extends State<LastRequestsWidgets> {
-  // TODO init from store
+
   final undeliveredRequestsStore = Modular.get<UndeliveredRequestsStore>();
 
   @override

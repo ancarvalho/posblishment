@@ -20,11 +20,15 @@ class Request {
 }
 
 class NewRequest {
-  final String observation;
+  final String? observation;
   final List<NewItem> items;
 
   const NewRequest({
-    required this.observation,
+    this.observation,
     required this.items,
   });
+
+  factory NewRequest.empty() {
+    return const NewRequest(observation: "", items: []);
+  }
 }

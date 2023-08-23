@@ -12,11 +12,11 @@ class DashBoardPage extends StatefulWidget {
 class _DashBoardPageState extends State<DashBoardPage> {
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
+    return  SafeArea(
       child: Scaffold(
-        // appBar: AppBar(),
-        body: RouterOutlet(),
-        drawer: DrawerWidget(),
+        appBar: AppBar(),
+        body: const RouterOutlet(),
+        drawer: const DrawerWidget(),
       ),
     );
   }

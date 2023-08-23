@@ -1,3 +1,5 @@
+import 'package:core/src/entities/bill_type.dart';
+
 import '../enums/enums.dart';
 
 class Bill {
@@ -5,14 +7,14 @@ class Bill {
   final int? table;
   final String? customerName;
   final BillStatus status;
-  final String billTypeID;
+  final BillType? billType;
   final DateTime createdAt;
   final DateTime updatedAt;
-  const Bill( {
+  const Bill({
     required this.id,
     this.table,
     this.customerName,
-    required this.billTypeID,
+    this.billType,
     required this.status,
     required this.createdAt,
     required this.updatedAt,

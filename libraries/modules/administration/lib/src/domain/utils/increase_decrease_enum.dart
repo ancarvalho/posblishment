@@ -1,0 +1,1 @@
+enum IncreaseORDecrease { increase, decrease }

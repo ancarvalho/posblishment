@@ -8,11 +8,12 @@ import '../utils/enum_converter.dart';
 class BillType extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
   IntColumn get value => integer().nullable()(); // 
-  TextColumn get name => text().nullable()();
+  TextColumn get name => text()();
+  TextColumn get icon => text().nullable()();
 
   IntColumn get type =>
       integer().map(JsonAwareIntEnumConverter(BillTypes.values))();
-  BoolColumn get defaultValue => boolean().withDefault(const Constant(false))();
+  BoolColumn get defaultType => boolean().withDefault(const Constant(false))();
 
   DateTimeColumn get createdAt =>
       dateTime().withDefault(Constant(DateTime.now()))();

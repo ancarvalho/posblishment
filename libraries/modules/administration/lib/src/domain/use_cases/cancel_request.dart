@@ -3,17 +3,17 @@ import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
 
 
-abstract class IRequestID {
-  Future<Either<Failure, int>> call(String requestID);
+abstract class ICancelRequest {
+  Future<Either<Failure, int>> call(String CancelRequest);
 }
 
-class RequestID implements IRequestID {
+class CancelRequest implements ICancelRequest {
   final AdministrationRepository repository;
 
-  RequestID(this.repository);
+  CancelRequest(this.repository);
 
   @override
-  Future<Either<Failure, int>> call(String requestID) async {
-    return repository.cancelRequest(requestID);
+  Future<Either<Failure, int>> call(String CancelRequest) async {
+    return repository.cancelRequest(CancelRequest);
   }
 }

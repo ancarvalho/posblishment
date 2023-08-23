@@ -1,4 +1,6 @@
 export 'bill.dart';
+export 'bill_total.dart';
+export 'bill_type.dart';
 export 'category.dart';
 export 'item.dart';
 export 'payment.dart';

@@ -3,6 +3,8 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
+import 'package:posblishment/domain/entities/entities.dart';
+import 'package:posblishment/domain/utils/get_theme.dart';
 import 'setting/setting_store.dart';
 
 class App extends StatelessWidget {
@@ -12,12 +14,12 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = SettingStore();
     
-    return ScopedBuilder<SettingStore, Failure, bool>(
+    return ScopedBuilder<SettingStore, Failure, Settings>(
       store: store,
       onState: (context, state) {
         return MaterialApp.router(
           title: AppConstant.appName,
-          theme:  Themes.lightTheme,
+          theme:  getTheme(state.theme),
           routerDelegate: Modular.routerDelegate,
           routeInformationParser: Modular.routeInformationParser,
         );

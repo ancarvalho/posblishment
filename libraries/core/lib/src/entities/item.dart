@@ -25,16 +25,15 @@ class Item {
 }
 
 class NewItem {
-  final String productId;
+  final String? productId;
   final int? code;
-  final int quantity;
+  int quantity;
 
-  const NewItem( {
-    required this.productId,
+  NewItem({
+    this.productId,
     this.code,
     required this.quantity,
   });
 
-  factory NewItem.empty() => const NewItem(quantity: 1, productId: "");
-
+  factory NewItem.empty() => NewItem(quantity: 1, productId: "");
 }

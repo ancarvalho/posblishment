@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'color_palettes.dart';
 
 class SolarizedTheme {
-  static ThemeData lightTheme = ThemeData.light().copyWith(
+  static ThemeData solarizedLightTheme = ThemeData.light().copyWith(
     brightness: Brightness.light,
     primaryColor: SolarizedColors.blue,
     scaffoldBackgroundColor: SolarizedColors.base3,
@@ -72,7 +72,7 @@ class SolarizedTheme {
         .copyWith(background: SolarizedColors.base3),
   );
 
-  static ThemeData darkTheme = ThemeData.dark().copyWith(
+  static ThemeData solarizedDarkTheme = ThemeData.dark().copyWith(
     brightness: Brightness.dark,
     primaryColor: SolarizedColors.blue,
     scaffoldBackgroundColor: SolarizedColors.base03,

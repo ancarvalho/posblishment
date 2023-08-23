@@ -15,7 +15,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
 
-
+  // get the settings last path and push trough or home if it's null
   Future<void> _startSplashPage() async {
     await Future.wait([
       Modular.isModuleReady<AppModule>(),

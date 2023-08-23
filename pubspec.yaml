@@ -16,8 +16,10 @@ dependencies:
     sdk: flutter
   core:
     path: libraries/core
+    
   dependencies:
     path: libraries/dependencies
+  
   design_system:
     path: libraries/design_system
 
@@ -26,6 +28,10 @@ dependencies:
   
   management:
     path: libraries/modules/management
+
+  administration:
+    path: libraries/modules/administration
+  
   stock:
     path: libraries/modules/stock
 

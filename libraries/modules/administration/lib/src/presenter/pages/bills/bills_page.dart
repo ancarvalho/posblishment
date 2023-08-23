@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
+import '../../widgets/bill_card/bill_card_widget.dart';
+
 class BillsPage extends StatefulWidget {
   const BillsPage({super.key});
 
@@ -28,7 +30,19 @@ class _BillsPageState extends State<BillsPage> {
       //TODO insert a Grid builder based on width minimum of 200px
       body: ScopedBuilder<NotPaidBillsStore, Failure, List<Bill>>(
         onState: (context, state) {
-          return Column();
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 250,
+                childAspectRatio: .9,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12),
+            itemCount: state.length,
+            itemBuilder: (context, index) {
+              return BillCardWidget(
+                bill: state[index],
+              );
+            },
+          );
         },
       ),
     );

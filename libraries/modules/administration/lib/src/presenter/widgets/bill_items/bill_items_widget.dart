@@ -19,6 +19,12 @@ class BillItemsWidgetState extends State<BillItemsWidget> {
   final billItemsStore = Modular.get<BillItemsStore>();
 
   @override
+  void initState() {
+    billItemsStore.getBillItems(widget.billID);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ScopedBuilder<BillItemsStore, Failure, List<Item>>(
       store: billItemsStore,

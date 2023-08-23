@@ -1,39 +1,46 @@
+import 'dart:convert';
+
 import 'package:core/core.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SettingStore extends StreamStore<Failure, bool> {
+import '../../domain/entities/entities.dart';
+
+class SettingStore extends StreamStore<Failure, Settings> {
   static SettingStore? _instance;
 
   factory SettingStore() => _instance ??= SettingStore._();
 
-  SettingStore._() : super(false) {
-    loadTheme();
+  SettingStore._() : super(Settings.empty()) {
+    loadSettings();
   }
 
-  Future<void> changeTheme({bool isDark = false}) async {
+  Future<void> changeTheme({required String theme}) async {
     setLoading(true);
-    await saveValueDarkTheme(isDark: isDark);
+    final newState = state.copyWith(theme: theme);
+    update(newState, force: true);
+    await saveSettings(newState);
+    // update({...state, }, force: true);
+    setLoading(false);
+  }
+
+  Future<void> loadSettings() async {
+    setLoading(true);
+    final isDark = await getSettings();
     update(isDark, force: true);
     setLoading(false);
   }
 
-  Future<void> loadTheme() async {
-    setLoading(true);
-    final isDark = await getValueDarkTheme();
-    update(isDark, force: true);
-    setLoading(false);
+  final String _settings = 'settings';
+
+  Future saveSettings(Settings settings) async {
+    final shared = await SharedPreferences.getInstance();
+    await shared.setString(_settings, jsonEncode(Settings.toJson(settings)));
   }
 
-  final String _theme = 'theme';
-
-  Future saveValueDarkTheme({bool isDark = false}) async {
+  Future<Settings> getSettings() async {
     final shared = await SharedPreferences.getInstance();
-    await shared.setBool(_theme, isDark);
-  }
-
-  Future<bool> getValueDarkTheme() async {
-    final shared = await SharedPreferences.getInstance();
-    return shared.getBool(_theme) ?? false;
+    final settings = shared.getString(_settings);
+    return settings != null ? Settings.fromMap(settings) : Settings.empty();
   }
 }
