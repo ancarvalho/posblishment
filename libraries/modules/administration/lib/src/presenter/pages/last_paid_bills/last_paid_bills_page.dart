@@ -1,5 +1,6 @@
 import 'package:administration/src/presenter/widgets/last_paid_bills/last_paid_bills_store.dart';
 import 'package:core/core.dart';
+import 'package:design_system/widgets/drawer/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
@@ -20,21 +21,24 @@ class _LastPaidBillsPageState extends State<LastPaidBillsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Ultimas Contas"),
-        centerTitle: true,
-      ),
-      body: ScopedBuilder<LastPaidBillsStore, Failure, List<Bill>>(
-        store: _lastPaidBillsStore,
-        onState: (context, state) {
-          return ListView.builder(
-            itemCount: state.length,
-            itemBuilder: (context, index) {
-              return BillPaidCardWidget(bill: state[index]);
-            },
-          );
-        },
+    return SafeArea(
+      child: Scaffold(
+        drawer: const DrawerWidget(),
+        appBar: AppBar(
+          title: const Text("Ultimas Contas"),
+          centerTitle: true,
+        ),
+        body: ScopedBuilder<LastPaidBillsStore, Failure, List<Bill>>(
+          store: _lastPaidBillsStore,
+          onState: (context, state) {
+            return ListView.builder(
+              itemCount: state.length,
+              itemBuilder: (context, index) {
+                return BillPaidCardWidget(bill: state[index]);
+              },
+            );
+          },
+        ),
       ),
     );
   }

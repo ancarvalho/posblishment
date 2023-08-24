@@ -3,6 +3,8 @@ import 'package:dartz/dartz.dart';
 
 import '../repositories/management_repository.dart';
 
+
+// ignore: one_member_abstracts
 abstract class IListAllCategories {
   Future<Either<Failure, List<Category>>> call();
 }

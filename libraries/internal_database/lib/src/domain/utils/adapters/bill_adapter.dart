@@ -28,12 +28,12 @@ class BillAdapter {
     );
   }
 
-  static BillData createBill(NewBill bill) {
+  static BillData createBill(NewBill bill, String billTypeID) {
     return BillData(
       id: const Uuid().v4(),
       table: bill.table,
       customerName: bill.customerName,
-      billTypeID: bill.billTypeID,
+      billTypeID: billTypeID,
       status: BillStatus.open,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),

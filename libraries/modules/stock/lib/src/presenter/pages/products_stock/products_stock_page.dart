@@ -5,7 +5,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/entities/product_stock.dart';
-import '../../../domain/errors/stock_failures.dart';
 import '../../widgets/error/error_widget.dart';
 import '../../widgets/product_stock/product_stock_widget.dart';
 import 'products_stock_store.dart';
@@ -30,6 +29,7 @@ class _ProductsStockPageState extends State<ProductsStockPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: const DrawerWidget(),
         appBar: AppBar(
           title: const Text("Controle Estoque"),
           centerTitle: true,

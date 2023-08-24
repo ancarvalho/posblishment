@@ -6,8 +6,6 @@ import 'package:management/management.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:statistics/statistics.dart';
 import 'package:stock/stock.dart';
-
-import 'dashboard/dashboard_module.dart';
 import 'splash/splash_module.dart';
 
 class AppModule extends Module {
@@ -34,9 +32,9 @@ class AppModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ModuleRoute('/', module: SplashModule()),
-    ModuleRoute('/dashboard', module: DashboardModule()),
-    ModuleRoute('/administration', module: AdministrationModule()),
-    ModuleRoute('/management', module: ManagementModule()),
-    ModuleRoute('/stock', module: StockModule()),
+    ModuleRoute(ModulesRoutes.statistics.route, module: StatisticsModule()),
+    ModuleRoute(ModulesRoutes.administration.route, module: AdministrationModule()),
+    ModuleRoute(ModulesRoutes.management.route, module: ManagementModule()),
+    ModuleRoute(ModulesRoutes.stock.route, module: StockModule()),
   ];
 }

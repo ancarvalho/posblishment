@@ -34,6 +34,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: const DrawerWidget(),
         appBar: AppBar(
           title: const Text("Categorias"),
           centerTitle: true,
@@ -48,7 +49,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
               tooltip: 'Create New Category',
               onPressed: () {
                 Modular.to.pushNamed(
-                  './category',
+                  "${PagesRoutes.category.dependsOnModule.route}${PagesRoutes.category.route}",
                   // TODO Check if dispose is being called on controllers
                   arguments: Category.empty(),
                 );

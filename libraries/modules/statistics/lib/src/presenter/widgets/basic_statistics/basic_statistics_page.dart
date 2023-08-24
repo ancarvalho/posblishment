@@ -6,7 +6,6 @@ import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/entities/entities.dart';
 import '../../../domain/enums/frequency.dart';
-import '../../../domain/errors/dashboard_failures.dart';
 import '../error/error_widget.dart';
 import '../invoicing/invoicing_widget.dart';
 import '../invoicing_dialog/invoicing_dialog_widget.dart';

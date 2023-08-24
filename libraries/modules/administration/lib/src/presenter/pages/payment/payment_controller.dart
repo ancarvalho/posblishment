@@ -23,7 +23,7 @@ class PaymentController extends Disposable {
 
   double calculateTotalRemaining() {
     final paymentsTotal = payment.value.fold(_paymentStore.state.payment ?? 0.0,
-        (previousValue, element) => element.value + previousValue);
+        (previousValue, element) => element.value + previousValue,);
 
     return _paymentStore.state.total - paymentsTotal;
   }

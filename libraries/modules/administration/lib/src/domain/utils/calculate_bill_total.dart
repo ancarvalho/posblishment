@@ -1,4 +1,3 @@
-import 'package:administration/src/domain/entities/bill_total.dart';
 import 'package:core/core.dart';
 
 BillTotal calculateTotal(double subtotal, BillTypes billType, int? value) {

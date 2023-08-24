@@ -3,7 +3,6 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
-import 'package:management/src/domain/errors/management_failures.dart';
 // import 'package:internal_database/internal_database.dart';
 
 import '../../widgets/error/error_widget.dart';
@@ -35,7 +34,9 @@ class _ProductsListPageState extends State<ProductsListPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: const DrawerWidget(),
         appBar: AppBar(
+        
           title: const Text("Produtos"),
           centerTitle: true,
           actions: [
@@ -49,8 +50,8 @@ class _ProductsListPageState extends State<ProductsListPage> {
               tooltip: 'Create New Product',
               onPressed: () {
                 Modular.to.pushNamed(
-                  './product',
-                  arguments: Product.empty(),
+                  "${PagesRoutes.product.dependsOnModule.route}${PagesRoutes.product.route}",
+                  // arguments: Product.empty(),
                 );
               },
             ),

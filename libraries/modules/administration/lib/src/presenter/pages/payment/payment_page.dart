@@ -33,43 +33,45 @@ class _PaymentPageState extends State<PaymentPage> {
     return ScopedBuilder<PaymentStore, Failure, BillTotal>(
       store: _paymentStore,
       onState: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Pagamento"),
-            centerTitle: true,
-          ),
-          body: Column(
-            children: [
-              PaymentMethodsWidget(
-                paymentType: _paymentController.currentPaymentType,
-                selectPaymentType: _paymentController.setCurrentPaymentType,
-              ),
-              Form(
-                key: _paymentController.formKey,
-                child: PaymentTextFieldWithButtons(
-                  textEditingController: _paymentController.valueController,
-                  addSubtotalRemaining:
-                      _paymentController.addValueWithoutCommission,
-                  addHalfTotal: _paymentController.addHalfTotal,
-                  addTotalRemaining: _paymentController.addRemainingValue,
-                  addPaymentMethod: _paymentController.addValueToPayment,
+        return SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text("Pagamento"),
+              centerTitle: true,
+            ),
+            body: Column(
+              children: [
+                PaymentMethodsWidget(
+                  paymentType: _paymentController.currentPaymentType,
+                  selectPaymentType: _paymentController.setCurrentPaymentType,
                 ),
-              ),
-              ListView.builder(
-                itemCount: _paymentController.payment.value.length,
-                itemBuilder: (context, index) {
-                  return PaymentItemWidget(
-                    payment: _paymentController.payment.value[index],
-                    removePayment: () =>
-                        _paymentController.removePayment(index),
-                  );
-                },
-              )
-            ],
-          ),
-          //TODO include Remeaning value
-          floatingActionButton: PaymentFloatingWidget(
-            billTotal: state,
+                Form(
+                  key: _paymentController.formKey,
+                  child: PaymentTextFieldWithButtons(
+                    textEditingController: _paymentController.valueController,
+                    addSubtotalRemaining:
+                        _paymentController.addValueWithoutCommission,
+                    addHalfTotal: _paymentController.addHalfTotal,
+                    addTotalRemaining: _paymentController.addRemainingValue,
+                    addPaymentMethod: _paymentController.addValueToPayment,
+                  ),
+                ),
+                ListView.builder(
+                  itemCount: _paymentController.payment.value.length,
+                  itemBuilder: (context, index) {
+                    return PaymentItemWidget(
+                      payment: _paymentController.payment.value[index],
+                      removePayment: () =>
+                          _paymentController.removePayment(index),
+                    );
+                  },
+                )
+              ],
+            ),
+            //TODO include Remeaning value
+            floatingActionButton: PaymentFloatingWidget(
+              billTotal: state,
+            ),
           ),
         );
       },

@@ -11,16 +11,16 @@ class OrderSheetItemWidget extends StatefulWidget {
     super.key,
     required this.item,
     this.addItem,
-    this.index = -1,
+    this.index,
     this.removeItem,
     this.increaseORdecrease,
   });
   final NewItem item;
 
-  final Function(NewItem? item)? addItem;
+  final void Function(NewItem? item)? addItem;
   final Function(int index)? removeItem;
-  final Function(IncreaseORDecrease e, int index)? increaseORdecrease;
-  final int index;
+  final void Function(IncreaseORDecrease e, int index)? increaseORdecrease;
+  final int? index;
 
   @override
   State<OrderSheetItemWidget> createState() => _OrderSheetItemWidgetState();
@@ -28,81 +28,114 @@ class OrderSheetItemWidget extends StatefulWidget {
 
 class _OrderSheetItemWidgetState extends State<OrderSheetItemWidget> {
   final orderSheetItemController = OrderSheetItemController();
-  bool isAlreadyAdded = false;
 
   @override
   Widget build(BuildContext context) {
-    if (widget.index == -1) isAlreadyAdded = true;
     return Form(
       key: orderSheetItemController.formKey,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomTextFormField(
-            controller: orderSheetItemController.itemCodeController,
-            decorationName: "Código",
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-            ],
-            value: widget.item.code.toString(),
+          SizedBox(
+            width: 60,
+            child: CustomTextFormField(
+              controller: orderSheetItemController.itemCodeController,
+              decorationName: "Código",
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              enabled: widget.index == null,
+              value: widget.item.code?.toString(),
+            ),
           ),
-          CustomTextFormField(
-            controller: orderSheetItemController.itemQuantityController,
-            decorationName: "Quantidade",
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-            ],
-            value: widget.item.quantity.toString(),
+          const SizedBox(
+            width: 2,
           ),
-          Row(
-            children: [
-              TextButton(
-                onPressed: () => isAlreadyAdded
-                    ? widget.increaseORdecrease!(
-                        IncreaseORDecrease.increase,
-                        widget.index,
-                      )
-                    : orderSheetItemController.increaseQuantity(),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(30, 30),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  alignment: Alignment.centerLeft,
-                ),
-                child: const Icon(
-                  Icons.keyboard_arrow_up,
-                  // size:
-                ),
-              ),
-              TextButton(
-                onPressed: () => isAlreadyAdded
-                    ? widget.increaseORdecrease!(
-                        IncreaseORDecrease.decrease, widget.index)
-                    : orderSheetItemController.decreaseQuantity(),
-                style: TextButton.styleFrom(
+          SizedBox(
+            width: 40,
+            child: CustomTextFormField(
+              controller: orderSheetItemController.itemQuantityController,
+              decorationName: "Quantidade",
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              value: widget.item.quantity.toString(),
+            ),
+          ),
+          const SizedBox(
+            width: 2,
+          ),
+          SizedBox(
+            width: 30,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: widget.index != null
+                      ? () => widget.increaseORdecrease!(
+                            IncreaseORDecrease.increase,
+                            widget.index!,
+                          )
+                      : orderSheetItemController.increaseQuantity,
+                  style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: const Size(30, 30),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    alignment: Alignment.centerLeft),
-                child: const Icon(
-                  Icons.keyboard_arrow_down,
-                  // size:
+                    alignment: Alignment.centerLeft,
+                  ),
+                  child: const Icon(
+                    Icons.keyboard_arrow_up,
+                    size: 30,
+                    // size:
+                  ),
                 ),
-              ),
-            ],
+                TextButton(
+                  onPressed: widget.index != null
+                      ? () => widget.increaseORdecrease!(
+                          IncreaseORDecrease.decrease, widget.index!,)
+                      : orderSheetItemController.decreaseQuantity,
+                  style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(30, 30),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      alignment: Alignment.centerLeft,),
+                  child: const Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 30,
+                    // size:
+                  ),
+                ),
+              ],
+            ),
           ),
-          TextButton.icon(
-            onPressed: isAlreadyAdded
-                ? widget.removeItem!(widget.index)
-                : widget.addItem!(orderSheetItemController.transformToItem()),
-            icon: isAlreadyAdded
-                ? const Icon(Icons.remove)
-                : const Icon(Icons.plus_one),
-            label: Text(isAlreadyAdded ? "Add Item" : "Remove Item"),
+          SizedBox(
+            width: 30,
+            child: IconButton(
+              onPressed: widget.index != null
+                  ? () {
+                      widget.removeItem!(widget.index!);
+                    }
+                  : () {
+                      widget
+                          .addItem!(orderSheetItemController.transformToItem());
+                      orderSheetItemController.resetFields();
+                    },
+              icon: widget.index != null
+                  ? const Icon(Icons.remove)
+                  : const Icon(Icons.add),
+              tooltip: widget.index != null ? "Add Item" : "Remove Item",
+            ),
           )
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    orderSheetItemController.dispose();
+    super.dispose();
   }
 }

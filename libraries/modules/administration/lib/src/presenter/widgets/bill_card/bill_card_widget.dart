@@ -16,14 +16,14 @@ class BillCardWidget extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-            color: transformBillStatusIntoColor(bill.status)),
+            color: transformBillStatusIntoColor(bill.status),),
         child: Stack(
           children: [
             Positioned(
               top: 5,
               right: 5,
               child: Icon(transformToIcon(bill.billType?.icon),
-                  color: const Color.fromARGB(255, 255, 254, 254)),
+                  color: const Color.fromARGB(255, 255, 254, 254),),
             ),
             Center(
               child: Column(
@@ -41,7 +41,7 @@ class BillCardWidget extends StatelessWidget {
                     bill.table.toString(),
                     style: const TextStyle(
                         color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 60),
+                        fontSize: 60,),
                   ),
                   const SizedBox(
                     height: 10,
@@ -51,7 +51,7 @@ class BillCardWidget extends StatelessWidget {
                     style: const TextStyle(
                         color: Color.fromARGB(255, 255, 255, 255),
                         fontWeight: FontWeight.w900,
-                        fontSize: 17),
+                        fontSize: 17,),
                   )
                 ],
               ),

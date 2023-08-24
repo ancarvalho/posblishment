@@ -23,7 +23,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
   static NumberFormat realFormat() =>
       NumberFormat.simpleCurrency(locale: "pt_Br", decimalDigits: 2);
-  static String formatRealCurrency(value) => realFormat().format(value);
+  static String formatRealCurrency(double? value) => realFormat().format(value);
   static double? formatToDouble(String value) =>
       double.tryParse(value.replaceAll(RegExp('[^0-9]'), ""))!/100;
 }

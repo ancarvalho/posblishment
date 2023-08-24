@@ -2,35 +2,57 @@ import "package:core/core.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_modular/flutter_modular.dart";
 
-class OrderSheetController extends Disposable {
-  ValueNotifier<NewRequest> request =
-      ValueNotifier<NewRequest>(NewRequest.empty());
+import "../../../domain/utils/utils.dart";
+import "order_sheet_store.dart";
+
+class OrderSheetController extends Disposable with ChangeNotifier {
+  NewRequest _request = NewRequest.empty();
+
+  NewRequest get request => _request;
+
+  final OrderSheetStore _orderSheetStore = Modular.get<OrderSheetStore>();
 
   TextEditingController tableTextController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  void insertItemONRequest(NewItem item) {
-    request.value.items.add(item);
+  void insertItemONRequest(NewItem? item) {
+    if (item != null) _request.items.add(item);
+    notifyListeners();
   }
 
-  void removeItemONRequest(int index) {
-    request.value.items.removeAt(index);
+  void removeItemInRequest(int index) {
+    _request.items.removeAt(index);
+    notifyListeners();
+  }
+
+  void increaseOrDecreaseQuantity(IncreaseORDecrease e, int index) {
+    switch (e) {
+      case IncreaseORDecrease.increase:
+        increaseItemQuantity(index);
+        break;
+      case IncreaseORDecrease.decrease:
+        decreaseItemQuantity(index);
+        break;
+    }
   }
 
   void increaseItemQuantity(int index) {
-    request.value.items[index].quantity++;
+    _request.items[index].quantity++;
+    notifyListeners();
   }
 
   void decreaseItemQuantity(int index) {
-    request.value.items[index].quantity--;
+    _request.items[index].quantity--;
+    notifyListeners();
   }
 
   void clearRequest() {
-    request.value = NewRequest.empty();
+    _request = NewRequest.empty();
+    notifyListeners();
   }
 
-  @override
-  void dispose() {
-    request.dispose();
+  void makeRequest(NewBill? newBill) {
+    // TODO Modify create Method
+    // _orderSheetStore.createOrUpdateBill(newBill, _request);
   }
 }

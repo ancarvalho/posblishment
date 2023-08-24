@@ -7,7 +7,7 @@ class Request {
   final RequestStatus status;
   final String billId;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const Request({
     required this.id,
     this.observation,
@@ -15,20 +15,30 @@ class Request {
     required this.status,
     required this.billId,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
+
+  factory Request.empty() {
+    return Request(
+      billId: "",
+      createdAt: DateTime.now(),
+      id: "",
+      status: RequestStatus.preparing,
+      items: [],
+    );
+  }
 }
 
 class NewRequest {
   final String? observation;
-  final List<NewItem> items;
+  List<NewItem> items;
 
-  const NewRequest({
+  NewRequest({
     this.observation,
     required this.items,
   });
 
   factory NewRequest.empty() {
-    return const NewRequest(observation: "", items: []);
+    return NewRequest(observation: "", items: []);
   }
 }

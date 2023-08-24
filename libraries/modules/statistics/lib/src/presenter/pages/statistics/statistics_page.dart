@@ -20,6 +20,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: const DrawerWidget(),
         appBar: AppBar(title: const Text("Estatísticas"), centerTitle: true,),
         body: SingleChildScrollView(
           child: Padding(

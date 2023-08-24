@@ -1,4 +1,5 @@
 import 'package:administration/src/presenter/pages/order_sheet/order_sheet_controller.dart';
+import 'package:administration/src/presenter/pages/order_sheet/order_sheet_store.dart';
 import 'package:administration/src/presenter/stores/products/products_store.dart';
 import 'package:administration/src/presenter/widgets/order_sheet_item/order_sheet_item_widget.dart';
 import 'package:core/core.dart';
@@ -17,49 +18,100 @@ class OrderSheetPage extends StatefulWidget {
 }
 
 class _OrderSheetPageState extends State<OrderSheetPage> {
-  final OrderSheetController _orderSheetController = OrderSheetController();
+  final _orderSheetController = OrderSheetController();
 
   final ProductStore _productStore = Modular.get<ProductStore>();
+  final OrderSheetStore _orderSheetStore = Modular.get<OrderSheetStore>();
+
+  
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
+  void initState() {
+    // Solution For now
+
+    _orderSheetController.addListener(() {
+      setState(() {});
+    });
+
+    _productStore.getAllProducts();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Comanda Virtual"),
-        centerTitle: true,
-      ),
-      body: ScopedBuilder<ProductStore, Failure, List<Product>>(
-        store: _productStore,
-        onState: (context, state) {
-          return Column(
-            children: [
-              Form(
-                key: _orderSheetController.formKey,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 80,
-                      width: Sizes.width(context) * .7,
-                      child: TextFormField(
-                        controller: _orderSheetController.tableTextController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: const InputDecoration(labelText: "Mesa"),
-                      ),
+    return SafeArea(
+      child: Scaffold(
+        drawer: const DrawerWidget(),
+        appBar: AppBar(
+          title: const Text("Comanda Virtual"),
+          centerTitle: true,
+        ),
+        body: ScopedBuilder<ProductStore, Failure, List<Product>>(
+          store: _productStore,
+          onState: (context, state) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Form(
+                    key: _orderSheetController.formKey,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 80,
+                          width: Sizes.width(context) * .7,
+                          child: TextFormField(
+                            controller:
+                                _orderSheetController.tableTextController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration:
+                                const InputDecoration(labelText: "Mesa"),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  ..._orderSheetController.request.items
+                      .asMap()
+                      .entries
+                      .map(
+                        (e) => OrderSheetItemWidget(
+                          key: Key(e.key.toString()),
+                          item: e.value,
+                          index: e.key,
+                          increaseORdecrease:
+                              _orderSheetController.increaseOrDecreaseQuantity,
+                          removeItem: _orderSheetController.removeItemInRequest,
+                        ),
+                      )
+                      .toList(),
+                  OrderSheetItemWidget(
+                    item: NewItem.empty(),
+                    addItem: _orderSheetController.insertItemONRequest,
+                  )
+                ],
               ),
-              ..._orderSheetController.request.value.items
-                  .map((e) => OrderSheetItemWidget(item: e))
-                  .toList(),
-              OrderSheetItemWidget(item: NewItem.empty())
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _orderSheetController.dispose();
+    // _orderSheetController.removeListener(() {});
   }
 }

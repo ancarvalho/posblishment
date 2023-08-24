@@ -18,7 +18,7 @@ class BillPaidCardWidget extends StatelessWidget {
             children: [
               Text(bill.table == null
                   ? bill.table.toString()
-                  : bill.customerName!),
+                  : bill.customerName!,),
               Text(bill.status.name)
             ],
           ),

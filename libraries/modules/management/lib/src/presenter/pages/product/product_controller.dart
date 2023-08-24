@@ -21,12 +21,13 @@ class ProductController extends Disposable {
 
   final ValueNotifier<String?> _categoryID = ValueNotifier(null);
 
-  void resetFields(Product product) {
-    nameTextController.text = product.name;
-    descriptionTextController.text = product.description ?? "";
-    priceTextController.text = product.price.toString();
+  void resetFields(Product? product) {
+    nameTextController.text = product?.name ?? "";
+    descriptionTextController.text = product?.description ?? "";
+    priceTextController.text = product?.price.toString() ?? "0";
     variationTextController.text =
-        product.variations != null ? product.variations!.join(",") : "";
+        product?.variations != null ? product?.variations?.join(",") ?? "" : "";
+    categoryID = product?.categoryId;
   }
 
   void saveChanges(String? id) {
@@ -46,15 +47,14 @@ class ProductController extends Disposable {
   void createProduct() {
     store.createProduct(
       Product(
-          name: nameTextController.text,
-          description: descriptionTextController.text,
-          price: parseCurrency(priceTextController.text) ?? 0.0,
-          variations: variationTextController.text.split(","),
-          categoryId: categoryID),
+        name: nameTextController.text,
+        description: descriptionTextController.text,
+        price: parseCurrency(priceTextController.text) ?? 0.0,
+        variations: variationTextController.text.split(","),
+        categoryId: categoryID,
+      ),
     );
   }
-
-
 
   String? get categoryID => _categoryID.value;
 
@@ -65,12 +65,13 @@ class ProductController extends Disposable {
   void updateProduct(String id) {
     store.updateProduct(
       Product(
-          id: id,
-          name: nameTextController.text,
-          description: descriptionTextController.text,
-          price: parseCurrency(priceTextController.text) ?? 0.0,
-          variations: variationTextController.text.split(","),
-          categoryId: categoryID),
+        id: id,
+        name: nameTextController.text,
+        description: descriptionTextController.text,
+        price: parseCurrency(priceTextController.text) ?? 0.0,
+        variations: variationTextController.text.split(","),
+        categoryId: categoryID,
+      ),
     );
   }
 

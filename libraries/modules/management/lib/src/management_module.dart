@@ -1,10 +1,11 @@
 
+import 'package:core/core.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:management/src/domain/use_cases/delete_category.dart';
 import 'package:management/src/domain/use_cases/delete_product.dart';
 import 'package:management/src/presenter/pages/category/category_controller.dart';
-import 'package:management/src/presenter/stores/categories_load_store.dart';
 import 'package:management/src/presenter/pages/product/product_store.dart';
+import 'package:management/src/presenter/stores/categories_load_store.dart';
 
 import 'domain/repositories/management_repository.dart';
 import 'domain/use_cases/create_category.dart';
@@ -66,9 +67,9 @@ class ManagementModule extends Module {
 
   @override
   final List<ModularRoute> routes = [
-    ChildRoute('/all_products', child: (_, args) => const ProductsListPage()),
-    ChildRoute('/product', child: (_, args) => ProductPage(product: args.data,)),
-    ChildRoute('/all_categories', child: (_, args) => const CategoriesListPage()),
-    ChildRoute('/category', child: (_, args) => CategoryPage(category: args.data,)),
+    ChildRoute(PagesRoutes.products.route, child: (_, args) => const ProductsListPage()),
+    ChildRoute(PagesRoutes.product.route, child: (_, args) => ProductPage(product: args.data,)),
+    ChildRoute(PagesRoutes.categories.route, child: (_, args) => const CategoriesListPage()),
+    ChildRoute(PagesRoutes.category.route, child: (_, args) => CategoryPage(category: args.data,)),
   ];
 }

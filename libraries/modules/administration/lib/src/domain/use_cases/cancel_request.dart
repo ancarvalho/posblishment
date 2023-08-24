@@ -3,8 +3,9 @@ import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
 
 
+// ignore: one_member_abstracts
 abstract class ICancelRequest {
-  Future<Either<Failure, int>> call(String CancelRequest);
+  Future<Either<Failure, int>> call(String cancelRequest);
 }
 
 class CancelRequest implements ICancelRequest {
@@ -13,7 +14,7 @@ class CancelRequest implements ICancelRequest {
   CancelRequest(this.repository);
 
   @override
-  Future<Either<Failure, int>> call(String CancelRequest) async {
-    return repository.cancelRequest(CancelRequest);
+  Future<Either<Failure, int>> call(String cancelRequest) async {
+    return repository.cancelRequest(cancelRequest);
   }
 }

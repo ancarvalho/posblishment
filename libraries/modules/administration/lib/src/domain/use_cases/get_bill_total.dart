@@ -1,9 +1,8 @@
-import 'package:administration/src/domain/entities/bill_total.dart';
 import 'package:administration/src/domain/repositories/administration_repository.dart';
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
 
-
+// ignore: one_member_abstracts
 abstract class IGetBillTotal {
   Future<Either<Failure, BillTotal>> call(String billID);
 }

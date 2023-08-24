@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -21,7 +22,7 @@ class _SplashPageState extends State<SplashPage> {
       Modular.isModuleReady<AppModule>(),
       Future.delayed(const Duration(seconds: 2)),
     ]).then(
-      (value) => Modular.to.navigate('/dashboard/statistics/'),
+      (value) => Modular.to.navigate(ModulesRoutes.statistics.route),
     );
   }
 

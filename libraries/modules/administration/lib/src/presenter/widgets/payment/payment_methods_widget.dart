@@ -5,7 +5,7 @@ import '../../../domain/utils/payment_types.dart';
 
 class PaymentMethodsWidget extends StatelessWidget {
   const PaymentMethodsWidget(
-      {super.key, required this.paymentType, required this.selectPaymentType});
+      {super.key, required this.paymentType, required this.selectPaymentType,});
   final PaymentType paymentType;
   final void Function(PaymentType paymentType) selectPaymentType;
 
@@ -21,8 +21,8 @@ class PaymentMethodsWidget extends StatelessWidget {
       fillColor: const Color.fromARGB(255, 0, 62, 133),
       color: const Color.fromARGB(255, 0, 104, 195),
       constraints: const BoxConstraints(
-        minHeight: 35.0,
-        minWidth: 80.0,
+        minHeight: 35,
+        minWidth: 80,
       ),
       isSelected: PaymentTypes.values.map((e) => e.value == paymentType).toList(),
       children: [
@@ -33,7 +33,7 @@ class PaymentMethodsWidget extends StatelessWidget {
                     e.icon,
                     size: 26,
                   ),
-                ))
+                ),)
             .toList()
       ],
     );

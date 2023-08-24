@@ -18,7 +18,7 @@ class BillItemWidget extends StatelessWidget {
         Text(item.id),
         Text(
           CurrencyInputFormatter.formatRealCurrency(
-              item.price * item.totalQuantity),
+              item.price * item.totalQuantity,),
         ),
       ],
     );

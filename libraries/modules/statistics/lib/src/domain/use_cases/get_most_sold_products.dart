@@ -5,6 +5,9 @@ import '../entities/entities.dart';
 import '../enums/frequency.dart';
 import '../repositories/statistics_repository.dart';
 
+
+
+// ignore: one_member_abstracts
 abstract class IGetMostSoldProducts {
   Future<Either<Failure,List<ItemsSold>>> call(Frequency frequency);
 }

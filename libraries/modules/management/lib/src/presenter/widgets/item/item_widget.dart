@@ -43,7 +43,7 @@ class _ItemWidgetState extends State<ItemWidget> {
     return GestureDetector(
       onTap: () {
         Modular.to.pushNamed(
-          './product',
+          "${PagesRoutes.product.dependsOnModule.route}${PagesRoutes.product.route}",
           arguments: widget.product,
         );
       },

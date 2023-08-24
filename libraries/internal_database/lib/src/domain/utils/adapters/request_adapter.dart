@@ -5,7 +5,7 @@ import "package:uuid/uuid.dart";
 
 class RequestAdapter {
   static Request fromRequestDataWithItems(
-      RequestData requestData, List<Item> items) {
+      RequestData requestData, List<Item> items,) {
     return Request(
       id: requestData.id,
       billId: requestData.billId,

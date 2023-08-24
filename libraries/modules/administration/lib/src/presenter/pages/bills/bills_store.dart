@@ -1,4 +1,3 @@
-import 'package:administration/src/domain/entities/bill_total.dart';
 import 'package:core/core.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 

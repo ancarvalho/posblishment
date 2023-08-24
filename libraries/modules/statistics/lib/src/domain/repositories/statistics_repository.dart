@@ -6,7 +6,7 @@ import '../enums/frequency.dart';
 
 abstract class StatisticsRepository {
   Future<Either<Failure, BasicStatistics>> getBasicStatistics(
-      Frequency frequency);
+      Frequency frequency,);
   Future<Either<Failure,List<ItemsSold>>> getMostSoldProducts(Frequency frequency);
   Future<Either<Failure, List<BasicStatistics>>>
       getMostSoldProductsByCategoryThisToday();

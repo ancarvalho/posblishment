@@ -26,8 +26,8 @@ class SettingStore extends StreamStore<Failure, Settings> {
 
   Future<void> loadSettings() async {
     setLoading(true);
-    final isDark = await getSettings();
-    update(isDark, force: true);
+    final settings = await getSettings();
+    update(settings, force: true);
     setLoading(false);
   }
 

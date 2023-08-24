@@ -3,6 +3,7 @@ import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
 
 
+// ignore: one_member_abstracts
 abstract class IFinalizeBill {
   Future<Either<Failure, int>> call(List<Payment> payments, String billID);
 }

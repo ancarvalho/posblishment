@@ -13,7 +13,7 @@ class BillTypeAdapter {
   }
 
   static BillType filterBillType(
-      List<BillTypeData> billTypes, String billTypeID) {
+      List<BillTypeData> billTypes, String billTypeID,) {
     final billType =
         billTypes.where((element) => element.id == billTypeID).first;
 

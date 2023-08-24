@@ -1,15 +1,16 @@
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
 
-import '../entities/bill_total.dart';
 
 abstract class AdministrationRepository {
   Future<Either<Failure, List<Product>>> getAllProducts();
 
-  Future<Either<Failure, Request>> createBill(NewBill bill, NewRequest request);
+  Future<Either<Failure, Bill>> createBill(NewBill bill);
+  Future<Either<Failure, Request>> createRequest(String billID, NewRequest request);
   Future<Either<Failure, List<Bill>>> getActiveBills();
   Future<Either<Failure, List<Bill>>> getLastPaidBills();
   Future<Either<Failure, Bill>> getBill(String id);
+  Future<Either<Failure, Bill>> getBillByTable(int table);
   Future<Either<Failure, int>> finalizeBill(List<Payment> payments, String billID);
   Future<Either<Failure, int>> cancelBill(String billID);
 

@@ -14,7 +14,7 @@ import '../../widgets/error/error_widget.dart';
 import '../products_list/products_list_store.dart';
 
 class ProductPage extends StatefulWidget {
-  final Product product;
+  final Product? product;
   const ProductPage({super.key, required this.product});
 
   @override
@@ -28,11 +28,12 @@ class _ProductPageState extends State<ProductPage> {
   final productsStore = Modular.get<ProductListStore>();
   final categoriesLoadStore = Modular.get<CategoriesLoadStore>();
 
-  late Disposer _disposer;
+  late Disposer _createProductDisposer;
+  late Disposer _observerCategoriesDisposer;
 
   @override
   void initState() {
-    _disposer = store.observer(
+    _createProductDisposer = store.observer(
       onError: (error) {
         displayMessageOnSnackbar(context, error.errorMessage);
       },
@@ -41,8 +42,15 @@ class _ProductPageState extends State<ProductPage> {
         Navigator.of(context).pop();
       },
     );
+
+    _observerCategoriesDisposer = categoriesLoadStore.observer(
+      onError: (error) {
+        displayMessageOnSnackbar(context, "Need Create Categories First");
+      },
+    );
+
     categoriesLoadStore.load();
-    controller.categoryID = widget.product.categoryId;
+    controller.resetFields(widget.product);
     super.initState();
   }
 
@@ -52,7 +60,7 @@ class _ProductPageState extends State<ProductPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            widget.product.id != null ? widget.product.name : "Criar Produto",
+            widget.product != null ? widget.product!.name : "Criar Produto",
           ),
           centerTitle: true,
           actions: [
@@ -83,30 +91,31 @@ class _ProductPageState extends State<ProductPage> {
                       CustomTextFormField(
                         controller: controller.nameTextController,
                         decorationName: "Nome",
-                        value: widget.product.name,
+                        value: controller.nameTextController.text,
                         validator: validateNome,
                       ),
                       CustomTextFormField(
                         controller: controller.descriptionTextController,
                         decorationName: "Description",
-                        value: widget.product.description,
+                        value: controller.descriptionTextController.text,
                         validator: validateDescription,
                       ),
                       CustomTextFormField(
                         controller: controller.priceTextController,
                         decorationName: "Price",
-                        value: CurrencyInputFormatter.formatRealCurrency(widget.product.price),
+                        value: controller.priceTextController.text,
                         keyboardType: TextInputType.number,
+                        // ERROR ON Editing on Start
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           CurrencyInputFormatter(),
                         ],
-                        validator: validateCurrency,
+                        // validator: validateCurrency,
                       ),
                       CustomTextFormField(
                         controller: controller.variationTextController,
                         decorationName: "Variações",
-                        value: widget.product.variations?.join(","),
+                        value: controller.variationTextController.text,
                       ),
                       CustomDropDown(
                         items: categoriesToMap(state),
@@ -128,7 +137,7 @@ class _ProductPageState extends State<ProductPage> {
         floatingActionButton: FloatingActionButton(
           // TODO Check here
           onPressed: () {
-            controller.saveChanges(widget.product.id);
+            controller.saveChanges(widget.product?.id);
           },
           child: const Icon(Icons.save),
         ),
@@ -139,7 +148,8 @@ class _ProductPageState extends State<ProductPage> {
   @override
   void dispose() {
     controller.dispose();
-    _disposer();
+    _createProductDisposer();
+    _observerCategoriesDisposer();
     super.dispose();
   }
 }

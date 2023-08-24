@@ -9,7 +9,7 @@ class PaymentTextFieldWithButtons extends StatefulWidget {
       required this.addSubtotalRemaining,
       required this.addHalfTotal,
       required this.addTotalRemaining,
-      required this.addPaymentMethod});
+      required this.addPaymentMethod,});
   final TextEditingController textEditingController;
   final void Function() addSubtotalRemaining;
   final void Function() addHalfTotal;

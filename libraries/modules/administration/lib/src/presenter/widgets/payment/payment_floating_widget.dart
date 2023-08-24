@@ -23,7 +23,7 @@ class PaymentFloatingWidget extends StatelessWidget {
                 billTotal.payment != null
                     ? "Total Pago:\n ${CurrencyInputFormatter.formatRealCurrency(billTotal.payment)}"
                     : "",
-                style: const TextStyle(fontSize: 18)),
+                style: const TextStyle(fontSize: 18),),
           ),
         ),
         Column(
@@ -34,7 +34,7 @@ class PaymentFloatingWidget extends StatelessWidget {
               onPressed: () {},
               style: TextButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
+                    borderRadius: BorderRadius.circular(30),),
                 backgroundColor: const Color.fromARGB(255, 0, 255, 195),
                 minimumSize: const Size(30, 30),
                 // tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -50,13 +50,13 @@ class PaymentFloatingWidget extends StatelessWidget {
             ),
             Text(
                 "Total: ${CurrencyInputFormatter.formatRealCurrency(billTotal.total)}",
-                style: const TextStyle(fontSize: 18)),
+                style: const TextStyle(fontSize: 18),),
             Text(
                 "Subtotal: ${CurrencyInputFormatter.formatRealCurrency(billTotal.subtotal)}",
-                style: const TextStyle(fontSize: 16)),
+                style: const TextStyle(fontSize: 16),),
             Text(
                 "Restante: ${CurrencyInputFormatter.formatRealCurrency(billTotal.total - (billTotal.payment ?? 0))}",
-                style: const TextStyle(fontSize: 18)),
+                style: const TextStyle(fontSize: 18),),
           ],
         ),
       ],

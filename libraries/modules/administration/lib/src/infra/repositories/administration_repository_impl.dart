@@ -1,4 +1,3 @@
-import 'package:administration/src/domain/entities/bill_total.dart';
 import 'package:administration/src/domain/repositories/administration_repository.dart';
 import 'package:administration/src/infra/data_sources/administration_data_source.dart';
 import 'package:core/core.dart';
@@ -134,9 +133,9 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   }
 
   @override
-  Future<Either<Failure, Request>> createBill(NewBill bill, NewRequest request) async {
+  Future<Either<Failure, Bill>> createBill(NewBill bill) async {
     try {
-      final txID = await _administrationDataSource.handleBillCreationOrUpdate(bill, request);
+      final txID = await _administrationDataSource.createBill(bill);
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -158,6 +157,26 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
     try {
       final items = await _administrationDataSource.getBillValidItems(billID);
       return Right(items);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+  
+  @override
+  Future<Either<Failure, Request>> createRequest(String billID, NewRequest newRequest) async {
+   try {
+      final request = await _administrationDataSource.createRequest(billID, newRequest);
+      return Right(request);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+  
+  @override
+  Future<Either<Failure, Bill>> getBillByTable(int table) async {
+     try {
+      final bill = await _administrationDataSource.getBillByTable(table);
+      return Right(bill);
     } on Failure catch (e) {
       return Left(e);
     }

@@ -49,9 +49,9 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
     } on InvalidDataException catch (e, s) {
       throw InternalDatabaseErrorDataException(
           s,
-          'ManagementDataSource-createProduct-DataExeption',
+          'ManagementDataSource-createProduct-DataException',
           e.message,
-          e.message);
+          e.message,);
     } catch (e, stackTrace) {
       throw ManagementError(
         stackTrace,

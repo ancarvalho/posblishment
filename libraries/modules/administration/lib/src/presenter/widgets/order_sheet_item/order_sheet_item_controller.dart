@@ -31,7 +31,7 @@ class OrderSheetItemController extends Disposable {
     if (formKey.currentState!.validate()) {
       return NewItem(
           code: int.parse(itemCodeController.text),
-          quantity: int.parse(itemQuantityController.text));
+          quantity: int.parse(itemQuantityController.text),);
     }
     return null;
   }

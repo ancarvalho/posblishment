@@ -5,6 +5,8 @@ import '../entities/product_stock.dart';
 import '../repositories/stock_control_repository.dart';
 
 
+
+// ignore: one_member_abstracts
 abstract class IDecreaseProductStock {
   Future<Either<Failure, ProductStock>> call(String id, int quantity);
 }

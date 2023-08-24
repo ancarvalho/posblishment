@@ -1,23 +1,28 @@
 import 'package:core/core.dart';
 
-import '../../domain/entities/bill_total.dart';
-
 abstract class AdministrationDataSource {
   Future<List<Product>> getAllProducts();
 
   //Bills
   Future<List<Bill>> getActiveBills();
   Future<List<Bill>> getLastPaidBills();
-  Future<Request> handleBillCreationOrUpdate(NewBill bill, NewRequest request);
+  // Future<Request> handleBillCreationOrUpdate(NewBill bill, NewRequest request);
+  Future<Bill> createBill(NewBill bill);
+  Future<Request> createRequest(String billId, NewRequest request);
   Future<Bill> getBill(String billID);
+  Future<Bill> getBillByTable(int table);
   Future<int> cancelBill(String billID);
   Future<int> finalizeBill(List<Payment> payments, String billID);
   Future<BillTotal> getBillTotal(String billID);
+  Future<BillType> getDefaultBillType();
 
   // Requests
-  Future<Request> createRequest(NewRequest request, String billID);
+  // Future<Request> createRequest(NewRequest request, String billID);
   Future<int> changeRequestStatus(
-      String requestID, RequestStatus status, ItemStatus itemStatus);
+    String requestID,
+    RequestStatus status,
+    ItemStatus itemStatus,
+  );
   Future<List<Request>> getBillValidRequests(String billID);
   Future<List<Request>> getLastRequests();
 

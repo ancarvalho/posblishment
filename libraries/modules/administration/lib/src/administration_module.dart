@@ -2,6 +2,8 @@
 import 'package:administration/src/presenter/pages/bill/bill_page.dart';
 import 'package:administration/src/presenter/pages/bills/bills_page.dart';
 import 'package:administration/src/presenter/pages/bills/bills_store.dart';
+import 'package:administration/src/presenter/pages/last_paid_bills/last_paid_bills_page.dart';
+import 'package:administration/src/presenter/pages/last_requests/last_requests_page.dart';
 import 'package:administration/src/presenter/pages/menu/menu_page.dart';
 import 'package:administration/src/presenter/pages/payment/payment_page.dart';
 import 'package:administration/src/presenter/pages/payment/payment_store.dart';
@@ -12,12 +14,13 @@ import 'package:administration/src/presenter/widgets/bill_total/bill_total_store
 import 'package:administration/src/presenter/widgets/last_paid_bills/last_paid_bills_store.dart';
 import 'package:administration/src/presenter/widgets/last_requests/last_requests_store.dart';
 import 'package:administration/src/presenter/widgets/undelivered_requests/undelivered_requests_store.dart';
+import 'package:core/core.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'domain/repositories/administration_repository.dart';
 import 'domain/use_cases/cancel_bill.dart';
 import 'domain/use_cases/cancel_request.dart';
-import 'domain/use_cases/create_bill.dart';
+// import 'domain/use_cases/create_bill.dart';
 import 'domain/use_cases/finalize_bill.dart';
 import 'domain/use_cases/get_all_products.dart';
 import 'domain/use_cases/get_bill.dart';
@@ -64,7 +67,7 @@ class AdministrationModule extends Module {
     Bind.lazySingleton<IGetBillItems>((i) => GetBillItems(i()),),
     Bind.lazySingleton<IGetAllProducts>((i) => GetAllProducts(i()),),
     Bind.lazySingleton<IFinalizeBill>((i) => FinalizeBill(i()),),
-    Bind.lazySingleton<ICreateBill>((i) => CreateBill(i()),),
+    // Bind.lazySingleton<ICreateBill>((i) => CreateBill(i()),),
     Bind.lazySingleton<ICancelRequest>((i) => CancelRequest(i()),),
     Bind.lazySingleton<ICancelBill>((i) => CancelBill(i()),),
 
@@ -78,14 +81,14 @@ class AdministrationModule extends Module {
   @override
   final List<ModularRoute> routes = [
 
-    ChildRoute('/active_bills', child: (_, args) => const BillsPage()),
-    ChildRoute('/recent_paid_bills', child: (_, args) => const BillsPage()),
-    ChildRoute('/last_requests', child: (_, args) => const BillsPage()),
+    ChildRoute(PagesRoutes.bills.route, child: (_, args) => const BillsPage()),
+    ChildRoute(PagesRoutes.lastPaidBills.route, child: (_, args) => const LastPaidBillsPage()),
+    ChildRoute(PagesRoutes.lastRequests.route, child: (_, args) => const LastRequestsPage()),
 
-    ChildRoute('/bill', child: (_, args) => BillPage(billID: args.data,)),
-    ChildRoute('/menu', child: (_, args) => const MenuPage()),
-    ChildRoute('/order_sheet', child: (_, args) => const OrderSheetPage()),
+    ChildRoute(PagesRoutes.bill.route, child: (_, args) => BillPage(billID: args.data,)),
+    ChildRoute(PagesRoutes.menu.route, child: (_, args) => const MenuPage()),
+    ChildRoute(PagesRoutes.orderSheet.route, child: (_, args) => const OrderSheetPage()),
 
-    ChildRoute('/payment', child: (_, args) =>  PaymentPage(billID: args.data,)),
+    ChildRoute(PagesRoutes.payment.route, child: (_, args) =>  PaymentPage(billID: args.data,)),
   ];
 }

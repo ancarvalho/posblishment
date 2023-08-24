@@ -27,6 +27,6 @@ class ItemAdapter {
         productId: item.productId,
         requestId: item.requestId,
         createdAt: item.createdAt,
-        updatedAt: item.updatedAt);
+        updatedAt: item.updatedAt,);
   }
 }

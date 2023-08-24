@@ -9,7 +9,7 @@ class StockControlErrorWidget extends StatelessWidget {
   final Failure? error;
   final VoidCallback reload;
   const StockControlErrorWidget(
-      {super.key, required this.error, required this.reload});
+      {super.key, required this.error, required this.reload,});
 
   @override
   Widget build(BuildContext context) {

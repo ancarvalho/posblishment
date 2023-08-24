@@ -1,5 +1,4 @@
 import 'package:core/core.dart';
-import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 import 'package:posblishment/domain/entities/entities.dart';
@@ -22,7 +21,17 @@ class _SettingPageState extends State<SettingPage> {
         centerTitle: true,
       ),
       body: ScopedBuilder<SettingStore, Failure, Settings>.transition(
-        
+        store: SettingStore(),
+        onState: (context, state) {
+          return Column(
+            children: [
+              Row(),
+              Row(),
+              Row(),
+              Row(),
+            ],
+          );
+        },
       ),
     );
   }

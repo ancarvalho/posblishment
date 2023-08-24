@@ -13,7 +13,7 @@ class PaymentItemWidget extends StatelessWidget {
       onLongPress:removePayment,
       child: Text(
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          "${CurrencyInputFormatter.formatRealCurrency(payment.value)} ${payment.paymentType.name}"),
+          "${CurrencyInputFormatter.formatRealCurrency(payment.value)} ${payment.paymentType.name}",),
     );
   }
 }

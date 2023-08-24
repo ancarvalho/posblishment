@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 
 import '../repositories/management_repository.dart';
 
+// ignore: one_member_abstracts
 abstract class IUpdateProduct {
   Future<Either<Failure, int>> call(Product product);
 }

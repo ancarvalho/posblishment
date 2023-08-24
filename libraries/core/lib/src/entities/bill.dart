@@ -24,10 +24,10 @@ class Bill {
 class NewBill {
   final int? table;
   final String? customerName;
-  final String billTypeID;
+  final String? billTypeID;
   const NewBill({
     this.table,
     this.customerName,
-    required this.billTypeID,
+    this.billTypeID,
   });
 }

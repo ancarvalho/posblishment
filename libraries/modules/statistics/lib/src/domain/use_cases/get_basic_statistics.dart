@@ -5,6 +5,9 @@ import '../enums/frequency.dart';
 
 import '../repositories/statistics_repository.dart';
 
+
+
+// ignore: one_member_abstracts
 abstract class IGetBasicStats {
   Future<Either<Failure, BasicStatistics>> call(Frequency frequency);
 }

@@ -2,7 +2,7 @@ import 'package:administration/src/domain/repositories/administration_repository
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
 
-
+// ignore: one_member_abstracts
 abstract class IGetBill {
   Future<Either<Failure, Bill>> call(String billID);
 }
