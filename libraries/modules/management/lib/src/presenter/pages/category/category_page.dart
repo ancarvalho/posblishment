@@ -10,7 +10,7 @@ import 'category_controller.dart';
 import 'category_store.dart';
 
 class CategoryPage extends StatefulWidget {
-  final Category category;
+  final Category? category;
   const CategoryPage({super.key, required this.category});
 
   @override
@@ -18,18 +18,18 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
-  // final controller = Modular.get<CategoryController>();
-
   final controller = CategoryController();
-  final categoriesStore = Modular.get<CategoriesListStore>();
   final store = Modular.get<CategoryStore>();
 
   late Disposer _disposer;
 
   @override
   void initState() {
+    controller.resetFields(widget.category);
     _disposer = store.observer(
       onState: (i) {
+        //TODO check can unpop
+        // Navigator.canPop(context);
         //TODO analyse error because context does not exist due widget was disposed
         Navigator.of(context).pop();
       },
@@ -53,8 +53,11 @@ class _CategoryPageState extends State<CategoryPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: Navigator.of(context).canPop() ? null : const DrawerWidget(),
         appBar: AppBar(
-          title: const Text(""),
+          title: Text(widget.category != null
+              ? "Atualizar ${widget.category?.name}"
+              : "Criar Categoria"),
           centerTitle: true,
           actions: [
             IconButton(
@@ -78,13 +81,13 @@ class _CategoryPageState extends State<CategoryPage> {
                   CustomTextFormField(
                     controller: controller.nameTextController,
                     decorationName: "Nome",
-                    value: widget.category.name,
+                    value: controller.nameTextController.text,
                     validator: validateNome,
                   ),
                   CustomTextFormField(
                     controller: controller.descriptionTextController,
                     decorationName: "Description",
-                    value: widget.category.description,
+                    value: controller.descriptionTextController.text,
                     validator: validateDescription,
                   ),
                 ],
@@ -94,10 +97,8 @@ class _CategoryPageState extends State<CategoryPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await controller.saveChanges(widget.category.id);
-            await categoriesStore.list();
-            // .then((value) => Navigator.of(context).pop());
-            // Navigator.of(context).pop();
+            await controller.saveChanges(widget.category?.id);
+            await Modular.get<CategoriesListStore>().list();
           },
           child: const Icon(Icons.save),
         ),

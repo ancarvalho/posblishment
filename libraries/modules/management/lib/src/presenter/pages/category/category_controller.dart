@@ -15,9 +15,9 @@ class CategoryController extends Disposable {
 
   CategoryController();
 
-  void resetFields(Category category) {
-    nameTextController.text = category.name;
-    descriptionTextController.text = category.description ?? "";
+  void resetFields(Category? category) {
+    nameTextController.text = category?.name ?? "";
+    descriptionTextController.text = category?.description ?? "";
   }
 
   Future<void> saveChanges(String? id) async {

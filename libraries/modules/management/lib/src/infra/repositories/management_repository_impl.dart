@@ -115,7 +115,7 @@ class ManagementRepositoryImpl implements ManagementRepository {
   }
 
   @override
-  Future<Either<Failure, int>> createProduct(Product product) async {
+  Future<Either<Failure, int>> createProduct(NewProduct product) async {
     try {
       final txId = await _dataSource.createProduct(product);
       return Right(txId);
@@ -133,7 +133,7 @@ class ManagementRepositoryImpl implements ManagementRepository {
   }
 
   @override
-  Future<Either<Failure, int>> updateProduct(Product product) async {
+  Future<Either<Failure, int>> updateProduct(UpdateProductModel product) async {
     try {
       final txId = await _dataSource.updateProduct(product);
       return Right(txId);

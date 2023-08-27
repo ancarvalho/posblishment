@@ -39,7 +39,7 @@ class _CategoryCardWidgetState extends State<CategoryCardWidget> {
     return GestureDetector(
       onTap: () {
         Modular.to.pushNamed(
-          './category',
+          "${PagesRoutes.category.dependsOnModule.route}${PagesRoutes.category.route}",
           arguments: widget.category,
         );
       },
@@ -57,21 +57,24 @@ class _CategoryCardWidgetState extends State<CategoryCardWidget> {
           },
         );
       },
-      child: Padding(
-        padding: EdgeInsets.all(Sizes.dp10(context)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: Sizes.width(context) * .60,
-              child: Column(
-                children: [
-                  Text(widget.category.name),
-                  Text(widget.category.description ?? "")
-                ],
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.all(Sizes.dp10(context)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: Sizes.width(context) * .60,
+                child: Column(
+                  children: [
+                    Text(widget.category.name, style: Theme.of(context).textTheme.bodyLarge,),
+                    const SizedBox(height: 2,),
+                    Text(widget.category.description ?? "", style: Theme.of(context).textTheme.bodySmall,)
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

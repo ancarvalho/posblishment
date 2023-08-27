@@ -14,6 +14,5 @@ class Request extends Table {
       integer().map(JsonAwareIntEnumConverter(RequestStatus.values))();
   DateTimeColumn get createdAt =>
       dateTime().withDefault(Constant(DateTime.now()))();
-  DateTimeColumn get updatedAt =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  DateTimeColumn get updatedAt => dateTime().nullable()();
 }

@@ -7,7 +7,7 @@ import '../utils/enum_converter.dart';
 
 class BillType extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
-  IntColumn get value => integer().nullable()(); // 
+  RealColumn get value => real().nullable()(); //
   TextColumn get name => text()();
   TextColumn get icon => text().nullable()();
 
@@ -17,6 +17,5 @@ class BillType extends Table {
 
   DateTimeColumn get createdAt =>
       dateTime().withDefault(Constant(DateTime.now()))();
-  DateTimeColumn get updatedAt =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  DateTimeColumn get updatedAt => dateTime().nullable()();
 }

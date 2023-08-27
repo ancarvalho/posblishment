@@ -9,7 +9,7 @@ class Item {
   final String productId;
   final String requestId;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
   const Item({
     required this.id,
@@ -20,17 +20,17 @@ class Item {
     required this.productId,
     required this.requestId,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
 }
 
 class NewItem {
-  final String? productId;
+  final String productId;
   final int? code;
   int quantity;
 
   NewItem({
-    this.productId,
+    required this.productId,
     this.code,
     required this.quantity,
   });

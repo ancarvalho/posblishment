@@ -13,11 +13,11 @@ class ProductStore extends StreamStore<Failure, int> {
     this._updateProduct,
   ) : super(0);
 
-  Future<void> createProduct(Product product) async => executeEither(
+  Future<void> createProduct(NewProduct product) async => executeEither(
         () => DartzEitherAdapter.adapter(_createProduct(product)),
       );
 
-  Future<void> updateProduct(Product product) async => executeEither(
+  Future<void> updateProduct(UpdateProductModel product) async => executeEither(
         () => DartzEitherAdapter.adapter(_updateProduct(product)),
       );
 }

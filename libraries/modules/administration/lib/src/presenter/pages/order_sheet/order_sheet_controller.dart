@@ -1,7 +1,9 @@
 import "package:core/core.dart";
+import 'package:dartz/dartz.dart';
 import "package:flutter/widgets.dart";
 import "package:flutter_modular/flutter_modular.dart";
 
+import "../../../domain/errors/administration_errors.dart";
 import "../../../domain/utils/utils.dart";
 import "order_sheet_store.dart";
 
@@ -12,12 +14,34 @@ class OrderSheetController extends Disposable with ChangeNotifier {
 
   final OrderSheetStore _orderSheetStore = Modular.get<OrderSheetStore>();
 
-  TextEditingController tableTextController = TextEditingController();
+  final tableTextController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   void insertItemONRequest(NewItem? item) {
     if (item != null) _request.items.add(item);
     notifyListeners();
+  }
+
+  Future<Either<Failure, void>> saveChanges() async {
+    if (formKey.currentState!.validate() &&
+        int.tryParse(tableTextController.text) != null) {
+      return Right(createOrUpdateBill());
+    }
+    return Left(
+      AdministrationError(
+        StackTrace.current,
+        "AdministrationModule-orderSheetSaveChanges",
+        "",
+        "Error Validating",
+      ),
+    );
+  }
+
+  Future<void> createOrUpdateBill() async {
+    await _orderSheetStore.createOrUpdateBill(
+      NewBill(table: int.tryParse(tableTextController.text)),
+      request,
+    );
   }
 
   void removeItemInRequest(int index) {
@@ -48,6 +72,7 @@ class OrderSheetController extends Disposable with ChangeNotifier {
 
   void clearRequest() {
     _request = NewRequest.empty();
+    tableTextController.text = "";
     notifyListeners();
   }
 

@@ -5,7 +5,7 @@ import '../repositories/management_repository.dart';
 
 // ignore: one_member_abstracts
 abstract class ICreateProduct {
-  Future<Either<Failure, int>> call(Product product);
+  Future<Either<Failure, int>> call(NewProduct product);
 }
 
 class CreateProduct implements ICreateProduct {
@@ -14,7 +14,7 @@ class CreateProduct implements ICreateProduct {
   CreateProduct(this.repository);
 
   @override
-  Future<Either<Failure, int>> call(Product product) async {
+  Future<Either<Failure, int>> call(NewProduct product) async {
     return repository.createProduct(product);
   }
 }

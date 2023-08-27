@@ -3,7 +3,8 @@ import "package:core/core.dart";
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-
+import 'package:management/src/domain/errors/management_failures.dart';
+import "package:dartz/dartz.dart";
 import 'product_store.dart';
 
 class ProductController extends Disposable {
@@ -17,41 +18,52 @@ class ProductController extends Disposable {
   final nameTextController = TextEditingController();
   final descriptionTextController = TextEditingController();
   final priceTextController = TextEditingController();
+  final codeTextController = TextEditingController();
   final variationTextController = TextEditingController();
 
   final ValueNotifier<String?> _categoryID = ValueNotifier(null);
 
   void resetFields(Product? product) {
+    codeTextController.text = product?.code.toString() ?? "";
     nameTextController.text = product?.name ?? "";
     descriptionTextController.text = product?.description ?? "";
-    priceTextController.text = product?.price.toString() ?? "0";
+    priceTextController.text = product?.price.toString() ?? "";
     variationTextController.text =
         product?.variations != null ? product?.variations?.join(",") ?? "" : "";
     categoryID = product?.categoryId;
   }
 
-  void saveChanges(String? id) {
-    if (formKey.currentState!.validate() && id != null) {
-      updateProduct(id);
-    } else if (formKey.currentState!.validate()) {
-      createProduct();
-    } else {
-      // print("Invalid Fields");
+  Future<Either<Failure, void>> saveChanges(String? id) async {
+    if (formKey.currentState!.validate() && categoryID != null) {
+      if (id != null) {
+        return Right(updateProduct(id));
+      } else {
+        return Right(createProduct());
+      }
     }
+    return Left(
+      ManagementError(
+        StackTrace.current,
+        "ManagementError-SaveOrCreateProducts",
+        "",
+        "No Category ID Set or Validation Error",
+      ),
+    );
   }
 
   double? parseCurrency(String value) {
     return CurrencyInputFormatter.formatToDouble(value);
   }
 
-  void createProduct() {
-    store.createProduct(
-      Product(
+  Future<void> createProduct() async {
+    return store.createProduct(
+      NewProduct(
+        code: int.tryParse(codeTextController.text),
         name: nameTextController.text,
         description: descriptionTextController.text,
         price: parseCurrency(priceTextController.text) ?? 0.0,
         variations: variationTextController.text.split(","),
-        categoryId: categoryID,
+        categoryId: categoryID!,
       ),
     );
   }
@@ -62,15 +74,16 @@ class ProductController extends Disposable {
     _categoryID.value = value;
   }
 
-  void updateProduct(String id) {
-    store.updateProduct(
-      Product(
+  Future<void> updateProduct(String id) async {
+    return store.updateProduct(
+      UpdateProductModel(
         id: id,
+        code: int.tryParse(codeTextController.text),
         name: nameTextController.text,
         description: descriptionTextController.text,
         price: parseCurrency(priceTextController.text) ?? 0.0,
         variations: variationTextController.text.split(","),
-        categoryId: categoryID,
+        categoryId: categoryID!,
       ),
     );
   }

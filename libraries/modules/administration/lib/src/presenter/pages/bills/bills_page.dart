@@ -22,6 +22,12 @@ class _BillsPageState extends State<BillsPage> {
   }
 
   @override
+  void initState() {
+    loadData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -36,10 +42,11 @@ class _BillsPageState extends State<BillsPage> {
           onState: (context, state) {
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 250,
-                  childAspectRatio: .9,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,),
+                maxCrossAxisExtent: 250,
+                childAspectRatio: .9,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
               itemCount: state.length,
               itemBuilder: (context, index) {
                 return BillCardWidget(

@@ -5,7 +5,7 @@ import '../repositories/management_repository.dart';
 
 // ignore: one_member_abstracts
 abstract class IUpdateProduct {
-  Future<Either<Failure, int>> call(Product product);
+  Future<Either<Failure, int>> call(UpdateProductModel product);
 }
 
 class UpdateProduct implements IUpdateProduct {
@@ -14,7 +14,7 @@ class UpdateProduct implements IUpdateProduct {
   UpdateProduct(this.repository);
 
   @override
-  Future<Either<Failure, int>> call(Product product) async {
+  Future<Either<Failure, int>> call(UpdateProductModel product) async {
     return repository.updateProduct(product);
   }
 }

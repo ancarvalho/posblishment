@@ -1,6 +1,7 @@
 import 'package:administration/src/domain/utils/utils.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 
 class BillCardWidget extends StatelessWidget {
@@ -11,52 +12,60 @@ class BillCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = DateTime.now().difference(bill.createdAt);
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-            color: transformBillStatusIntoColor(bill.status),),
-        child: Stack(
-          children: [
-            Positioned(
-              top: 5,
-              right: 5,
-              child: Icon(transformToIcon(bill.billType?.icon),
-                  color: const Color.fromARGB(255, 255, 254, 254),),
-            ),
-            Center(
-              child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    bill.billType?.name == null ? "" : bill.billType!.name,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  Text(
-                    bill.table.toString(),
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 60,),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "${date.inMinutes}min",
-                    style: const TextStyle(
+    return GestureDetector(
+      onTap: () {
+        Modular.to.pushNamed(
+          "${PagesRoutes.bill.dependsOnModule.route}${PagesRoutes.bill.route}",
+          arguments: bill.id,
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+              color: transformBillStatusIntoColor(bill.status),),
+          child: Stack(
+            children: [
+              Positioned(
+                top: 5,
+                right: 5,
+                child: Icon(transformToIcon(bill.billType?.icon),
+                    color: const Color.fromARGB(255, 255, 254, 254),),
+              ),
+              Center(
+                child: Column(
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      bill.billType?.name == null ? "" : bill.billType!.name,
+                      style: const TextStyle(
                         color: Color.fromARGB(255, 255, 255, 255),
                         fontWeight: FontWeight.w900,
-                        fontSize: 17,),
-                  )
-                ],
+                      ),
+                    ),
+                    Text(
+                      bill.table.toString(),
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          fontSize: 60,),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "${date.inMinutes}min",
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          fontWeight: FontWeight.w900,
+                          fontSize: 17,),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

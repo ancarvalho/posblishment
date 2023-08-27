@@ -23,19 +23,19 @@ class _OrderSheetPageState extends State<OrderSheetPage> {
   final ProductStore _productStore = Modular.get<ProductStore>();
   final OrderSheetStore _orderSheetStore = Modular.get<OrderSheetStore>();
 
-  
-
-  @override
-  void setState(fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
+  late Disposer _orderStoreListener;
 
   @override
   void initState() {
     // Solution For now
-
+    _orderStoreListener = _orderSheetStore.observer(
+      onError: (error) {
+        displayMessageOnSnackbar(context, error.errorMessage);
+      },
+      onState: (req) {
+        _orderSheetController.clearRequest();
+      },
+    );
     _orderSheetController.addListener(() {
       setState(() {});
     });
@@ -104,6 +104,15 @@ class _OrderSheetPageState extends State<OrderSheetPage> {
             );
           },
         ),
+        floatingActionButton: FloatingActionButton(
+          // TODO Check here
+          onPressed: () {
+            _orderSheetController.saveChanges().then((value) => value.fold(
+                (l) => displayMessageOnSnackbar(context, l.errorMessage),
+                (r) => null,),);
+          },
+          child: const Icon(Icons.save),
+        ),
       ),
     );
   }
@@ -112,6 +121,7 @@ class _OrderSheetPageState extends State<OrderSheetPage> {
   void dispose() {
     super.dispose();
     _orderSheetController.dispose();
+    _orderStoreListener();
     // _orderSheetController.removeListener(() {});
   }
 }

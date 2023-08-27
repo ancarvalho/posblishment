@@ -17,6 +17,5 @@ class Bill extends Table {
   TextColumn get billTypeID => text().references(BillType, #id)();
   DateTimeColumn get createdAt =>
       dateTime().withDefault(Constant(DateTime.now()))();
-  DateTimeColumn get updatedAt =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  DateTimeColumn get updatedAt => dateTime().nullable()();
 }

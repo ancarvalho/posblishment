@@ -44,10 +44,8 @@ class $CategoryTable extends Category
       const VerificationMeta('updatedAt');
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
       [id, name, description, createdAt, updatedAt];
@@ -101,7 +99,7 @@ class $CategoryTable extends Category
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
     );
   }
 
@@ -116,13 +114,13 @@ class CategoryData extends DataClass implements Insertable<CategoryData> {
   final String name;
   final String? description;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const CategoryData(
       {required this.id,
       required this.name,
       this.description,
       required this.createdAt,
-      required this.updatedAt});
+      this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -132,7 +130,9 @@ class CategoryData extends DataClass implements Insertable<CategoryData> {
       map['description'] = Variable<String>(description);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
@@ -144,7 +144,9 @@ class CategoryData extends DataClass implements Insertable<CategoryData> {
           ? const Value.absent()
           : Value(description),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -156,7 +158,7 @@ class CategoryData extends DataClass implements Insertable<CategoryData> {
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -167,7 +169,7 @@ class CategoryData extends DataClass implements Insertable<CategoryData> {
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -176,13 +178,13 @@ class CategoryData extends DataClass implements Insertable<CategoryData> {
           String? name,
           Value<String?> description = const Value.absent(),
           DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
       CategoryData(
         id: id ?? this.id,
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
         createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
       );
   @override
   String toString() {
@@ -214,7 +216,7 @@ class CategoryCompanion extends UpdateCompanion<CategoryData> {
   final Value<String> name;
   final Value<String?> description;
   final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   final Value<int> rowid;
   const CategoryCompanion({
     this.id = const Value.absent(),
@@ -255,7 +257,7 @@ class CategoryCompanion extends UpdateCompanion<CategoryData> {
       Value<String>? name,
       Value<String?>? description,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
+      Value<DateTime?>? updatedAt,
       Value<int>? rowid}) {
     return CategoryCompanion(
       id: id ?? this.id,
@@ -330,18 +332,21 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
   static const VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
   @override
-  late final GeneratedColumn<String> description =
-      GeneratedColumn<String>('description', aliasedName, true,
-          additionalChecks: GeneratedColumn.checkTextLength(
-            minTextLength: 15,
-          ),
-          type: DriftSqlType.string,
-          requiredDuringInsert: false);
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _priceMeta = const VerificationMeta('price');
   @override
   late final GeneratedColumn<double> price = GeneratedColumn<double>(
       'price', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<int> code = GeneratedColumn<int>(
+      'code', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _preparableMeta =
       const VerificationMeta('preparable');
   @override
@@ -376,16 +381,15 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
       const VerificationMeta('updatedAt');
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         name,
         description,
         price,
+        code,
         preparable,
         categoryId,
         createdAt,
@@ -420,6 +424,10 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
           _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
     } else if (isInserting) {
       context.missing(_priceMeta);
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+          _codeMeta, code.isAcceptableOrUnknown(data['code']!, _codeMeta));
     }
     if (data.containsKey('preparable')) {
       context.handle(
@@ -460,6 +468,8 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
       price: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
+      code: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}code']),
       preparable: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}preparable'])!,
       categoryId: attachedDatabase.typeMapping
@@ -467,7 +477,7 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
     );
   }
 
@@ -482,19 +492,21 @@ class ProductData extends DataClass implements Insertable<ProductData> {
   final String name;
   final String? description;
   final double price;
+  final int? code;
   final bool preparable;
   final String categoryId;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const ProductData(
       {required this.id,
       required this.name,
       this.description,
       required this.price,
+      this.code,
       required this.preparable,
       required this.categoryId,
       required this.createdAt,
-      required this.updatedAt});
+      this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -504,10 +516,15 @@ class ProductData extends DataClass implements Insertable<ProductData> {
       map['description'] = Variable<String>(description);
     }
     map['price'] = Variable<double>(price);
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<int>(code);
+    }
     map['preparable'] = Variable<bool>(preparable);
     map['category_id'] = Variable<String>(categoryId);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
@@ -519,10 +536,13 @@ class ProductData extends DataClass implements Insertable<ProductData> {
           ? const Value.absent()
           : Value(description),
       price: Value(price),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       preparable: Value(preparable),
       categoryId: Value(categoryId),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -534,10 +554,11 @@ class ProductData extends DataClass implements Insertable<ProductData> {
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       price: serializer.fromJson<double>(json['price']),
+      code: serializer.fromJson<int?>(json['code']),
       preparable: serializer.fromJson<bool>(json['preparable']),
       categoryId: serializer.fromJson<String>(json['categoryId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -548,10 +569,11 @@ class ProductData extends DataClass implements Insertable<ProductData> {
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'price': serializer.toJson<double>(price),
+      'code': serializer.toJson<int?>(code),
       'preparable': serializer.toJson<bool>(preparable),
       'categoryId': serializer.toJson<String>(categoryId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -560,19 +582,21 @@ class ProductData extends DataClass implements Insertable<ProductData> {
           String? name,
           Value<String?> description = const Value.absent(),
           double? price,
+          Value<int?> code = const Value.absent(),
           bool? preparable,
           String? categoryId,
           DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
       ProductData(
         id: id ?? this.id,
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
         price: price ?? this.price,
+        code: code.present ? code.value : this.code,
         preparable: preparable ?? this.preparable,
         categoryId: categoryId ?? this.categoryId,
         createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
       );
   @override
   String toString() {
@@ -581,6 +605,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('price: $price, ')
+          ..write('code: $code, ')
           ..write('preparable: $preparable, ')
           ..write('categoryId: $categoryId, ')
           ..write('createdAt: $createdAt, ')
@@ -590,8 +615,8 @@ class ProductData extends DataClass implements Insertable<ProductData> {
   }
 
   @override
-  int get hashCode => Object.hash(id, name, description, price, preparable,
-      categoryId, createdAt, updatedAt);
+  int get hashCode => Object.hash(id, name, description, price, code,
+      preparable, categoryId, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -600,6 +625,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
           other.name == this.name &&
           other.description == this.description &&
           other.price == this.price &&
+          other.code == this.code &&
           other.preparable == this.preparable &&
           other.categoryId == this.categoryId &&
           other.createdAt == this.createdAt &&
@@ -611,16 +637,18 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
   final Value<String> name;
   final Value<String?> description;
   final Value<double> price;
+  final Value<int?> code;
   final Value<bool> preparable;
   final Value<String> categoryId;
   final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   final Value<int> rowid;
   const ProductCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.price = const Value.absent(),
+    this.code = const Value.absent(),
     this.preparable = const Value.absent(),
     this.categoryId = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -632,6 +660,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
     required String name,
     this.description = const Value.absent(),
     required double price,
+    this.code = const Value.absent(),
     this.preparable = const Value.absent(),
     required String categoryId,
     this.createdAt = const Value.absent(),
@@ -645,6 +674,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
     Expression<String>? name,
     Expression<String>? description,
     Expression<double>? price,
+    Expression<int>? code,
     Expression<bool>? preparable,
     Expression<String>? categoryId,
     Expression<DateTime>? createdAt,
@@ -656,6 +686,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (price != null) 'price': price,
+      if (code != null) 'code': code,
       if (preparable != null) 'preparable': preparable,
       if (categoryId != null) 'category_id': categoryId,
       if (createdAt != null) 'created_at': createdAt,
@@ -669,16 +700,18 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
       Value<String>? name,
       Value<String?>? description,
       Value<double>? price,
+      Value<int?>? code,
       Value<bool>? preparable,
       Value<String>? categoryId,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
+      Value<DateTime?>? updatedAt,
       Value<int>? rowid}) {
     return ProductCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
       price: price ?? this.price,
+      code: code ?? this.code,
       preparable: preparable ?? this.preparable,
       categoryId: categoryId ?? this.categoryId,
       createdAt: createdAt ?? this.createdAt,
@@ -701,6 +734,9 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
     }
     if (price.present) {
       map['price'] = Variable<double>(price.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<int>(code.value);
     }
     if (preparable.present) {
       map['preparable'] = Variable<bool>(preparable.value);
@@ -727,6 +763,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('price: $price, ')
+          ..write('code: $code, ')
           ..write('preparable: $preparable, ')
           ..write('categoryId: $categoryId, ')
           ..write('createdAt: $createdAt, ')
@@ -752,9 +789,9 @@ class $BillTypeTable extends BillType
       defaultValue: Constant(const Uuid().v4()));
   static const VerificationMeta _valueMeta = const VerificationMeta('value');
   @override
-  late final GeneratedColumn<int> value = GeneratedColumn<int>(
+  late final GeneratedColumn<double> value = GeneratedColumn<double>(
       'value', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -796,10 +833,8 @@ class $BillTypeTable extends BillType
       const VerificationMeta('updatedAt');
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
       [id, value, name, icon, type, defaultType, createdAt, updatedAt];
@@ -856,7 +891,7 @@ class $BillTypeTable extends BillType
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       value: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}value']),
+          .read(DriftSqlType.double, data['${effectivePrefix}value']),
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       icon: attachedDatabase.typeMapping
@@ -868,7 +903,7 @@ class $BillTypeTable extends BillType
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
     );
   }
 
@@ -883,13 +918,13 @@ class $BillTypeTable extends BillType
 
 class BillTypeData extends DataClass implements Insertable<BillTypeData> {
   final String id;
-  final int? value;
+  final double? value;
   final String name;
   final String? icon;
   final BillTypes type;
   final bool defaultType;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const BillTypeData(
       {required this.id,
       this.value,
@@ -898,13 +933,13 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
       required this.type,
       required this.defaultType,
       required this.createdAt,
-      required this.updatedAt});
+      this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     if (!nullToAbsent || value != null) {
-      map['value'] = Variable<int>(value);
+      map['value'] = Variable<double>(value);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || icon != null) {
@@ -916,7 +951,9 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
     }
     map['default_type'] = Variable<bool>(defaultType);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
@@ -930,7 +967,9 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
       type: Value(type),
       defaultType: Value(defaultType),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -939,14 +978,14 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return BillTypeData(
       id: serializer.fromJson<String>(json['id']),
-      value: serializer.fromJson<int?>(json['value']),
+      value: serializer.fromJson<double?>(json['value']),
       name: serializer.fromJson<String>(json['name']),
       icon: serializer.fromJson<String?>(json['icon']),
       type: $BillTypeTable.$convertertype
           .fromJson(serializer.fromJson<int>(json['type'])),
       defaultType: serializer.fromJson<bool>(json['defaultType']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -954,26 +993,26 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'value': serializer.toJson<int?>(value),
+      'value': serializer.toJson<double?>(value),
       'name': serializer.toJson<String>(name),
       'icon': serializer.toJson<String?>(icon),
       'type':
           serializer.toJson<int>($BillTypeTable.$convertertype.toJson(type)),
       'defaultType': serializer.toJson<bool>(defaultType),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
   BillTypeData copyWith(
           {String? id,
-          Value<int?> value = const Value.absent(),
+          Value<double?> value = const Value.absent(),
           String? name,
           Value<String?> icon = const Value.absent(),
           BillTypes? type,
           bool? defaultType,
           DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
       BillTypeData(
         id: id ?? this.id,
         value: value.present ? value.value : this.value,
@@ -982,7 +1021,7 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
         type: type ?? this.type,
         defaultType: defaultType ?? this.defaultType,
         createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
       );
   @override
   String toString() {
@@ -1018,13 +1057,13 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
 
 class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
   final Value<String> id;
-  final Value<int?> value;
+  final Value<double?> value;
   final Value<String> name;
   final Value<String?> icon;
   final Value<BillTypes> type;
   final Value<bool> defaultType;
   final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   final Value<int> rowid;
   const BillTypeCompanion({
     this.id = const Value.absent(),
@@ -1051,7 +1090,7 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
         type = Value(type);
   static Insertable<BillTypeData> custom({
     Expression<String>? id,
-    Expression<int>? value,
+    Expression<double>? value,
     Expression<String>? name,
     Expression<String>? icon,
     Expression<int>? type,
@@ -1075,13 +1114,13 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
 
   BillTypeCompanion copyWith(
       {Value<String>? id,
-      Value<int?>? value,
+      Value<double?>? value,
       Value<String>? name,
       Value<String?>? icon,
       Value<BillTypes>? type,
       Value<bool>? defaultType,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
+      Value<DateTime?>? updatedAt,
       Value<int>? rowid}) {
     return BillTypeCompanion(
       id: id ?? this.id,
@@ -1103,7 +1142,7 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
       map['id'] = Variable<String>(id.value);
     }
     if (value.present) {
-      map['value'] = Variable<int>(value.value);
+      map['value'] = Variable<double>(value.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -1197,10 +1236,8 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
       const VerificationMeta('updatedAt');
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
       [id, table, customerName, status, billTypeID, createdAt, updatedAt];
@@ -1265,7 +1302,7 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
     );
   }
 
@@ -1285,7 +1322,7 @@ class BillData extends DataClass implements Insertable<BillData> {
   final BillStatus status;
   final String billTypeID;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const BillData(
       {required this.id,
       this.table,
@@ -1293,7 +1330,7 @@ class BillData extends DataClass implements Insertable<BillData> {
       required this.status,
       required this.billTypeID,
       required this.createdAt,
-      required this.updatedAt});
+      this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1310,7 +1347,9 @@ class BillData extends DataClass implements Insertable<BillData> {
     }
     map['bill_type_i_d'] = Variable<String>(billTypeID);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
@@ -1325,7 +1364,9 @@ class BillData extends DataClass implements Insertable<BillData> {
       status: Value(status),
       billTypeID: Value(billTypeID),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -1340,7 +1381,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           .fromJson(serializer.fromJson<int>(json['status'])),
       billTypeID: serializer.fromJson<String>(json['billTypeID']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -1354,7 +1395,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           serializer.toJson<int>($BillTable.$converterstatus.toJson(status)),
       'billTypeID': serializer.toJson<String>(billTypeID),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -1365,7 +1406,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           BillStatus? status,
           String? billTypeID,
           DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
       BillData(
         id: id ?? this.id,
         table: table.present ? table.value : this.table,
@@ -1374,7 +1415,7 @@ class BillData extends DataClass implements Insertable<BillData> {
         status: status ?? this.status,
         billTypeID: billTypeID ?? this.billTypeID,
         createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
       );
   @override
   String toString() {
@@ -1413,7 +1454,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
   final Value<BillStatus> status;
   final Value<String> billTypeID;
   final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   final Value<int> rowid;
   const BillCompanion({
     this.id = const Value.absent(),
@@ -1465,7 +1506,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
       Value<BillStatus>? status,
       Value<String>? billTypeID,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
+      Value<DateTime?>? updatedAt,
       Value<int>? rowid}) {
     return BillCompanion(
       id: id ?? this.id,
@@ -1570,10 +1611,8 @@ class $RequestTable extends Request with TableInfo<$RequestTable, RequestData> {
       const VerificationMeta('updatedAt');
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
       [id, observation, billId, status, createdAt, updatedAt];
@@ -1631,7 +1670,7 @@ class $RequestTable extends Request with TableInfo<$RequestTable, RequestData> {
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
     );
   }
 
@@ -1650,14 +1689,14 @@ class RequestData extends DataClass implements Insertable<RequestData> {
   final String billId;
   final RequestStatus status;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const RequestData(
       {required this.id,
       this.observation,
       required this.billId,
       required this.status,
       required this.createdAt,
-      required this.updatedAt});
+      this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1671,7 +1710,9 @@ class RequestData extends DataClass implements Insertable<RequestData> {
       map['status'] = Variable<int>(converter.toSql(status));
     }
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
@@ -1684,7 +1725,9 @@ class RequestData extends DataClass implements Insertable<RequestData> {
       billId: Value(billId),
       status: Value(status),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -1698,7 +1741,7 @@ class RequestData extends DataClass implements Insertable<RequestData> {
       status: $RequestTable.$converterstatus
           .fromJson(serializer.fromJson<int>(json['status'])),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -1711,7 +1754,7 @@ class RequestData extends DataClass implements Insertable<RequestData> {
       'status':
           serializer.toJson<int>($RequestTable.$converterstatus.toJson(status)),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -1721,14 +1764,14 @@ class RequestData extends DataClass implements Insertable<RequestData> {
           String? billId,
           RequestStatus? status,
           DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
       RequestData(
         id: id ?? this.id,
         observation: observation.present ? observation.value : this.observation,
         billId: billId ?? this.billId,
         status: status ?? this.status,
         createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
       );
   @override
   String toString() {
@@ -1764,7 +1807,7 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
   final Value<String> billId;
   final Value<RequestStatus> status;
   final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   final Value<int> rowid;
   const RequestCompanion({
     this.id = const Value.absent(),
@@ -1811,7 +1854,7 @@ class RequestCompanion extends UpdateCompanion<RequestData> {
       Value<String>? billId,
       Value<RequestStatus>? status,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
+      Value<DateTime?>? updatedAt,
       Value<int>? rowid}) {
     return RequestCompanion(
       id: id ?? this.id,
@@ -1936,10 +1979,8 @@ class $ItemTable extends Item with TableInfo<$ItemTable, ItemData> {
       const VerificationMeta('updatedAt');
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -2027,7 +2068,7 @@ class $ItemTable extends Item with TableInfo<$ItemTable, ItemData> {
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
     );
   }
 
@@ -2049,7 +2090,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
   final String productId;
   final String requestId;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const ItemData(
       {required this.id,
       required this.price,
@@ -2059,7 +2100,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
       required this.productId,
       required this.requestId,
       required this.createdAt,
-      required this.updatedAt});
+      this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2073,7 +2114,9 @@ class ItemData extends DataClass implements Insertable<ItemData> {
     map['product_id'] = Variable<String>(productId);
     map['request_id'] = Variable<String>(requestId);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
@@ -2086,7 +2129,9 @@ class ItemData extends DataClass implements Insertable<ItemData> {
       productId: Value(productId),
       requestId: Value(requestId),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -2103,7 +2148,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
       productId: serializer.fromJson<String>(json['productId']),
       requestId: serializer.fromJson<String>(json['requestId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -2119,7 +2164,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
       'productId': serializer.toJson<String>(productId),
       'requestId': serializer.toJson<String>(requestId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -2132,7 +2177,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
           String? productId,
           String? requestId,
           DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
       ItemData(
         id: id ?? this.id,
         price: price ?? this.price,
@@ -2142,7 +2187,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
         productId: productId ?? this.productId,
         requestId: requestId ?? this.requestId,
         createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
       );
   @override
   String toString() {
@@ -2186,7 +2231,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
   final Value<String> productId;
   final Value<String> requestId;
   final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   final Value<int> rowid;
   const ItemCompanion({
     this.id = const Value.absent(),
@@ -2245,7 +2290,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
       Value<String>? productId,
       Value<String>? requestId,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
+      Value<DateTime?>? updatedAt,
       Value<int>? rowid}) {
     return ItemCompanion(
       id: id ?? this.id,
@@ -2355,10 +2400,8 @@ class $PaymentTable extends Payment with TableInfo<$PaymentTable, PaymentData> {
       const VerificationMeta('updatedAt');
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
       [id, value, paymentType, billId, createdAt, updatedAt];
@@ -2416,7 +2459,7 @@ class $PaymentTable extends Payment with TableInfo<$PaymentTable, PaymentData> {
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
     );
   }
 
@@ -2435,14 +2478,14 @@ class PaymentData extends DataClass implements Insertable<PaymentData> {
   final PaymentType paymentType;
   final String billId;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const PaymentData(
       {required this.id,
       required this.value,
       required this.paymentType,
       required this.billId,
       required this.createdAt,
-      required this.updatedAt});
+      this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2454,7 +2497,9 @@ class PaymentData extends DataClass implements Insertable<PaymentData> {
     }
     map['bill_id'] = Variable<String>(billId);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
@@ -2465,7 +2510,9 @@ class PaymentData extends DataClass implements Insertable<PaymentData> {
       paymentType: Value(paymentType),
       billId: Value(billId),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -2479,7 +2526,7 @@ class PaymentData extends DataClass implements Insertable<PaymentData> {
           .fromJson(serializer.fromJson<int>(json['paymentType'])),
       billId: serializer.fromJson<String>(json['billId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -2492,7 +2539,7 @@ class PaymentData extends DataClass implements Insertable<PaymentData> {
           .toJson<int>($PaymentTable.$converterpaymentType.toJson(paymentType)),
       'billId': serializer.toJson<String>(billId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -2502,14 +2549,14 @@ class PaymentData extends DataClass implements Insertable<PaymentData> {
           PaymentType? paymentType,
           String? billId,
           DateTime? createdAt,
-          DateTime? updatedAt}) =>
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
       PaymentData(
         id: id ?? this.id,
         value: value ?? this.value,
         paymentType: paymentType ?? this.paymentType,
         billId: billId ?? this.billId,
         createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
       );
   @override
   String toString() {
@@ -2545,7 +2592,7 @@ class PaymentCompanion extends UpdateCompanion<PaymentData> {
   final Value<PaymentType> paymentType;
   final Value<String> billId;
   final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   final Value<int> rowid;
   const PaymentCompanion({
     this.id = const Value.absent(),
@@ -2593,7 +2640,7 @@ class PaymentCompanion extends UpdateCompanion<PaymentData> {
       Value<PaymentType>? paymentType,
       Value<String>? billId,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt,
+      Value<DateTime?>? updatedAt,
       Value<int>? rowid}) {
     return PaymentCompanion(
       id: id ?? this.id,

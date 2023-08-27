@@ -9,7 +9,7 @@ class Bill {
   final BillStatus status;
   final BillType? billType;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   const Bill({
     required this.id,
     this.table,
@@ -17,7 +17,7 @@ class Bill {
     this.billType,
     required this.status,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
 }
 

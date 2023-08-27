@@ -1,10 +1,18 @@
 
+import 'package:administration/src/domain/use_cases/create_or_update_bill.dart';
+import 'package:administration/src/domain/use_cases/create_or_update_bill_type.dart';
+import 'package:administration/src/domain/use_cases/get_bill_types.dart';
 import 'package:administration/src/presenter/pages/bill/bill_page.dart';
+import 'package:administration/src/presenter/pages/bill_type/bill_type_page.dart';
+import 'package:administration/src/presenter/pages/bill_type/bill_type_store.dart';
+import 'package:administration/src/presenter/pages/bill_types/bill_types_page.dart';
+import 'package:administration/src/presenter/pages/bill_types/bill_types_store.dart';
 import 'package:administration/src/presenter/pages/bills/bills_page.dart';
 import 'package:administration/src/presenter/pages/bills/bills_store.dart';
 import 'package:administration/src/presenter/pages/last_paid_bills/last_paid_bills_page.dart';
 import 'package:administration/src/presenter/pages/last_requests/last_requests_page.dart';
 import 'package:administration/src/presenter/pages/menu/menu_page.dart';
+import 'package:administration/src/presenter/pages/order_sheet/order_sheet_store.dart';
 import 'package:administration/src/presenter/pages/payment/payment_page.dart';
 import 'package:administration/src/presenter/pages/payment/payment_store.dart';
 import 'package:administration/src/presenter/stores/products/products_store.dart';
@@ -51,6 +59,9 @@ class AdministrationModule extends Module {
     Bind.lazySingleton((i) => LastRequestsStore(i()),export: true,),
     Bind.lazySingleton((i) => UndeliveredRequestsStore(i()),export: true,),
     Bind.lazySingleton((i) => PaymentStore(i()),export: true,),
+    Bind.lazySingleton((i) => OrderSheetStore(i()),export: true,),
+    Bind.lazySingleton((i) => BillTypesStore(i()),export: true,),
+    Bind.lazySingleton((i) => BillTypeStore(i()),export: true,),
 
 
 
@@ -67,9 +78,11 @@ class AdministrationModule extends Module {
     Bind.lazySingleton<IGetBillItems>((i) => GetBillItems(i()),),
     Bind.lazySingleton<IGetAllProducts>((i) => GetAllProducts(i()),),
     Bind.lazySingleton<IFinalizeBill>((i) => FinalizeBill(i()),),
-    // Bind.lazySingleton<ICreateBill>((i) => CreateBill(i()),),
+    Bind.lazySingleton<ICreateOrUpdateBill>((i) => CreateOrUpdateBill(i()),),
     Bind.lazySingleton<ICancelRequest>((i) => CancelRequest(i()),),
     Bind.lazySingleton<ICancelBill>((i) => CancelBill(i()),),
+    Bind.lazySingleton<ICreateOrUpdateBillType>((i) => CreateOrUpdateBillType(i()),),
+    Bind.lazySingleton<IGetBillTypes>((i) => GetBillTypes(i()),),
 
 
     Bind.lazySingleton<AdministrationRepository>((i) => AdministrationRepositoryImpl(i()),),
@@ -81,6 +94,9 @@ class AdministrationModule extends Module {
   @override
   final List<ModularRoute> routes = [
 
+    ChildRoute(PagesRoutes.billType.route, child: (_, args) =>  BillTypePage(billType: args.data,)),
+    ChildRoute(PagesRoutes.billTypes.route, child: (_, args) => const BillTypesPage()),
+    
     ChildRoute(PagesRoutes.bills.route, child: (_, args) => const BillsPage()),
     ChildRoute(PagesRoutes.lastPaidBills.route, child: (_, args) => const LastPaidBillsPage()),
     ChildRoute(PagesRoutes.lastRequests.route, child: (_, args) => const LastRequestsPage()),

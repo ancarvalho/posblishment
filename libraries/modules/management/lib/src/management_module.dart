@@ -32,7 +32,7 @@ import 'presenter/pages/products_list/products_list_store.dart';
 // all categories
 import 'presenter/widgets/category_card/category_card_store.dart';
 // all products 
-import 'presenter/widgets/item/item_store.dart';
+import 'presenter/widgets/product_card/product_card_store.dart';
 
 class ManagementModule extends Module {
   @override
@@ -48,7 +48,7 @@ class ManagementModule extends Module {
     Bind.lazySingleton((i) => ProductController(),export: true,),
     Bind.lazySingleton((i) => CategoryController(),export: true,),
     Bind.lazySingleton((i) => CategoryCardStore(i(), ),export: true,),
-    Bind.lazySingleton((i) => ItemStore(i(), ),export: true,),
+    Bind.lazySingleton((i) => ProductCardStore(i(), ),export: true,),
 
     Bind.lazySingleton<ManagementRepository>((i) => ManagementRepositoryImpl(i()),),
 

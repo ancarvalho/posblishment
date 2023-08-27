@@ -39,7 +39,9 @@ class _ProductPageState extends State<ProductPage> {
       },
       onState: (i) {
         productsStore.list();
-        Navigator.of(context).pop();
+        Navigator.of(context).canPop()
+            ? Navigator.of(context).pop()
+            : const DoNothingAndStopPropagationIntent();
       },
     );
 
@@ -58,6 +60,7 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: Navigator.of(context).canPop() ? null : const DrawerWidget(),
         appBar: AppBar(
           title: Text(
             widget.product != null ? widget.product!.name : "Criar Produto",
@@ -88,6 +91,16 @@ class _ProductPageState extends State<ProductPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      CustomTextFormField(
+                        controller: controller.codeTextController,
+                        decorationName: "Código",
+                        value: controller.codeTextController.text,
+                        keyboardType: TextInputType.number,
+                        // ERROR ON Editing on Start
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ]
+                      ),
                       CustomTextFormField(
                         controller: controller.nameTextController,
                         decorationName: "Nome",
@@ -137,7 +150,10 @@ class _ProductPageState extends State<ProductPage> {
         floatingActionButton: FloatingActionButton(
           // TODO Check here
           onPressed: () {
-            controller.saveChanges(widget.product?.id);
+            controller.saveChanges(widget.product?.id).then((value) =>
+                value.fold(
+                    (l) => displayMessageOnSnackbar(context, l.errorMessage),
+                    (r) => null));
           },
           child: const Icon(Icons.save),
         ),

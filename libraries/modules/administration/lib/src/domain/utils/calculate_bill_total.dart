@@ -1,6 +1,6 @@
 import 'package:core/core.dart';
 
-BillTotal calculateTotal(double subtotal, BillTypes billType, int? value) {
+BillTotal calculateTotal(double subtotal, BillTypes billType, double? value) {
   switch (billType) {
     case BillTypes.deliveryTax:
       return calculateDeliveryTax(subtotal, value!);
@@ -11,11 +11,11 @@ BillTotal calculateTotal(double subtotal, BillTypes billType, int? value) {
   }
 }
 
-BillTotal calculateDeliveryTax(double subtotal, int value) {
-  return formatToBillTotal(subtotal, value as double);
+BillTotal calculateDeliveryTax(double subtotal, double value) {
+  return formatToBillTotal(subtotal, value);
 }
 
-BillTotal calculatePercentageTax(double subtotal, int value) {
+BillTotal calculatePercentageTax(double subtotal, double value) {
   final percentage = value / 100;
 
   return formatToBillTotal(subtotal, percentage * subtotal);

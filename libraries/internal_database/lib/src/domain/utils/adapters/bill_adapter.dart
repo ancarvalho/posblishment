@@ -16,7 +16,7 @@ class BillAdapter {
     );
   }
 
-  static Bill convertToBillWithType(BillData bill, List<BillTypeData> billTypes) {
+  static Bill convertToBillWithType(BillData bill, List<BillType> billTypes) {
     return Bill(
       id: bill.id,
       status: bill.status,

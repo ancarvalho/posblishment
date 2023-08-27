@@ -40,7 +40,7 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
   }
 
   @override
-  Future<int> createProduct(Product product) async {
+  Future<int> createProduct(NewProduct product) async {
     try {
       final created = await appDatabase
           .into(appDatabase.product)
@@ -48,10 +48,11 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
       return created;
     } on InvalidDataException catch (e, s) {
       throw InternalDatabaseErrorDataException(
-          s,
-          'ManagementDataSource-createProduct-DataException',
-          e.message,
-          e.message,);
+        s,
+        'ManagementDataSource-createProduct-DataException',
+        e.message,
+        e.message,
+      );
     } catch (e, stackTrace) {
       throw ManagementError(
         stackTrace,
@@ -81,10 +82,10 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
   }
 
   @override
-  Future<int> updateProduct(Product product) async {
+  Future<int> updateProduct(UpdateProductModel product) async {
     try {
       final updated = await (appDatabase.update(appDatabase.product)
-            ..where((t) => t.id.equals(product.id!)))
+            ..where((t) => t.id.equals(product.id)))
           .write(ProductAdapter.updateProduct(product));
       return updated;
     } catch (e, stackTrace) {

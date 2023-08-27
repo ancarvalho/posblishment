@@ -8,6 +8,8 @@ enum PagesRoutes {
   // Stock Control
   stockControl(name: "Stock Control", route: "/", dependsOnModule: ModulesRoutes.stock),
   //Administration
+  billType(name: "Bill Type", route: "/bill_type/", dependsOnModule: ModulesRoutes.administration),
+  billTypes(name: "Bill Types", route: "/bill_types/", dependsOnModule: ModulesRoutes.administration),
   bill(name: "Bill", route: "/bill/", dependsOnModule: ModulesRoutes.administration),
   bills(name: "Bills", route: "/bills/", dependsOnModule: ModulesRoutes.administration),
   lastPaidBills(name: "Last Paid Bills", route: "/last_paid_bills/", dependsOnModule: ModulesRoutes.administration),

@@ -7,14 +7,6 @@ import '../utils/enum_converter.dart';
 import 'tables.dart';
 
 
-// enum ItemStatus {
-//   preparing,
-//   delivered,
-//   canceled,
-// }
-
-
-
 
 class Item extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
@@ -29,6 +21,5 @@ class Item extends Table {
 
   DateTimeColumn get createdAt =>
       dateTime().withDefault(Constant(DateTime.now()))();
-  DateTimeColumn get updatedAt =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  DateTimeColumn get updatedAt => dateTime().nullable()();
 }

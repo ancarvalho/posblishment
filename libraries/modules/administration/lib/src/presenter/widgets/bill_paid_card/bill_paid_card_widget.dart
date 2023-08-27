@@ -8,7 +8,7 @@ class BillPaidCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final date = DateTime.now().difference(bill.updatedAt);
+    final date = DateTime.now().difference(bill.updatedAt ?? bill.createdAt);
     return Card(
       color: transformBillStatusIntoColor(bill.status),
       child: Column(
@@ -16,9 +16,9 @@ class BillPaidCardWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text(bill.table == null
-                  ? bill.table.toString()
-                  : bill.customerName!,),
+              Text(
+                bill.table == null ? bill.table.toString() : bill.customerName!,
+              ),
               Text(bill.status.name)
             ],
           ),

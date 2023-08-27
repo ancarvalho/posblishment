@@ -5,18 +5,18 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../pages/products_list/products_list_store.dart';
 import '../dialog/custom_cancel_dialog.dart';
-import 'item_store.dart';
+import 'product_card_store.dart';
 
-class ItemWidget extends StatefulWidget {
+class ProductCardWidget extends StatefulWidget {
   final Product product;
-  const ItemWidget({super.key, required this.product});
+  const ProductCardWidget({super.key, required this.product});
 
   @override
-  State<ItemWidget> createState() => _ItemWidgetState();
+  State<ProductCardWidget> createState() => _ProductCardWidgetState();
 }
 
-class _ItemWidgetState extends State<ItemWidget> {
-  final store = Modular.get<ItemStore>();
+class _ProductCardWidgetState extends State<ProductCardWidget> {
+  final store = Modular.get<ProductCardStore>();
   final productsStore = Modular.get<ProductListStore>();
 
   @override
@@ -33,7 +33,6 @@ class _ItemWidgetState extends State<ItemWidget> {
       onState: (error) {
         productsStore.list();
       },
-      
     );
     super.initState();
   }
@@ -53,8 +52,7 @@ class _ItemWidgetState extends State<ItemWidget> {
           builder: (context) {
             return CustomCancelDialog(
               delete: () {
-                store.deleteProduct(widget.product.id!);
-                
+                store.deleteProduct(widget.product.id);
               },
               name: widget.product.name,
             );
@@ -75,13 +73,20 @@ class _ItemWidgetState extends State<ItemWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "${widget.product.code ?? ""}",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                    if (widget.product.code != null)
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "cod",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          Text(
+                            "${widget.product.code ?? ""}",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
                       ),
-                    ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -92,14 +97,15 @@ class _ItemWidgetState extends State<ItemWidget> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Text(
-                          widget.product.description ?? "",
-                          maxLines: 1,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        )
+                        if (widget.product.description != null)
+                          Text(
+                            widget.product.description!,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          )
                       ],
                     ),
                     Text(

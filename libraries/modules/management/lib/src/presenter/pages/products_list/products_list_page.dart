@@ -6,7 +6,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 // import 'package:internal_database/internal_database.dart';
 
 import '../../widgets/error/error_widget.dart';
-import '../../widgets/item/item_widget.dart';
+import '../../widgets/product_card/product_card_widget.dart';
 import 'products_list_store.dart';
 
 class ProductsListPage extends StatefulWidget {
@@ -36,7 +36,6 @@ class _ProductsListPageState extends State<ProductsListPage> {
       child: Scaffold(
         drawer: const DrawerWidget(),
         appBar: AppBar(
-        
           title: const Text("Produtos"),
           centerTitle: true,
           actions: [
@@ -65,21 +64,22 @@ class _ProductsListPageState extends State<ProductsListPage> {
               store: store,
               onLoading: (context) => const LoadingWidget(),
               onError: (context, error) => ManagementErrorWidget(
-                  error: error,
-                  reload: reload,
-                )
-              ,
+                error: error,
+                reload: reload,
+              ),
               onState: (context, state) {
                 return ListView.builder(
                   itemCount: state.length,
                   itemBuilder: (context, index) {
                     //TODO Analyze way to remove this container
-                    return Container(
-                      margin:
+                    return Padding(
+                      padding:
                           EdgeInsets.symmetric(vertical: Sizes.dp4(context)),
-                      height: Sizes.height(context) / 10,
-                      child: ItemWidget(
-                        product: state[index],
+                      child: SizedBox(
+                        height: Sizes.height(context) / 10,
+                        child: ProductCardWidget(
+                          product: state[index],
+                        ),
                       ),
                     );
                   },

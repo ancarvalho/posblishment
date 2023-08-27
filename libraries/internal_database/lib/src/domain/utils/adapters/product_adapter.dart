@@ -7,6 +7,7 @@ class ProductAdapter {
   static Product fromProductData(ProductData product) {
     return Product(
       id: product.id,
+      code: product.code,
       name: product.name,
       description: product.description,
       price: product.price,
@@ -17,26 +18,28 @@ class ProductAdapter {
     );
   }
 
-  static ProductData createProduct(Product product) {
+  static ProductData createProduct(NewProduct product) {
     return ProductData(
       id: const Uuid().v4(),
+      code: product.code,
       name: product.name,
       description: product.description,
       price: product.price,
       preparable: product.preparable,
-      categoryId: product.categoryId!,
+      categoryId: product.categoryId,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
   }
 
-  static ProductCompanion updateProduct(Product product) {
+  static ProductCompanion updateProduct(UpdateProductModel product) {
     return ProductCompanion(
+      code: Value(product.code),
       name: Value(product.name),
       description: Value(product.description),
       price: Value(product.price),
       preparable: Value(product.preparable),
-      categoryId: Value(product.categoryId!),
+      categoryId: Value(product.categoryId),
       updatedAt: Value(DateTime.now()),
     );
   }

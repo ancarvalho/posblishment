@@ -21,7 +21,8 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   @override
   Future<Either<Failure, int>> cancelRequest(String id) async {
     try {
-      final txID = await _administrationDataSource.changeRequestStatus(id, RequestStatus.canceled, ItemStatus.canceled);
+      final txID = await _administrationDataSource.changeRequestStatus(
+          id, RequestStatus.canceled, ItemStatus.canceled,);
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -115,7 +116,8 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   @override
   Future<Either<Failure, int>> setItemDelivered(String id) async {
     try {
-      final txID = await _administrationDataSource.changeItemStatus(id, ItemStatus.delivered);
+      final txID = await _administrationDataSource.changeItemStatus(
+          id, ItemStatus.delivered,);
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -125,7 +127,8 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   @override
   Future<Either<Failure, int>> setRequestDelivered(String id) async {
     try {
-      final txID = await _administrationDataSource.changeRequestStatus(id, RequestStatus.delivered, ItemStatus.delivered);
+      final txID = await _administrationDataSource.changeRequestStatus(
+          id, RequestStatus.delivered, ItemStatus.delivered,);
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -144,7 +147,7 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
 
   @override
   Future<Either<Failure, BillTotal>> getBillTotal(String billID) async {
-     try {
+    try {
       final billTotal = await _administrationDataSource.getBillTotal(billID);
       return Right(billTotal);
     } on Failure catch (e) {
@@ -153,7 +156,7 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Item>>> getBillValidItems(String billID) async{
+  Future<Either<Failure, List<Item>>> getBillValidItems(String billID) async {
     try {
       final items = await _administrationDataSource.getBillValidItems(billID);
       return Right(items);
@@ -161,22 +164,96 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
       return Left(e);
     }
   }
-  
+
   @override
-  Future<Either<Failure, Request>> createRequest(String billID, NewRequest newRequest) async {
-   try {
-      final request = await _administrationDataSource.createRequest(billID, newRequest);
+  Future<Either<Failure, Request>> createRequest(
+      String billID, NewRequest newRequest,) async {
+    try {
+      final request =
+          await _administrationDataSource.createRequest(billID, newRequest);
       return Right(request);
     } on Failure catch (e) {
       return Left(e);
     }
   }
-  
+
   @override
   Future<Either<Failure, Bill>> getBillByTable(int table) async {
-     try {
+    try {
       final bill = await _administrationDataSource.getBillByTable(table);
       return Right(bill);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<BillType>>> getBillTypes() async {
+    try {
+      final billTypes = await _administrationDataSource.getBillTypes();
+      return Right(billTypes);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, BillType>> getDefaultBillType() async {
+    try {
+      final billType = await _administrationDataSource.getDefaultBillType();
+      return Right(billType);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, BillType>> getBillType(String id) async {
+    try {
+      final billType = await _administrationDataSource.getBillType(id);
+      return Right(billType);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> createBillType(NewBillType newBillType) async {
+    try {
+      final billType =
+          await _administrationDataSource.createBillType(newBillType);
+      return Right(billType);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateBillType(BillType billType) async {
+    try {
+      final billTypeUpdated =
+          await _administrationDataSource.updateBillType(billType);
+      return Right(billTypeUpdated);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+  @override
+  Future<Either<Failure, bool>> removeBillTypeDefaultValue() async {
+    try {
+      final billTypeUpdated =
+          await _administrationDataSource.removeBillTypeDefaultValue();
+      return Right(billTypeUpdated);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+@override
+  Future<Either<Failure, bool>> setDefaultBillType(String id) async {
+    try {
+      final billTypeUpdated =
+          await _administrationDataSource.setDefaultBillType(id);
+      return Right(billTypeUpdated);
     } on Failure catch (e) {
       return Left(e);
     }
