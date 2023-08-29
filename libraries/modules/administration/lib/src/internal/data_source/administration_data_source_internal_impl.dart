@@ -20,10 +20,11 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           await getDefaultBillType().then((value) => value.id);
       if (billType == null) {
         throw AdministrationError(
-            StackTrace.current,
-            "InternalDatabase-Administration-createBill",
-            "",
-            "No Bill Types Defined",);
+          StackTrace.current,
+          "InternalDatabase-Administration-createBill",
+          "",
+          "No Bill Types Defined",
+        );
       }
       final bill = await _internalDatabase
           .into(_internalDatabase.bill)
@@ -43,31 +44,31 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
 
   // Handle bill Insertion (create or update bill)
 
-  Future<BillData?> checkBillExist(NewBill newBill) async {
-    try {
-      return (_internalDatabase.select(_internalDatabase.bill)
-            ..where(
-              (tbl) =>
-                  tbl.status.isIn([
-                    BillStatus.open.index,
-                    BillStatus.closed.index,
-                    BillStatus.partiallyPaid.index,
-                  ]) &
-                  (tbl.table.equals(newBill.table!) |
-                      tbl.customerName.equals(
-                        newBill.customerName!,
-                      )), // TODO somehow request one to be required
-            ))
-          .getSingleOrNull();
-    } catch (e, s) {
-      throw AdministrationError(
-        s,
-        "InternalDatabase-Administration-checkBillExist",
-        e,
-        e.toString(),
-      );
-    }
-  }
+  // Future<BillData?> checkBillExist(NewBill newBill) async {
+  //   try {
+  //     return (_internalDatabase.select(_internalDatabase.bill)
+  //           ..where(
+  //             (tbl) =>
+  //                 tbl.status.isIn([
+  //                   BillStatus.open.index,
+  //                   BillStatus.closed.index,
+  //                   BillStatus.partiallyPaid.index,
+  //                 ]) &
+  //                 (tbl.table.equals(newBill.table!) |
+  //                     tbl.customerName.equals(
+  //                       newBill.customerName!,
+  //                     )), // TODO somehow request one to be required
+  //           ))
+  //         .getSingleOrNull();
+  //   } catch (e, s) {
+  //     throw AdministrationError(
+  //       s,
+  //       "InternalDatabase-Administration-checkBillExist",
+  //       e,
+  //       e.toString(),
+  //     );
+  //   }
+  // }
 
   // @override
   // Future<Request> handleBillCreationOrUpdate(
@@ -296,7 +297,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     final bill = await (_internalDatabase.select(_internalDatabase.bill).join([
       leftOuterJoin(
         _internalDatabase.billType,
-        _internalDatabase.billType.id.equalsExp(_internalDatabase.bill.id),
+        _internalDatabase.billType.id.equalsExp(_internalDatabase.bill.billTypeID),
       )
     ])
           ..where(_internalDatabase.bill.id.equals(billID)))
@@ -307,7 +308,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     return calculateTotal(subtotal, billType.type, billType.value);
   }
 
-  // TODO Get total, subtotal, comission
+  // TODO Get total, subtotal, commission
   @override
   Future<BillTotal> getBillTotal(String billID) async {
     try {
@@ -397,15 +398,16 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   Future<List<Item>> getBillValidItems(String billID) async {
     try {
       final _query =
-          await (_internalDatabase.select(_internalDatabase.request).join([
-        leftOuterJoin(
-          _internalDatabase.item,
-          _internalDatabase.item.requestId
-              .equalsExp(_internalDatabase.request.id),
+          await (_internalDatabase.select(_internalDatabase.item).join([
+        innerJoin(
+          _internalDatabase.request,
+          _internalDatabase.request.id
+              .equalsExp(_internalDatabase.item.requestId),
+          useColumns: false,
         )
       ])
                 ..where(
-                  _internalDatabase.bill.id.equals(billID) &
+                  _internalDatabase.request.billId.equals(billID) &
                       _internalDatabase.item.status.isIn([
                         ItemStatus.preparing.index,
                         ItemStatus.delivered.index,
@@ -416,6 +418,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       final items =
           _query.map((e) => e.readTable(_internalDatabase.item)).toList();
 
+      // TODO remove print(items);
       return items.map(ItemAdapter.toItem).toList();
     } catch (e, s) {
       throw AdministrationError(
@@ -561,7 +564,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
         )
       ])
                 ..where(
-                  _internalDatabase.bill.id.equals(billID) &
+                  _internalDatabase.request.billId.equals(billID) &
                       _internalDatabase.item.status.isIn([
                         ItemStatus.preparing.index,
                         ItemStatus.delivered.index,

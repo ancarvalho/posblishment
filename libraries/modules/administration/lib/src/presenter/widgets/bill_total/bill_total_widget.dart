@@ -44,11 +44,11 @@ class _BillTotalWidgetState extends State<BillTotalWidget> {
               children: [
                 Text(
                   "subtotal",
-                  style: Theme.of(context).textTheme.displaySmall,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 Text(
                   state.subtotal.toString(),
-                  style: Theme.of(context).textTheme.displaySmall,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
@@ -57,11 +57,11 @@ class _BillTotalWidgetState extends State<BillTotalWidget> {
               children: [
                 Text(
                   "Total",
-                  style: Theme.of(context).textTheme.displayLarge,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 Text(
                   state.total.toString(),
-                  style: Theme.of(context).textTheme.displayLarge,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             )

@@ -57,7 +57,7 @@ class _CategoryPageState extends State<CategoryPage> {
         appBar: AppBar(
           title: Text(widget.category != null
               ? "Atualizar ${widget.category?.name}"
-              : "Criar Categoria"),
+              : "Criar Categoria",),
           centerTitle: true,
           actions: [
             IconButton(

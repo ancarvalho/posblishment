@@ -10,7 +10,7 @@ class ItemAdapter {
       quantity: item.quantity,
       totalQuantity: item.quantity,
       status: ItemStatus.preparing,
-      productId: product.id!,
+      productId: product.id,
       requestId: requestID,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),

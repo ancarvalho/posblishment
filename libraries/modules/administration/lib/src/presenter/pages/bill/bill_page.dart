@@ -26,8 +26,9 @@ class _BillPageState extends State<BillPage> with TickerProviderStateMixin {
         appBar: AppBar(
           title: const Text("Conta"),
           centerTitle: true,
-          bottom: const TabBar(
-            tabs: [
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
               Tab(icon: Icon(Icons.list_alt_outlined)),
               Tab(icon: Icon(Icons.line_style_sharp)),
             ],
@@ -38,6 +39,7 @@ class _BillPageState extends State<BillPage> with TickerProviderStateMixin {
           physics: const NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: [
+        
             BillItemsWidget(billID: widget.billID),
             BillRequestsWidget(billID: widget.billID)
           ],

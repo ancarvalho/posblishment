@@ -12,6 +12,7 @@ class BillItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Text(item.totalQuantity.toString()),
         //TODO change to name

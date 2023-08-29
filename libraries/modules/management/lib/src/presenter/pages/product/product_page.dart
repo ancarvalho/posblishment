@@ -99,7 +99,7 @@ class _ProductPageState extends State<ProductPage> {
                         // ERROR ON Editing on Start
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
-                        ]
+                        ],
                       ),
                       CustomTextFormField(
                         controller: controller.nameTextController,
@@ -153,7 +153,7 @@ class _ProductPageState extends State<ProductPage> {
             controller.saveChanges(widget.product?.id).then((value) =>
                 value.fold(
                     (l) => displayMessageOnSnackbar(context, l.errorMessage),
-                    (r) => null));
+                    (r) => null,),);
           },
           child: const Icon(Icons.save),
         ),

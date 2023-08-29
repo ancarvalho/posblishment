@@ -16,7 +16,9 @@ enum PagesRoutes {
   orderSheet(name: "Order Sheet", route: "/order_sheet/", dependsOnModule: ModulesRoutes.administration),
   menu(name: "menu", route: "/menu/", dependsOnModule: ModulesRoutes.administration),
   lastRequests(name: "lastRequests", route: "/last_requests/", dependsOnModule: ModulesRoutes.administration),
-  payment(name: "payment", route: "/payment/", dependsOnModule: ModulesRoutes.administration);
+  payment(name: "payment", route: "/payment/", dependsOnModule: ModulesRoutes.administration),
+  //Settings
+  settings(name: "Settings", route: "/",  dependsOnModule: ModulesRoutes.settings);
 
   const PagesRoutes({required this.name, required this.route, required this.dependsOnModule});
 
@@ -29,7 +31,8 @@ enum ModulesRoutes {
   statistics(name: "Dashboard", route: "/statistics"),
   administration(name: "Dashboard", route: "/administration"),
   management(name: "Dashboard", route: "/management"),
-  stock(name: "Dashboard", route: "/stock");
+  stock(name: "Dashboard", route: "/stock"),
+  settings(name: "Settings", route: "/settings");
 
   const ModulesRoutes({required this.name, required this.route});
 

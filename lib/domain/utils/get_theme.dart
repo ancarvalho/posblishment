@@ -1,17 +1,18 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
-ThemeData getTheme(String theme) {
+import '../enums/themes.dart';
+
+ThemeData getTheme(ThemesOptions theme) {
   switch (theme) {
-    case "dark-theme":
+    case ThemesOptions.dark:
       return Themes.darkTheme;
-    case "light-theme":
+    case ThemesOptions.light:
       return Themes.lightTheme;
-    case "solarized-light-theme":
+    case ThemesOptions.solarizedLight:
       return SolarizedTheme.solarizedLightTheme;
-    case "solarized-dark-theme":
+    case ThemesOptions.solarizedDark:
       return SolarizedTheme.solarizedDarkTheme;
-    default:
-      return Themes.darkTheme;
+
   }
 }

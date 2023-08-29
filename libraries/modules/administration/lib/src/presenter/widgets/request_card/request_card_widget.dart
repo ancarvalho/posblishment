@@ -10,10 +10,11 @@ class RequestCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (request.items == null) return Column();
 
-    return Stack(
+    return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
+          
           children: [
             Text(request.id),
             Text(request.observation ?? ""),
