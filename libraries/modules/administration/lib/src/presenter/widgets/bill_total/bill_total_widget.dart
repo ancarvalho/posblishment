@@ -1,4 +1,4 @@
-import 'package:administration/src/presenter/widgets/bill_total/bill_total_store.dart';
+import 'package:administration/src/presenter/stores/bill/bill_total_store.dart';
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
@@ -44,24 +44,25 @@ class _BillTotalWidgetState extends State<BillTotalWidget> {
               children: [
                 Text(
                   "subtotal",
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 Text(
-                  state.subtotal.toString(),
-                  style: Theme.of(context).textTheme.bodySmall,
+                  CurrencyInputFormatter.formatRealCurrency(state.subtotal),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             ),
+            const SizedBox( height: 4,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "Total",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  state.total.toString(),
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  CurrencyInputFormatter.formatRealCurrency(state.total),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ],
             )

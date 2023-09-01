@@ -12,7 +12,7 @@ abstract class AdministrationDataSource {
   Future<Bill> getBill(String billID);
   Future<Bill> getBillByTable(int table);
   Future<int> cancelBill(String billID);
-  Future<int> finalizeBill(List<Payment> payments, String billID);
+  Future<int> finalizeBill(List<NewPayment> payments, String billID);
   Future<BillTotal> getBillTotal(String billID);
 
   Future<BillType> getDefaultBillType();
@@ -35,4 +35,5 @@ abstract class AdministrationDataSource {
 
   Future<int> changeItemStatus(String id, ItemStatus status);
   Future<List<Item>> getBillValidItems(String billID);
+  Future<BillTotal> getBillTotalWithPaidAmount(String billID);
 }

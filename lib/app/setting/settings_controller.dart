@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:posblishment/domain/entities/entities.dart';
 import 'package:posblishment/domain/enums/enums.dart';
-import 'package:posblishment/domain/enums/establishment_type.dart';
 
 class SettingsController extends Disposable {
   SettingsController();
 
-  // final formKey = GlobalKey<FormState>();
 
   final establishmentNameTextController = TextEditingController();
 
@@ -18,7 +16,6 @@ class SettingsController extends Disposable {
 
   void resetFields(Settings? settings) {
     establishmentNameTextController.text = settings?.establishment.name ?? "";
-    // iconTextController.text = type?.icon ?? "";
     orderSheetEnabled.value = settings?.orderSheetEnabled ?? false;
     theme.value = settings?.theme ?? ThemesOptions.dark;
     establishmentType.value = settings?.establishment.establishmentType ??

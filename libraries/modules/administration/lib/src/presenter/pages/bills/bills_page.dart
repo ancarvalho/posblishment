@@ -17,8 +17,8 @@ class BillsPage extends StatefulWidget {
 class _BillsPageState extends State<BillsPage> {
   final notPaidBillsStore = Modular.get<NotPaidBillsStore>();
 
-  void loadData() {
-    notPaidBillsStore.getNotPaidBills();
+  Future<void> loadData() async{
+    await notPaidBillsStore.getNotPaidBills();
   }
 
   @override
@@ -40,19 +40,22 @@ class _BillsPageState extends State<BillsPage> {
         body: ScopedBuilder<NotPaidBillsStore, Failure, List<Bill>>(
           store: notPaidBillsStore,
           onState: (context, state) {
-            return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 250,
-                childAspectRatio: .9,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+            return RefreshIndicator(
+              onRefresh: loadData,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 250,
+                  childAspectRatio: .9,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
+                itemCount: state.length,
+                itemBuilder: (context, index) {
+                  return BillCardWidget(
+                    bill: state[index],
+                  );
+                },
               ),
-              itemCount: state.length,
-              itemBuilder: (context, index) {
-                return BillCardWidget(
-                  bill: state[index],
-                );
-              },
             );
           },
         ),

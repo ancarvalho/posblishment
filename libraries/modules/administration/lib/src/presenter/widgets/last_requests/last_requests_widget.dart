@@ -14,7 +14,7 @@ class LastRequestsWidgets extends StatefulWidget {
 }
 
 class _LastRequestsWidgetsState extends State<LastRequestsWidgets> {
-  // TODO init from store
+  
   final lastRequestsStore = Modular.get<LastRequestsStore>();
 
   @override
@@ -40,8 +40,8 @@ class _LastRequestsWidgetsState extends State<LastRequestsWidgets> {
           return ListView.builder(
             itemCount: requests.length,
             itemBuilder: (context, index) {
-              // TODO change to renden requests and item ...
-
+              // TODO include bill id
+          
               return RequestCardWidget(
                 request: requests[index],
               );

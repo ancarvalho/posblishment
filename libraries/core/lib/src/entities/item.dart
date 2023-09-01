@@ -2,6 +2,8 @@ import '../enums/enums.dart';
 
 class Item {
   final String id;
+  final int? code;
+  final String name;
   final double price;
   final int quantity;
   final int totalQuantity;
@@ -12,6 +14,8 @@ class Item {
   final DateTime? updatedAt;
 
   const Item({
+    this.code,
+    required this.name,
     required this.id,
     required this.price,
     required this.quantity,

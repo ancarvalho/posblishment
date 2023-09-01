@@ -56,36 +56,32 @@ class _ProductsListPageState extends State<ProductsListPage> {
             ),
           ],
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
-          child: RefreshIndicator(
-            onRefresh: reload,
-            child: ScopedBuilder<ProductListStore, Failure, List<Product>>(
-              store: store,
-              onLoading: (context) => const LoadingWidget(),
-              onError: (context, error) => ManagementErrorWidget(
-                error: error,
-                reload: reload,
-              ),
-              onState: (context, state) {
-                return ListView.builder(
+        body: RefreshIndicator(
+          onRefresh: reload,
+          child: ScopedBuilder<ProductListStore, Failure, List<Product>>(
+            store: store,
+            onLoading: (context) => const LoadingWidget(),
+            onError: (context, error) => ManagementErrorWidget(
+              error: error,
+              reload: reload,
+            ),
+            onState: (context, state) {
+              return Padding(
+                padding: Paddings.paddingLTRB4(),
+                child: ListView.builder(
                   itemCount: state.length,
                   itemBuilder: (context, index) {
                     //TODO Analyze way to remove this container
-                    return Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: Sizes.dp4(context)),
-                      child: SizedBox(
-                        height: Sizes.height(context) / 10,
-                        child: ProductCardWidget(
-                          product: state[index],
-                        ),
+                    return SizedBox(
+                      height: Sizes.height(context) / 10,
+                      child: ProductCardWidget(
+                        product: state[index],
                       ),
                     );
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),

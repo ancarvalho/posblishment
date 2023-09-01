@@ -9,9 +9,9 @@ Color transformBillStatusIntoColor(BillStatus billStatus) {
     case BillStatus.closed:
       return const Color.fromARGB(255, 255, 6, 10);
     case BillStatus.paid:
-      return const Color.fromARGB(255, 1, 30, 252);
+      return const Color.fromARGB(255, 19, 115, 2);
     case BillStatus.paidWithoutCommission:
-      return const Color.fromARGB(255, 0, 97, 253);
+      return const Color.fromARGB(255, 253, 84, 0);
     case BillStatus.canceled:
       return const Color.fromARGB(255, 252, 1, 131);
     case BillStatus.partiallyPaid:

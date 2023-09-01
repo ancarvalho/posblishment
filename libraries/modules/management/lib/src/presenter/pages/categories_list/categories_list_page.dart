@@ -57,28 +57,28 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
             ),
           ],
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
-          child: RefreshIndicator(
-            onRefresh: reload,
-            child: ScopedBuilder<CategoriesListStore, Failure, List<Category>>(
-              onLoading: (context) => const LoadingWidget(),
-              onError: (context, error) => ManagementErrorWidget(
-                error: error,
-                reload: reload,
-              ),
-              store: store,
-              onState: (context, state) {
-                return ListView.builder(
+        body: RefreshIndicator(
+          onRefresh: reload,
+          child: ScopedBuilder<CategoriesListStore, Failure, List<Category>>(
+            onLoading: (context) => const LoadingWidget(),
+            onError: (context, error) => ManagementErrorWidget(
+              error: error,
+              reload: reload,
+            ),
+            store: store,
+            onState: (context, state) {
+              return Padding(
+                padding:  Paddings.paddingLTRB4(),
+                child: ListView.builder(
                   itemCount: state.length,
                   itemBuilder: (context, index) {
                     return CategoryCardWidget(
                       category: state[index],
                     );
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),

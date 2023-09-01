@@ -76,17 +76,17 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ],
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
-          child: SingleChildScrollView(
-            child: ScopedBuilder<CategoriesLoadStore, Failure, List<Category>>(
-              store: categoriesLoadStore,
-              onError: (context, error) => ManagementErrorWidget(
-                error: error,
-                reload: categoriesLoadStore.load,
-              ),
-              onState: (context, state) {
-                return Form(
+        body: SingleChildScrollView(
+          child: ScopedBuilder<CategoriesLoadStore, Failure, List<Category>>(
+            store: categoriesLoadStore,
+            onError: (context, error) => ManagementErrorWidget(
+              error: error,
+              reload: categoriesLoadStore.load,
+            ),
+            onState: (context, state) {
+              return Padding(
+                padding: Paddings.paddingForm(),
+                child: Form(
                   key: controller.formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -141,11 +141,11 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                     ],
                   ),
-                );
-              },
-            ),
-            // ScopedBuilder<ProductStore, Failure, e.Product>(),
+                ),
+              );
+            },
           ),
+          // ScopedBuilder<ProductStore, Failure, e.Product>(),
         ),
         floatingActionButton: FloatingActionButton(
           // TODO Check here

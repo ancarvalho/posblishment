@@ -5,6 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/errors/administration_error_widget.dart';
+import '../../../domain/utils/utils.dart';
 import 'bill_types_store.dart';
 
 class BillTypesPage extends StatefulWidget {
@@ -44,64 +45,66 @@ class _BillTypesPageState extends State<BillTypesPage> {
             reload: loadData,
           ),
           onState: (context, state) {
-            return ListView.builder(
-              itemCount: state.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    (GestureDetector(
-                      onTap: () {
-                        Modular.to.pushNamed(
-                          "${PagesRoutes.billType.dependsOnModule.route}${PagesRoutes.billType.route}",
-                          arguments: state[index],
-                        );
-                      },
-                      child: Card(
-                        child: SizedBox(
-                          height: Sizes.height(context) / 10,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: Sizes.dp8(context),
-                              vertical: Sizes.dp9(context),
-                            ),
-                            child: Stack(
-                              alignment: AlignmentDirectional.center,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          state[index].name,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
+            return Padding(
+              padding: Paddings.paddingLTRB4(),
+              child: ListView.builder(
+                itemCount: state.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      (GestureDetector(
+                        onTap: () {
+                          Modular.to.pushNamed(
+                            "${PagesRoutes.billType.dependsOnModule.route}${PagesRoutes.billType.route}",
+                            arguments: state[index],
+                          );
+                        },
+                        child: Card(
+                          child: SizedBox(
+                            height: Sizes.height(context) / 10,
+                            child: Padding(
+                              padding: Paddings.paddingLTRB4(),
+                              child: Stack(
+                                alignment: AlignmentDirectional.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            state[index].name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge,
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      state[index].value.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w500,
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      if (state[index].value != null)
+                                        Text(
+                                          formatBillTypeValue(
+                                            state[index].type,
+                                            state[index].value!,
+                                          ),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge,
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ))
-                  ],
-                );
-              },
+                      ))
+                    ],
+                  );
+                },
+              ),
             );
           },
         ),

@@ -8,40 +8,69 @@ class MenuWidgetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: SizedBox(
-        height: Sizes.height(context) / 12,
-        child: Padding(
-          padding: EdgeInsets.all(Sizes.dp10(context)),
-          child: Stack(
-            alignment: AlignmentDirectional.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        product.name,
-                        maxLines: 1,
-                        style: Theme.of(context).textTheme.bodyMedium,
+    return GestureDetector(
+      child: Card(
+        child: SizedBox(
+          height: Sizes.height(context) / 10,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: Sizes.dp8(context),
+              vertical: Sizes.dp9(context),
+            ),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (product.code != null)
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "cod",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          Text(
+                            "${product.code ?? ""}",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
                       ),
-                      if (product.description != null)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                         Text(
-                          product.description!,
-                          maxLines: 1,
-                          style: Theme.of(context).textTheme.bodySmall,
+                          product.name,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                    ],
-                  ),
-                  Text(
-                    product.price.toString(),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ],
+                        if (product.description != null)
+                          Text(
+                            product.description!,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          )
+                      ],
+                    ),
+                    Text(
+                      CurrencyInputFormatter.formatRealCurrency(
+                        product.price,
+                      ),
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

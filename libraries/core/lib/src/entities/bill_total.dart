@@ -2,7 +2,7 @@ class BillTotal {
   final double total;
   final double subtotal;
   final double commission;
-  late final double? payment;
+  double? payment;
 
   BillTotal({
     required this.total,

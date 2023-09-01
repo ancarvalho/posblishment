@@ -11,9 +11,14 @@ class PaymentItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress:removePayment,
-      child: Text(
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          "${CurrencyInputFormatter.formatRealCurrency(payment.value)} ${payment.paymentType.name}",),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              "${CurrencyInputFormatter.formatRealCurrency(payment.value)} ${payment.paymentType.name}",),
+        ],
+      ),
     );
   }
 }

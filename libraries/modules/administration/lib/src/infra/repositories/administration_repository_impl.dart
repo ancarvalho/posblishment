@@ -22,7 +22,10 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   Future<Either<Failure, int>> cancelRequest(String id) async {
     try {
       final txID = await _administrationDataSource.changeRequestStatus(
-          id, RequestStatus.canceled, ItemStatus.canceled,);
+        id,
+        RequestStatus.canceled,
+        ItemStatus.canceled,
+      );
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -31,7 +34,7 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
 
   @override
   Future<Either<Failure, int>> finalizeBill(
-    List<Payment> payments,
+    List<NewPayment> payments,
     String billID,
   ) async {
     try {
@@ -117,7 +120,9 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   Future<Either<Failure, int>> setItemDelivered(String id) async {
     try {
       final txID = await _administrationDataSource.changeItemStatus(
-          id, ItemStatus.delivered,);
+        id,
+        ItemStatus.delivered,
+      );
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -128,7 +133,10 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   Future<Either<Failure, int>> setRequestDelivered(String id) async {
     try {
       final txID = await _administrationDataSource.changeRequestStatus(
-          id, RequestStatus.delivered, ItemStatus.delivered,);
+        id,
+        RequestStatus.delivered,
+        ItemStatus.delivered,
+      );
       return Right(txID);
     } on Failure catch (e) {
       return Left(e);
@@ -167,7 +175,9 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
 
   @override
   Future<Either<Failure, Request>> createRequest(
-      String billID, NewRequest newRequest,) async {
+    String billID,
+    NewRequest newRequest,
+  ) async {
     try {
       final request =
           await _administrationDataSource.createRequest(billID, newRequest);
@@ -238,6 +248,7 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
       return Left(e);
     }
   }
+
   @override
   Future<Either<Failure, bool>> removeBillTypeDefaultValue() async {
     try {
@@ -248,12 +259,25 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
       return Left(e);
     }
   }
-@override
+
+  @override
   Future<Either<Failure, bool>> setDefaultBillType(String id) async {
     try {
       final billTypeUpdated =
           await _administrationDataSource.setDefaultBillType(id);
       return Right(billTypeUpdated);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, BillTotal>> getBillTotalWithPaidAmount(
+      String billID,) async {
+    try {
+      final billTotal =
+          await _administrationDataSource.getBillTotalWithPaidAmount(billID);
+      return Right(billTotal);
     } on Failure catch (e) {
       return Left(e);
     }

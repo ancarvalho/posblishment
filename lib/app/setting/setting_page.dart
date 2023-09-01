@@ -76,7 +76,7 @@ class _SettingPageState extends State<SettingPage> {
                         ThemesOptions.values.elementAt(int.parse(value ?? "0"));
                     settingsStore.changeTheme(
                         theme: ThemesOptions.values
-                            .elementAt(int.parse(value ?? "0")));
+                            .elementAt(int.parse(value ?? "0")),);
                   },
                   labelText: "Tema",
                 ),
@@ -88,7 +88,7 @@ class _SettingPageState extends State<SettingPage> {
                         value: settingsController.orderSheetEnabled.value,
                         onChanged: (v) {
                           settingsController.orderSheetEnabled.value = v;
-                        })
+                        },)
                   ],
                 ),
                 TextButton(
@@ -97,7 +97,7 @@ class _SettingPageState extends State<SettingPage> {
                         settingsController.updateSettings(settingsStore.state),
                       );
                     },
-                    child: const Text("Salvar")),
+                    child: const Text("Salvar"),),
               ],
             ),
           );

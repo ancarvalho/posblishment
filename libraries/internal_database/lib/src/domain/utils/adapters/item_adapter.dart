@@ -17,16 +17,29 @@ class ItemAdapter {
     );
   }
 
-  static Item toItem(ItemData item) {
+  static List<Item> toItems(List<ItemData> items, List<ProductData> products) {
+    final groupedItems = <Item>[];
+    for (final item in items) {
+      final product =
+          products.firstWhere((element) => element.id == item.productId);
+      groupedItems.add(toItem(item, product.name, product.code));
+    }
+    return groupedItems;
+  }
+
+  static Item toItem(ItemData item, String productName, int? code) {
     return Item(
-        id: item.id,
-        price: item.price,
-        quantity: item.quantity,
-        totalQuantity: item.totalQuantity,
-        status: item.status,
-        productId: item.productId,
-        requestId: item.requestId,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,);
+      id: item.id,
+      name: productName,
+      code: code,
+      price: item.price,
+      quantity: item.quantity,
+      totalQuantity: item.totalQuantity,
+      status: item.status,
+      productId: item.productId,
+      requestId: item.requestId,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    );
   }
 }

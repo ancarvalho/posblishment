@@ -1,12 +1,12 @@
-import "package:administration/src/domain/use_cases/get_bill_total.dart";
+import "package:administration/src/domain/use_cases/finalize_bill.dart";
 import "package:core/core.dart";
 import "package:flutter_triple/flutter_triple.dart";
 
-class PaymentStore extends StreamStore<Failure, BillTotal> {
-  PaymentStore( this._getBillTotal) : super(BillTotal.empty()) ;
+class PaymentStore extends StreamStore<Failure, int> {
+  PaymentStore(this._finalizeBill) : super(0);
 
-  final IGetBillTotal _getBillTotal;
+  final IFinalizeBill _finalizeBill;
 
-  Future<void> getBillTotal(String billID) async =>
-      executeEither(() => DartzEitherAdapter.adapter(_getBillTotal(billID)));
+  Future<void> finalizeBill(List<NewPayment> payments, String billID) async =>
+      executeEither(() => DartzEitherAdapter.adapter(_finalizeBill(payments, billID)));
 }

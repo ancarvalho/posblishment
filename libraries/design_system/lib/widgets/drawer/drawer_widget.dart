@@ -15,15 +15,17 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     return Drawer(
       child: Column(
         children: [
-          ...PagesRoutes.values.map(
-            (e) => TextButton(
-              onPressed: () {
-                Modular.to.navigate("${e.dependsOnModule.route}${e.route}");
-                Navigator.of(context).pop();
-              },
-              child: Text(e.name),
-            ),
-          )
+          ...PagesRoutes.values
+              .where((element) => element.standAlone == true)
+              .map(
+                (e) => TextButton(
+                  onPressed: () {
+                    Modular.to.navigate("${e.dependsOnModule.route}${e.route}");
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(e.name),
+                ),
+              )
         ],
       ),
     );

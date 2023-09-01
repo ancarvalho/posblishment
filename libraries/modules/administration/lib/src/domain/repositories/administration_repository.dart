@@ -6,13 +6,17 @@ abstract class AdministrationRepository {
 
   Future<Either<Failure, Bill>> createBill(NewBill bill);
   Future<Either<Failure, Request>> createRequest(
-      String billID, NewRequest request,);
+    String billID,
+    NewRequest request,
+  );
   Future<Either<Failure, List<Bill>>> getActiveBills();
   Future<Either<Failure, List<Bill>>> getLastPaidBills();
   Future<Either<Failure, Bill>> getBill(String id);
   Future<Either<Failure, Bill>> getBillByTable(int table);
   Future<Either<Failure, int>> finalizeBill(
-      List<Payment> payments, String billID,);
+    List<NewPayment> payments,
+    String billID,
+  );
   Future<Either<Failure, int>> cancelBill(String billID);
 
   Future<Either<Failure, List<BillType>>> getBillTypes();
@@ -31,4 +35,5 @@ abstract class AdministrationRepository {
 
   Future<Either<Failure, BillTotal>> getBillTotal(String billID);
   Future<Either<Failure, List<Item>>> getBillValidItems(String billID);
+  Future<Either<Failure,BillTotal>> getBillTotalWithPaidAmount(String billID);
 }

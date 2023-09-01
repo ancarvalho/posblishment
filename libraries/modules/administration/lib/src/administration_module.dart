@@ -18,7 +18,7 @@ import 'package:administration/src/presenter/pages/payment/payment_store.dart';
 import 'package:administration/src/presenter/stores/products/products_store.dart';
 import 'package:administration/src/presenter/widgets/bill_items/bill_items_store.dart';
 import 'package:administration/src/presenter/widgets/bill_requests/bill_requests_store.dart';
-import 'package:administration/src/presenter/widgets/bill_total/bill_total_store.dart';
+import 'package:administration/src/presenter/stores/bill/bill_total_store.dart';
 import 'package:administration/src/presenter/widgets/last_paid_bills/last_paid_bills_store.dart';
 import 'package:administration/src/presenter/widgets/last_requests/last_requests_store.dart';
 import 'package:administration/src/presenter/widgets/undelivered_requests/undelivered_requests_store.dart';

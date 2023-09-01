@@ -137,19 +137,20 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
+  @override
   Future<BillTotal> getBillTotalWithPaidAmount(String billID) async {
     try {
       //TODO Benchmark results
 
-      // late BillTotal billTotal;
-      // late double amountPaid;
-      // final v = await Future.wait([
-      //    getBillTotal(billID).then((value) => billTotal = value),
-      //   getTotalBillPayments(billID).then((value) => amountPaid = value)
-      // ]);
+      late BillTotal billTotal;
+      late double amountPaid;
+      await Future.wait([
+        getBillTotal(billID).then((value) => billTotal = value),
+        getTotalBillPayments(billID).then((value) => amountPaid = value)
+      ]);
 
-      final billTotal = await getBillTotal(billID);
-      final amountPaid = await getTotalBillPayments(billID);
+      // final billTotal = await getBillTotal(billID);
+      // final amountPaid = await getTotalBillPayments(billID);
 
       billTotal.payment = amountPaid;
 
@@ -183,14 +184,16 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
 
 // TODO COmplete Solution
   @override
-  Future<int> finalizeBill(List<Payment> payments, String billID) async {
+  Future<int> finalizeBill(List<NewPayment> payments, String billID) async {
     try {
       final billTotal = await getBillTotalWithPaidAmount(billID);
 
       await _internalDatabase.batch(
         (batch) => batch.insertAll(
-          _internalDatabase.item,
-          payments.map((e) => PaymentAdapter.createPayment(e, billID)),
+          _internalDatabase.payment,
+          Iterable.generate(payments.length,
+              (index) => PaymentAdapter.createPayment(payments[index], billID),),
+          mode: InsertMode.insertOrFail,
         ),
       );
 
@@ -297,7 +300,8 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     final bill = await (_internalDatabase.select(_internalDatabase.bill).join([
       leftOuterJoin(
         _internalDatabase.billType,
-        _internalDatabase.billType.id.equalsExp(_internalDatabase.bill.billTypeID),
+        _internalDatabase.billType.id
+            .equalsExp(_internalDatabase.bill.billTypeID),
       )
     ])
           ..where(_internalDatabase.bill.id.equals(billID)))
@@ -383,7 +387,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           .into(_internalDatabase.item)
           .insertReturning(ItemAdapter.createItem(item, product, requestID));
 
-      return ItemAdapter.toItem(createdItem);
+      return ItemAdapter.toItem(createdItem, product.name, product.code);
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -404,7 +408,11 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           _internalDatabase.request.id
               .equalsExp(_internalDatabase.item.requestId),
           useColumns: false,
-        )
+        ),
+        leftOuterJoin(
+            _internalDatabase.product,
+            _internalDatabase.product.id
+                .equalsExp(_internalDatabase.item.productId),)
       ])
                 ..where(
                   _internalDatabase.request.billId.equals(billID) &
@@ -417,9 +425,10 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
 
       final items =
           _query.map((e) => e.readTable(_internalDatabase.item)).toList();
+      final products =
+          _query.map((e) => e.readTable(_internalDatabase.product)).toList();
 
-      // TODO remove print(items);
-      return items.map(ItemAdapter.toItem).toList();
+      return ItemAdapter.toItems(items, products);
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -524,7 +533,11 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           _internalDatabase.item,
           _internalDatabase.item.requestId
               .equalsExp(_internalDatabase.request.id),
-        )
+        ),
+        leftOuterJoin(
+            _internalDatabase.product,
+            _internalDatabase.product.id
+                .equalsExp(_internalDatabase.item.productId),)
       ])
                 ..where(
                   _internalDatabase.item.status.isNotIn([
@@ -540,7 +553,10 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       final items =
           _query.map((e) => e.readTable(_internalDatabase.item)).toList();
 
-      return RequestAdapter.groupRequesWithItems(requests, items);
+      final products =
+          _query.map((e) => e.readTable(_internalDatabase.product)).toList();
+
+      return RequestAdapter.groupRequesWithItems(requests, items, products);
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -561,7 +577,11 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           _internalDatabase.item,
           _internalDatabase.item.requestId
               .equalsExp(_internalDatabase.request.id),
-        )
+        ),
+        leftOuterJoin(
+            _internalDatabase.product,
+            _internalDatabase.product.id
+                .equalsExp(_internalDatabase.item.productId),)
       ])
                 ..where(
                   _internalDatabase.request.billId.equals(billID) &
@@ -577,7 +597,10 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       final items =
           _query.map((e) => e.readTable(_internalDatabase.item)).toList();
 
-      return RequestAdapter.groupRequesWithItems(requests, items);
+      final products =
+          _query.map((e) => e.readTable(_internalDatabase.product)).toList();
+
+      return RequestAdapter.groupRequesWithItems(requests, items, products);
     } catch (e, s) {
       throw AdministrationError(
         s,

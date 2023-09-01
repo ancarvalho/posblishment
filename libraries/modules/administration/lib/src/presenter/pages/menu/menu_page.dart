@@ -1,5 +1,6 @@
 import 'package:administration/src/presenter/stores/products/products_store.dart';
 import 'package:core/core.dart';
+import 'package:design_system/design_system.dart';
 import 'package:design_system/widgets/drawer/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -36,13 +37,16 @@ class _MenuPageState extends State<MenuPage> {
         body: ScopedBuilder<ProductStore, Failure, List<Product>>(
           store: menuStore,
           onState: (context, state) {
-            return ListView.builder(
-              itemCount: state.length,
-              itemBuilder: (context, index) {
-                return MenuWidgetCard(
-                  product: state[index],
-                );
-              },
+            return Padding(
+              padding: Paddings.paddingLTRB4(),
+              child: ListView.builder(
+                itemCount: state.length,
+                itemBuilder: (context, index) {
+                  return MenuWidgetCard(
+                    product: state[index],
+                  );
+                },
+              ),
             );
           },
         ),

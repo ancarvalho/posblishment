@@ -28,8 +28,8 @@ class _BillPageState extends State<BillPage> with TickerProviderStateMixin {
           centerTitle: true,
           bottom: TabBar(
             controller: _tabController,
-            tabs: const [
-              Tab(icon: Icon(Icons.list_alt_outlined)),
+            tabs:const  [
+              Tab(icon: Icon(Icons.list_alt_outlined),),
               Tab(icon: Icon(Icons.line_style_sharp)),
             ],
           ),

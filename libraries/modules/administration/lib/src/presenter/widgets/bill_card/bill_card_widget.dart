@@ -19,6 +19,10 @@ class BillCardWidget extends StatelessWidget {
           arguments: bill.id,
         );
       },
+      onLongPress: () => Modular.to.pushNamed(
+          "${PagesRoutes.payment.dependsOnModule.route}${PagesRoutes.payment.route}",
+          arguments: bill.id,
+        ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(

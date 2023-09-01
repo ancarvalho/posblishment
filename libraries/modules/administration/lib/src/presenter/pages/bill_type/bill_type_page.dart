@@ -44,7 +44,7 @@ class _BillTypePageState extends State<BillTypePage> {
         ),
         //TODO insert a Grid builder based on width minimum of 200px
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+          padding: Paddings.paddingForm(),
           child: Form(
             key: billTypeController.formKey,
             child: Column(
@@ -73,7 +73,7 @@ class _BillTypePageState extends State<BillTypePage> {
                         ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: Paddings.paddingVertical8(),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

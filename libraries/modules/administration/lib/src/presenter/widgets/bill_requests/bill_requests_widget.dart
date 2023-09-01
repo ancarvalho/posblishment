@@ -46,13 +46,16 @@ class _BillRequestsWidgetState extends State<BillRequestsWidget> {
         onError: (context, error) =>
             AdministrationErrorWidget(error: error, reload: loadRequests),
         onState: (context, state) {
-          return ListView.builder(
-            itemCount: state.length,
-            itemBuilder: (context, index) {
-              return RequestCardWidget(
-                request: state[index],
-              );
-            },
+          return Padding(
+            padding: const EdgeInsets.all(8),
+            child: ListView.builder(
+              itemCount: state.length,
+              itemBuilder: (context, index) {
+                return RequestCardWidget(
+                  request: state[index],
+                );
+              },
+            ),
           );
         },
       ),

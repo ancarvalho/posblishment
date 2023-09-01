@@ -5,7 +5,9 @@ import "package:uuid/uuid.dart";
 
 class RequestAdapter {
   static Request fromRequestDataWithItems(
-      RequestData requestData, List<Item> items,) {
+    RequestData requestData,
+    List<Item> items,
+  ) {
     return Request(
       id: requestData.id,
       billId: requestData.billId,
@@ -28,22 +30,16 @@ class RequestAdapter {
     );
   }
 
-
-  static List<Request> groupRequesWithItems(
-    List<RequestData> requestData,
-    List<ItemData> items,
-  ) {
+  static List<Request> groupRequesWithItems(List<RequestData> requestData,
+      List<ItemData> items, List<ProductData> products,) {
     final requests = <Request>[];
 
     for (final r in requestData) {
-      final requestItems = items
-          .where((element) => element.requestId == r.id)
-          .map(
-            ItemAdapter.toItem,
-          )
-          .toList();
+      final requestItems =
+          items.where((element) => element.requestId == r.id).toList();
+      final itemsWithName = ItemAdapter.toItems(requestItems, products);
 
-      requests.add(fromRequestDataWithItems(r, requestItems));
+      requests.add(fromRequestDataWithItems(r, itemsWithName));
     }
 
     return requests;

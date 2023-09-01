@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class PaymentTextFieldWithButtons extends StatefulWidget {
-  const PaymentTextFieldWithButtons(
-      {super.key,
-      required this.textEditingController,
-      required this.addSubtotalRemaining,
-      required this.addHalfTotal,
-      required this.addTotalRemaining,
-      required this.addPaymentMethod,});
+  const PaymentTextFieldWithButtons({
+    super.key,
+    required this.textEditingController,
+    required this.addSubtotalRemaining,
+    required this.addHalfTotal,
+    required this.addTotalRemaining,
+    required this.addPaymentMethod,
+  });
   final TextEditingController textEditingController;
   final void Function() addSubtotalRemaining;
   final void Function() addHalfTotal;
@@ -36,9 +37,9 @@ class _PaymentTextFieldWithButtonsState
         ),
         TextButton(
           onPressed: widget.addHalfTotal,
-          child: const Text(
+          child: Text(
             "½",
-            style: TextStyle(fontSize: 32, color: Color.fromARGB(255, 0, 0, 0)),
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
         const SizedBox(
@@ -51,6 +52,7 @@ class _PaymentTextFieldWithButtonsState
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
+              CurrencyInputFormatter()
             ],
             decorationName: "Valor",
           ),

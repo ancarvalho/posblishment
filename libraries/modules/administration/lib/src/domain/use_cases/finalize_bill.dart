@@ -5,7 +5,7 @@ import 'package:dartz/dartz.dart';
 
 // ignore: one_member_abstracts
 abstract class IFinalizeBill {
-  Future<Either<Failure, int>> call(List<Payment> payments, String billID);
+  Future<Either<Failure, int>> call(List<NewPayment> payments, String billID);
 }
 
 class FinalizeBill implements IFinalizeBill {
@@ -14,7 +14,7 @@ class FinalizeBill implements IFinalizeBill {
   FinalizeBill(this.repository);
 
   @override
-  Future<Either<Failure, int>> call(List<Payment> payments, String billID) async {
+  Future<Either<Failure, int>> call(List<NewPayment> payments, String billID) async {
     return repository.finalizeBill(payments, billID);
   }
 }

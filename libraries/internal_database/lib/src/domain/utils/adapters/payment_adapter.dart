@@ -3,7 +3,7 @@ import 'package:internal_database/src/domain/db/sqlite.dart';
 import "package:uuid/uuid.dart";
 
 class PaymentAdapter {
-  static PaymentData createPayment(Payment payment, String billID) {
+  static PaymentData createPayment(NewPayment payment, String billID) {
     return PaymentData(
       id: const Uuid().v4(),
       paymentType: payment.paymentType,
@@ -11,6 +11,15 @@ class PaymentAdapter {
       billId: billID,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+    );
+  }
+
+  static PaymentCompanion createPaymentCompanion(
+      NewPayment payment, String billID,) {
+    return PaymentCompanion.insert(
+      paymentType: payment.paymentType,
+      value: payment.value,
+      billId: billID,
     );
   }
 

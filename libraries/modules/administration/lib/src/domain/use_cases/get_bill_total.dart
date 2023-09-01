@@ -14,6 +14,6 @@ class GetBillTotal implements IGetBillTotal {
 
   @override
   Future<Either<Failure, BillTotal>> call(String billID) async {
-    return repository.getBillTotal(billID);
+    return repository.getBillTotalWithPaidAmount(billID);
   }
 }
