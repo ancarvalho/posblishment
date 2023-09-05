@@ -58,6 +58,12 @@ class _OrderSheetPageState extends State<OrderSheetPage> {
         appBar: AppBar(
           title: const Text("Comanda Virtual"),
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: _orderSheetStore.clearRequest,
+              icon: const Icon(Icons.clear),
+            )
+          ],
         ),
         body: ScopedBuilder<ProductStore, Failure, List<Product>>(
           store: _productStore,
@@ -110,7 +116,7 @@ class _OrderSheetPageState extends State<OrderSheetPage> {
                   ),
                   OrderSheetItemWidget(
                       item: NewItem.empty(),
-                      addItem: _orderSheetStore.insertItemONRequest),
+                      addItem: _orderSheetStore.insertItemONRequest,),
                   // ..._orderSheetStore.state.items
                   //     .asMap()
                   //     .entries

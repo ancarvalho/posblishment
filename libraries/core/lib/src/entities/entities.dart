@@ -7,3 +7,4 @@ export 'payment.dart';
 export 'product.dart';
 export 'product_variation.dart';
 export 'request.dart';
+export 'request_item.dart';

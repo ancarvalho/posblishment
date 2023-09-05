@@ -6,7 +6,7 @@ import "package:uuid/uuid.dart";
 class RequestAdapter {
   static Request fromRequestDataWithItems(
     RequestData requestData,
-    List<Item> items,
+    List<MinimizedItem> items,
   ) {
     return Request(
       id: requestData.id,
@@ -30,14 +30,43 @@ class RequestAdapter {
     );
   }
 
-  static List<Request> groupRequesWithItems(List<RequestData> requestData,
-      List<ItemData> items, List<ProductData> products,) {
+  static List<Request> transformToRequest(List<RequestItem> requestItems) {
+    var map = <String, Request>{};
+
+    for (final element in requestItems) {
+      if (map.containsKey(element.id)) {
+        map[element.id]
+            ?.items!
+            .add(MinimizedItem(name: element.name, quantity: element.quantity));
+      } else {
+        map[element.id] = Request(
+          id: element.id,
+          status: RequestStatus.values.elementAt(element.status),
+          billId: element.billID,
+          observation: element.observation,
+          items: [
+            MinimizedItem(name: element.name, quantity: element.quantity)
+          ],
+          updatedAt: element.updatedAt,
+          createdAt: element.createdAt,
+        );
+      }
+    }
+    return map.values.toList();
+  }
+
+  static List<Request> groupRequesWithItems(
+    List<RequestData> requestData,
+    List<ItemData> items,
+    List<ProductData> products,
+  ) {
     final requests = <Request>[];
 
     for (final r in requestData) {
       final requestItems =
           items.where((element) => element.requestId == r.id).toList();
-      final itemsWithName = ItemAdapter.toItems(requestItems, products);
+      final itemsWithName =
+          ItemAdapter.toMinimalizedItems(requestItems, products);
 
       requests.add(fromRequestDataWithItems(r, itemsWithName));
     }

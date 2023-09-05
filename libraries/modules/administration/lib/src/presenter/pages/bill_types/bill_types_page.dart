@@ -63,7 +63,7 @@ class _BillTypesPageState extends State<BillTypesPage> {
                           child: SizedBox(
                             height: Sizes.height(context) / 10,
                             child: Padding(
-                              padding: Paddings.paddingLTRB4(),
+                              padding: Paddings.paddingLTRB8(),
                               child: Stack(
                                 alignment: AlignmentDirectional.center,
                                 children: [

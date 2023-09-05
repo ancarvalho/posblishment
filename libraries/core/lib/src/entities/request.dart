@@ -3,12 +3,12 @@ import '../../core.dart';
 class Request {
   final String id;
   final String? observation;
-  final List<Item>? items;
+  List<MinimizedItem>? items;
   final RequestStatus status;
   final String billId;
   final DateTime createdAt;
   final DateTime? updatedAt;
-  const Request({
+   Request({
     required this.id,
     this.observation,
     this.items,

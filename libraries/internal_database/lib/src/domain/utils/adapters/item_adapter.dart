@@ -17,6 +17,17 @@ class ItemAdapter {
     );
   }
 
+  static List<MinimizedItem> toMinimalizedItems(
+      List<ItemData> items, List<ProductData> products,) {
+    final groupedItems = <MinimizedItem>[];
+    for (final item in items) {
+      final product =
+          products.firstWhere((element) => element.id == item.productId);
+      groupedItems.add(toMinimalizedItem(item, product.name, product.code));
+    }
+    return groupedItems;
+  }
+
   static List<Item> toItems(List<ItemData> items, List<ProductData> products) {
     final groupedItems = <Item>[];
     for (final item in items) {
@@ -25,6 +36,11 @@ class ItemAdapter {
       groupedItems.add(toItem(item, product.name, product.code));
     }
     return groupedItems;
+  }
+
+  static MinimizedItem toMinimalizedItem(
+      ItemData item, String productName, int? code,) {
+    return MinimizedItem(name: productName, quantity: item.quantity);
   }
 
   static Item toItem(ItemData item, String productName, int? code) {

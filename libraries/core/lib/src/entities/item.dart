@@ -41,3 +41,13 @@ class NewItem {
 
   factory NewItem.empty() => NewItem(quantity: 1, productId: "");
 }
+
+class MinimizedItem {
+  final String name;
+  final int quantity;
+
+  MinimizedItem({
+    required this.name,
+    required this.quantity,
+  });
+}

@@ -41,12 +41,13 @@ class BillItemsWidgetState extends State<BillItemsWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ScopedBuilder<BillItemsStore, Failure, List<Item>>(
-          store: billItemsStore,
-          onLoading: (context) => const LoadingWidget(),
-          onError: (context, error) =>
-              AdministrationErrorWidget(error: error, reload: reload),
-          onState: (context, items) {
-            return LayoutBuilder(builder:
+        store: billItemsStore,
+        onLoading: (context) => const LoadingWidget(),
+        onError: (context, error) =>
+            AdministrationErrorWidget(error: error, reload: reload),
+        onState: (context, items) {
+          return LayoutBuilder(
+            builder:
                 (BuildContext context, BoxConstraints viewportConstraints) {
               return SingleChildScrollView(
                 child: ConstrainedBox(
@@ -83,19 +84,25 @@ class BillItemsWidgetState extends State<BillItemsWidget> {
                                 const TableRow(
                                   children: <Widget>[
                                     Text("Cd", style: TextStyle(fontSize: 16)),
-                                    Text("Nome",
-                                        style: TextStyle(fontSize: 16),),
+                                    Text(
+                                      "Nome",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
                                     Text("Qt", style: TextStyle(fontSize: 16)),
-                                    Text("Preço",
-                                        style: TextStyle(fontSize: 16),),
+                                    Text(
+                                      "Preço",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
                                     Text("", style: TextStyle(fontSize: 16)),
                                   ],
                                 ),
-                                ...items.map((e) => billItemWidget(
-                                      billId: widget.billID,
-                                      context: context,
-                                      item: e,
-                                    ),),
+                                ...items.map(
+                                  (e) => billItemWidget(
+                                    billId: widget.billID,
+                                    context: context,
+                                    item: e,
+                                  ),
+                                ),
                                 const TableRow(
                                   children: [
                                     Text(""),
@@ -120,28 +127,11 @@ class BillItemsWidgetState extends State<BillItemsWidget> {
                   ),
                 ),
               );
-            },);
-          },
-          // return Column(
+            },
+          );
+        },
 
-          //   children: [
-
-          //     Flexible(
-          //       child: ListView.builder(
-          //         itemCount: items.length,
-          //         itemBuilder: (context, index) {
-
-          //           return BillItemWidget(item: items[index]);
-          //         },
-          //       ),
-          //     ),
-          //     BillTotalWidget(
-          //       billID: widget.billID,
-          //     )
-          //   ],
-          // );
-          // ]
-          ),
+      ),
     );
   }
 

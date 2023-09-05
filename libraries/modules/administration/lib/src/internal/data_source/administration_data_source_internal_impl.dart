@@ -42,56 +42,6 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
-  // Handle bill Insertion (create or update bill)
-
-  // Future<BillData?> checkBillExist(NewBill newBill) async {
-  //   try {
-  //     return (_internalDatabase.select(_internalDatabase.bill)
-  //           ..where(
-  //             (tbl) =>
-  //                 tbl.status.isIn([
-  //                   BillStatus.open.index,
-  //                   BillStatus.closed.index,
-  //                   BillStatus.partiallyPaid.index,
-  //                 ]) &
-  //                 (tbl.table.equals(newBill.table!) |
-  //                     tbl.customerName.equals(
-  //                       newBill.customerName!,
-  //                     )), // TODO somehow request one to be required
-  //           ))
-  //         .getSingleOrNull();
-  //   } catch (e, s) {
-  //     throw AdministrationError(
-  //       s,
-  //       "InternalDatabase-Administration-checkBillExist",
-  //       e,
-  //       e.toString(),
-  //     );
-  //   }
-  // }
-
-  // @override
-  // Future<Request> handleBillCreationOrUpdate(
-  //   NewBill newBill,
-  //   NewRequest newRequest,
-  // ) async {
-  //   try {
-  //     final bill = await checkBillExist(newBill);
-  //     if (bill != null) {
-  //       return createBill(newBill, newRequest);
-  //     } else {
-  //       return createRequest(newRequest, bill!.id);
-  //     }
-  //   } catch (e, s) {
-  //     throw AdministrationError(
-  //       s,
-  //       "InternalDatabase-Administration-handleBillCreationOrUpdate",
-  //       e,
-  //       e.toString(),
-  //     );
-  //   }
-  // }
-
   @override
   Future<int> cancelBill(String id) {
     try {
@@ -140,8 +90,6 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   @override
   Future<BillTotal> getBillTotalWithPaidAmount(String billID) async {
     try {
-      //TODO Benchmark results
-
       late BillTotal billTotal;
       late double amountPaid;
       await Future.wait([
@@ -405,38 +353,87 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
+  Future<List<Item>> getBillValidItemsQuery(String billID) async {
+    var q = _internalDatabase
+        .customSelect(
+          "SELECT i.id as id, p.code as code, p.name as name, SUM(i.quantity) as quantity, i.total_quantity as total_quantity, i.price as price, i.status as status, i.request_id as request_id, i.product_id as product_id, i.created_at as created_at, i.updated_at as updated_at "
+          "FROM item i "
+          "LEFT JOIN product p ON p.id = i.product_id "
+          "LEFT JOIN request r ON r.id = i.request_id "
+          "WHERE r.bill_id = ? AND i.status IN (0, 1) AND r.status IN (0, 1) "
+          "GROUP BY i.product_id "
+         
+          ,
+          variables: [
+            Variable.withString(billID),
+            // Variable.withBlob(
+            //   Uint8List.fromList([
+            //     ItemStatus.preparing.index,
+            //     ItemStatus.delivered.index,
+            //   ]),
+            // )
+          ],
+          readsFrom: {
+            _internalDatabase.product,
+            _internalDatabase.item,
+          },
+        )
+        .get()
+        .then((value) {
+          return value
+              .map(
+                (row) => Item(
+                  id: row.read<String>("id"),
+                  code: row.read<int?>("code"),
+                  name: row.read<String>("name"),
+                  price: row.read<double>("price"),
+                  quantity: row.read<int>("quantity"),
+                  totalQuantity: row.read<int>("total_quantity"),
+                  status: ItemStatus.values.elementAt(row.read<int>("status")),
+                  productId: row.read<String>("product_id"),
+                  requestId: row.read<String>("request_id"),
+                  createdAt: row.read<DateTime>("created_at"),
+                  updatedAt: row.read<DateTime?>("updated_at"),
+                ),
+              )
+              .toList();
+        });
+    return q;
+  }
+
   @override
   Future<List<Item>> getBillValidItems(String billID) async {
     try {
-      final _query =
-          await (_internalDatabase.select(_internalDatabase.item).join([
-        innerJoin(
-          _internalDatabase.request,
-          _internalDatabase.request.id
-              .equalsExp(_internalDatabase.item.requestId),
-          useColumns: false,
-        ),
-        leftOuterJoin(
-          _internalDatabase.product,
-          _internalDatabase.product.id
-              .equalsExp(_internalDatabase.item.productId),
-        )
-      ])
-                ..where(
-                  _internalDatabase.request.billId.equals(billID) &
-                      _internalDatabase.item.status.isIn([
-                        ItemStatus.preparing.index,
-                        ItemStatus.delivered.index,
-                      ]),
-                ))
-              .get();
+      return getBillValidItemsQuery(billID);
+      // final _query =
+      //     await (_internalDatabase.select(_internalDatabase.item).join([
+      //   innerJoin(
+      //     _internalDatabase.request,
+      //     _internalDatabase.request.id
+      //         .equalsExp(_internalDatabase.item.requestId),
+      //     useColumns: false,
+      //   ),
+      //   leftOuterJoin(
+      //     _internalDatabase.product,
+      //     _internalDatabase.product.id
+      //         .equalsExp(_internalDatabase.item.productId),
+      //   )
+      // ])
+      //           ..where(
+      //             _internalDatabase.request.billId.equals(billID) &
+      //                 _internalDatabase.item.status.isIn([
+      //                   ItemStatus.preparing.index,
+      //                   ItemStatus.delivered.index,
+      //                 ]),
+      //           ))
+      //         .get();
 
-      final items =
-          _query.map((e) => e.readTable(_internalDatabase.item)).toList();
-      final products =
-          _query.map((e) => e.readTable(_internalDatabase.product)).toList();
+      // final items =
+      //     _query.map((e) => e.readTable(_internalDatabase.item)).toList();
+      // final products =
+      //     _query.map((e) => e.readTable(_internalDatabase.product)).toList();
 
-      return ItemAdapter.toItems(items, products);
+      // return ItemAdapter.toItems(items, products);
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -521,7 +518,12 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
         request.items.map((e) => createItem(e, req.id)).toList(),
       );
 
-      return RequestAdapter.fromRequestDataWithItems(req, items);
+      return RequestAdapter.fromRequestDataWithItems(
+        req,
+        items
+            .map((e) => MinimizedItem(name: e.name, quantity: e.quantity))
+            .toList(),
+      );
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -535,37 +537,48 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   @override
   Future<List<Request>> getLastRequests() async {
     try {
-      final _query =
-          await (_internalDatabase.select(_internalDatabase.request).join([
-        leftOuterJoin(
-          _internalDatabase.item,
-          _internalDatabase.item.requestId
-              .equalsExp(_internalDatabase.request.id),
-        ),
-        leftOuterJoin(
-          _internalDatabase.product,
-          _internalDatabase.product.id
-              .equalsExp(_internalDatabase.item.productId),
-        )
-      ])
-                ..where(
-                  _internalDatabase.item.status.isNotIn([
-                        ItemStatus.canceled.index,
-                      ]) &
-                      _internalDatabase.request.status
-                          .isNotIn([RequestStatus.canceled.index]),
-                ))
-              .get();
+      var requestItems = await _internalDatabase
+          .customSelect(
+            "SELECT r.id as id, p.name as name, i.quantity as quantity, r.observation as observation, r.status as status, r.created_at as created_at, r.updated_at as updated_at, r.bill_id as bill_id "
+            "FROM request r "
+            "LEFT JOIN item i ON i.request_id = r.id "
+            "LEFT JOIN product p ON p.id = i.product_id "
+            "WHERE i.status IN (0, 1) "
+            "ORDER BY r.created_at DESC "
+            "Limit 10",
+            // variables: [
+            // Variable.withBlob(
+            //   Uint8List.fromList([
+            //     ItemStatus.preparing.index,
+            //     ItemStatus.delivered.index,
+            //   ]),
+            // )
+            // ],
+            readsFrom: {
+              _internalDatabase.product,
+              _internalDatabase.item,
+              _internalDatabase.request
+            },
+          )
+          .get()
+          .then((value) {
+            return value
+                .map(
+                  (row) => RequestItem(
+                    id: row.read<String>("id"),
+                    name: row.read<String>("name"),
+                    observation: row.read<String>("observation"),
+                    quantity: row.read<int>("quantity"),
+                    status: row.read<int>("status"),
+                    billID: row.read<String>("bill_id"),
+                    createdAt: row.read<DateTime>("created_at"),
+                    updatedAt: row.read<DateTime?>("updated_at"),
+                  ),
+                )
+                .toList();
+          });
 
-      final requests =
-          _query.map((e) => e.readTable(_internalDatabase.request)).toList();
-      final items =
-          _query.map((e) => e.readTable(_internalDatabase.item)).toList();
-
-      final products =
-          _query.map((e) => e.readTable(_internalDatabase.product)).toList();
-
-      return RequestAdapter.groupRequesWithItems(requests, items, products);
+      return RequestAdapter.transformToRequest(requestItems);
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -576,51 +589,64 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
-  // TODO
-  @override
-  Future<List<Request>> getBillValidRequests(String billID) async {
+  Future<List<RequestItem>> getBillValidRequestsQuery(String billID) async {
+    // TODO fix array in
     try {
-      final _query =
-          await (_internalDatabase.select(_internalDatabase.request).join([
-        leftOuterJoin(
-          _internalDatabase.item,
-          _internalDatabase.item.requestId
-              .equalsExp(_internalDatabase.request.id),
-        ),
-        leftOuterJoin(
-          _internalDatabase.product,
-          _internalDatabase.product.id
-              .equalsExp(_internalDatabase.item.productId),
-        )
-      ])
-                ..where(
-                  _internalDatabase.request.billId.equals(billID) &
-                      _internalDatabase.item.status.isIn([
-                        ItemStatus.preparing.index,
-                        ItemStatus.delivered.index,
-                      ]),
-                ))
-              .get();
-
-      final requests =
-          _query.map((e) => e.readTable(_internalDatabase.request)).toList();
-      final items =
-          _query.map((e) => e.readTable(_internalDatabase.item)).toList();
-
-      final products =
-          _query.map((e) => e.readTable(_internalDatabase.product)).toList();
-
-      return RequestAdapter.groupRequesWithItems(requests, items, products);
+      var q = _internalDatabase
+          .customSelect(
+            "SELECT r.id as id, p.name as name, i.quantity as quantity, r.observation as observation, r.status as status, r.created_at as created_at, r.updated_at as updated_at, r.bill_id as bill_id "
+            "FROM request r "
+            "LEFT JOIN item i ON i.request_id = r.id "
+            "LEFT JOIN product p ON p.id = i.product_id "
+            "WHERE r.bill_id = ? AND i.status IN (0, 1)",
+            variables: [
+              Variable.withString(billID),
+              // Variable.withBlob(
+              //   Uint8List.fromList([
+              //     ItemStatus.preparing.index,
+              //     ItemStatus.delivered.index,
+              //   ]),
+              // )
+            ],
+            readsFrom: {
+              _internalDatabase.product,
+              _internalDatabase.item,
+              _internalDatabase.request
+            },
+          )
+          .get()
+          .then((value) {
+            return value
+                .map(
+                  (row) => RequestItem(
+                    id: row.read<String>("id"),
+                    name: row.read<String>("name"),
+                    observation: row.read<String>("observation"),
+                    quantity: row.read<int>("quantity"),
+                    status: row.read<int>("status"),
+                    billID: row.read<String>("bill_id"),
+                    createdAt: row.read<DateTime>("created_at"),
+                    updatedAt: row.read<DateTime?>("updated_at"),
+                  ),
+                )
+                .toList();
+          });
+      return q;
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-getBillValidRequests",
+        "InternalDatabase-Administration-getBillValidRequestsQuery",
         e,
         e.toString(),
       );
     }
   }
 
+  @override
+  Future<List<Request>> getBillValidRequests(String billID) async {
+    var requestItem = await getBillValidRequestsQuery(billID);
+    return RequestAdapter.transformToRequest(requestItem);
+  }
   // Products
 
   Future<Product> getProduct(String productID) {

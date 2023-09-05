@@ -1,7 +1,6 @@
 import 'package:administration/src/presenter/widgets/last_paid_bills/last_paid_bills_store.dart';
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
-import 'package:design_system/widgets/drawer/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';

@@ -1,5 +1,7 @@
+// ignore_for_file: constant_identifier_names, non_constant_identifier_names
+
 class Commands {
-  static final int LF = 0x0A;
+  static const int LF = 0x0A;
 
   static final List<int> RESET_PRINTER = [0x1B, 0x40];
 
@@ -44,17 +46,17 @@ class Commands {
   static final List<int> TEXT_COLOR_REVERSE_OFF = [0x1D, 0x42, 0x00];
   static final List<int> TEXT_COLOR_REVERSE_ON = [0x1D, 0x42, 0x01];
 
-  static final int BARCODE_TYPE_UPCA = 65;
-  static final int BARCODE_TYPE_UPCE = 66;
-  static final int BARCODE_TYPE_EAN13 = 67;
-  static final int BARCODE_TYPE_EAN8 = 68;
-  static final int BARCODE_TYPE_ITF = 70;
-  static final int BARCODE_TYPE_128 = 73;
+  static const int BARCODE_TYPE_UPCA = 65;
+  static const int BARCODE_TYPE_UPCE = 66;
+  static const int BARCODE_TYPE_EAN13 = 67;
+  static const int BARCODE_TYPE_EAN8 = 68;
+  static const int BARCODE_TYPE_ITF = 70;
+  static const int BARCODE_TYPE_128 = 73;
 
-  static final int BARCODE_TEXT_POSITION_NONE = 0;
-  static final int BARCODE_TEXT_POSITION_ABOVE = 1;
-  static final int BARCODE_TEXT_POSITION_BELOW = 2;
+  static const int BARCODE_TEXT_POSITION_NONE = 0;
+  static const int BARCODE_TEXT_POSITION_ABOVE = 1;
+  static const int BARCODE_TEXT_POSITION_BELOW = 2;
 
-  static final int QRCODE_1 = 49;
-  static final int QRCODE_2 = 50;
+  static const int QRCODE_1 = 49;
+  static const int QRCODE_2 = 50;
 }

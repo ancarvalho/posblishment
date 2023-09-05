@@ -7,6 +7,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../widgets/menu_card/menu_card_widget.dart';
+import '../../widgets/search/search_engine.dart';
 
 // Menu alternative would be create items with image in grid square style
 class MenuPage extends StatefulWidget {
@@ -33,6 +34,14 @@ class _MenuPageState extends State<MenuPage> {
         appBar: AppBar(
           title: const Text("Menu"),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                showSearch(context: context, delegate: SearchEngine());
+              },
+            ),
+          ],
         ),
         body: ScopedBuilder<ProductStore, Failure, List<Product>>(
           store: menuStore,

@@ -26,7 +26,7 @@ class TCPConnection extends DeviceConnection {
 
     try {
       this._socket = await Socket.connect(this.address, this.port,
-          timeout: Duration(seconds: this.timeout));
+          timeout: Duration(seconds: this.timeout),);
     } catch (e, s) {
       throw PrinterError(
         s,

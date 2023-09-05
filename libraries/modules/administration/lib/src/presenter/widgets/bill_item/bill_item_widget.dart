@@ -36,10 +36,10 @@ TableRow billItemWidget({
     children: <Widget>[
        Text(item.code.toString(), style: const TextStyle(fontSize: 16)),
       Text(item.name, style: const TextStyle(fontSize: 18)),
-      Text("${item.totalQuantity}", style: const TextStyle(fontSize: 16)),
+      Text("${item.quantity}", style: const TextStyle(fontSize: 16)),
       Text(
           CurrencyInputFormatter.formatRealCurrency(
-              item.price * item.totalQuantity,),
+              item.price * item.quantity,),
           style: const TextStyle(fontSize: 16),),
       Container(
         margin: const EdgeInsets.only(left: 5, bottom: 5, top: 5),
