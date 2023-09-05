@@ -14,9 +14,14 @@ class OrderSheetItemController extends Disposable {
 
   OrderSheetItemController();
 
-  void resetFields() {
+  void resetFields(NewItem item) {
+    itemCodeController.text = item.code != null ? item.code.toString() : "";
+    itemQuantityController.text = item.quantity.toString();
+  }
+
+  void clearFields() {
     itemCodeController.clear();
-    itemQuantityController.clear();
+    itemQuantityController.text = "1";
   }
 
   void increaseQuantity() {
@@ -31,16 +36,21 @@ class OrderSheetItemController extends Disposable {
     }
   }
 
-  String getProductByCode(int code) {
-    return _productStore.state.firstWhere((element) => element.code == code).id;
+  String? getProductByCode(int code) {
+    final index =
+        _productStore.state.indexWhere((element) => element.code == code);
+    if (index != -1) {
+      return _productStore.state.elementAt(index).id;
+    }
+    return null;
   }
 
   NewItem? transformToItem() {
     final code = int.tryParse(itemCodeController.text);
-    if (formKey.currentState!.validate() && code != null) {
-      
+    final productID = code != null ? getProductByCode(code) : null;
+    if (formKey.currentState!.validate() && code != null && productID != null) {
       return NewItem(
-        productId: getProductByCode(code),
+        productId: productID,
         code: int.parse(itemCodeController.text),
         quantity: int.parse(itemQuantityController.text),
       );

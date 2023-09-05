@@ -15,8 +15,8 @@ class OrderSheetItemWidget extends StatefulWidget {
     this.removeItem,
     this.increaseORdecrease,
   });
-  final NewItem item;
 
+  final NewItem item;
   final void Function(NewItem? item)? addItem;
   final Function(int index)? removeItem;
   final void Function(IncreaseORDecrease e, int index)? increaseORdecrease;
@@ -30,6 +30,13 @@ class _OrderSheetItemWidgetState extends State<OrderSheetItemWidget> {
   final orderSheetItemController = OrderSheetItemController();
 
   @override
+  void initState() {
+    orderSheetItemController.resetFields(widget.item);
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
       key: orderSheetItemController.formKey,
@@ -39,6 +46,13 @@ class _OrderSheetItemWidgetState extends State<OrderSheetItemWidget> {
           SizedBox(
             width: 60,
             child: CustomTextFormField(
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (state) {
+                if (widget.index == null) {
+                  widget.addItem!(orderSheetItemController.transformToItem());
+                  orderSheetItemController.clearFields();
+                }
+              },
               controller: orderSheetItemController.itemCodeController,
               decorationName: "Código",
               keyboardType: TextInputType.number,
@@ -74,10 +88,13 @@ class _OrderSheetItemWidgetState extends State<OrderSheetItemWidget> {
               children: [
                 TextButton(
                   onPressed: widget.index != null
-                      ? () => widget.increaseORdecrease!(
+                      ? () {
+                          widget.increaseORdecrease!(
                             IncreaseORDecrease.increase,
                             widget.index!,
-                          )
+                          );
+                         
+                        }
                       : orderSheetItemController.increaseQuantity,
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
@@ -94,13 +111,16 @@ class _OrderSheetItemWidgetState extends State<OrderSheetItemWidget> {
                 TextButton(
                   onPressed: widget.index != null
                       ? () => widget.increaseORdecrease!(
-                          IncreaseORDecrease.decrease, widget.index!,)
+                            IncreaseORDecrease.decrease,
+                            widget.index!,
+                          )
                       : orderSheetItemController.decreaseQuantity,
                   style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(30, 30),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      alignment: Alignment.centerLeft,),
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(30, 30),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    alignment: Alignment.centerLeft,
+                  ),
                   child: const Icon(
                     Icons.keyboard_arrow_down,
                     size: 30,
@@ -120,7 +140,7 @@ class _OrderSheetItemWidgetState extends State<OrderSheetItemWidget> {
                   : () {
                       widget
                           .addItem!(orderSheetItemController.transformToItem());
-                      orderSheetItemController.resetFields();
+                      orderSheetItemController.clearFields();
                     },
               icon: widget.index != null
                   ? const Icon(Icons.remove)

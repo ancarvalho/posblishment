@@ -2,9 +2,12 @@
 import 'package:administration/src/domain/errors/administration_errors.dart';
 import "package:core/core.dart";
 import 'package:dartz/dartz.dart';
+import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../domain/utils/bill_types_formatter.dart';
+import '../../../domain/utils/format_bill_type_value.dart';
 import 'bill_type_store.dart';
 
 class BillTypeController extends Disposable {
@@ -27,7 +30,11 @@ class BillTypeController extends Disposable {
     nameTextController.text = type?.name ?? "";
     // iconTextController.text = type?.icon ?? "";
     defaultType.value = false;
-    valueTextController.text = type?.value.toString() ?? "";
+    valueTextController.text = type?.value == null
+        ? ""
+        : type?.type != null
+            ? formatBillTypeValue(type!.type, type.value!)
+            : "";
     billType.value = type?.type ?? BillTypes.percentageTax;
   }
 

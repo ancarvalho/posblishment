@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 class PercentageBillTypeValue extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue,) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     if (newValue.selection.baseOffset == 0) {
       return newValue;
     }
@@ -25,5 +27,13 @@ class PercentageBillTypeValue extends TextInputFormatter {
       text: newText,
       selection: TextSelection.collapsed(offset: newText.length),
     );
+  }
+
+  static String? formatToPercentage(double? value) {
+    if (value != null) {
+      return "${value.toInt()}%";
+    }
+    return null;
+
   }
 }

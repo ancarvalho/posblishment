@@ -1,12 +1,93 @@
-import "package:administration/src/domain/use_cases/create_or_update_bill.dart";
 import "package:core/core.dart";
+import "package:flutter/widgets.dart";
 import "package:flutter_triple/flutter_triple.dart";
 
-class OrderSheetStore extends StreamStore<Failure, Request> {
-  OrderSheetStore( this._createOrUpdateBill) : super(Request.empty()) ;
+import "../../../domain/errors/administration_errors.dart";
+import "../../../domain/utils/utils.dart";
+import "make_request_store.dart";
 
-  final ICreateOrUpdateBill _createOrUpdateBill;
+class OrderSheetStore extends NotifierStore<Failure, NewRequest> {
+  OrderSheetStore(this._makeRequestStore) : super(NewRequest.empty());
+  NewRequest get requests => state;
 
-  Future<void> createOrUpdateBill(NewBill bill, NewRequest request) async =>
-      executeEither(() => DartzEitherAdapter.adapter(_createOrUpdateBill(bill, request)));
+  final MakeRequestStore _makeRequestStore;
+
+  final tableTextController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  void insertItemONRequest(NewItem? item) {
+    if (item != null) {
+      setLoading(true);
+      state.items.add(item);
+      return setLoading(false);
+    }
+    return setError(
+      AdministrationError(
+        StackTrace.current,
+        "AdministrationModule-orderSheet-insertItemONRequest",
+        "",
+        "Item does not exist in menu",
+      ),
+    );
+  }
+
+  Future<void> saveChanges() async {
+    if (formKey.currentState!.validate() &&
+        int.tryParse(tableTextController.text) != null &&
+        state.items.isNotEmpty) {
+      await createOrUpdateBill();
+      return;
+    }
+    setError(
+      AdministrationError(
+        StackTrace.current,
+        "AdministrationModule-orderSheetSaveChanges",
+        "",
+        "Error Validating",
+      ),
+    );
+  }
+
+  Future<void> createOrUpdateBill() async {
+    await _makeRequestStore.createOrUpdateBill(
+      NewBill(table: int.tryParse(tableTextController.text)),
+      state,
+    );
+  }
+
+  void removeItemInRequests(int index) {
+    setLoading(true);
+    state.items.removeAt(index);
+    setLoading(false);
+  }
+
+  void increaseOrDecreaseQuantity(IncreaseORDecrease e, int index) {
+    switch (e) {
+      case IncreaseORDecrease.increase:
+        increaseItemQuantity(index);
+        break;
+      case IncreaseORDecrease.decrease:
+        decreaseItemQuantity(index);
+        break;
+    }
+  }
+
+  void increaseItemQuantity(int index) {
+    setLoading(true);
+    state.items[index].quantity++;
+    setLoading(false);
+  }
+
+  void decreaseItemQuantity(int index) {
+    setLoading(true);
+    if (state.items[index].quantity > 1) state.items[index].quantity--;
+    setLoading(false);
+  }
+
+  void clearRequest() {
+    setLoading(true);
+    update(NewRequest.empty());
+    tableTextController.text = "";
+    setLoading(false);
+  }
 }

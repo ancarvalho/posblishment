@@ -1,4 +1,4 @@
-import 'package:administration/src/presenter/pages/order_sheet/order_sheet_controller.dart';
+import 'package:administration/src/presenter/pages/order_sheet/make_request_store.dart';
 import 'package:administration/src/presenter/pages/order_sheet/order_sheet_store.dart';
 import 'package:administration/src/presenter/stores/products/products_store.dart';
 import 'package:administration/src/presenter/widgets/order_sheet_item/order_sheet_item_widget.dart';
@@ -18,27 +18,33 @@ class OrderSheetPage extends StatefulWidget {
 }
 
 class _OrderSheetPageState extends State<OrderSheetPage> {
-  final _orderSheetController = OrderSheetController();
+  // final _orderSheetStore = OrderSheetController();
 
   final ProductStore _productStore = Modular.get<ProductStore>();
+  final MakeRequestStore _makeRequestStore = Modular.get<MakeRequestStore>();
   final OrderSheetStore _orderSheetStore = Modular.get<OrderSheetStore>();
 
   late Disposer _orderStoreListener;
+  late Disposer _requestStoreListener;
 
   @override
   void initState() {
     // Solution For now
-    _orderStoreListener = _orderSheetStore.observer(
+    _requestStoreListener = _makeRequestStore.observer(
       onError: (error) {
         displayMessageOnSnackbar(context, error.errorMessage);
       },
       onState: (req) {
-        _orderSheetController.clearRequest();
+        _orderSheetStore.clearRequest();
       },
     );
-    _orderSheetController.addListener(() {
-      setState(() {});
-    });
+
+    _orderStoreListener = _orderSheetStore.observer(
+      onError: (error) {
+        displayMessageOnSnackbar(context, error.errorMessage);
+      },
+      onLoading: (loading) => setState(() {}),
+    );
 
     _productStore.getAllProducts();
     super.initState();
@@ -60,7 +66,7 @@ class _OrderSheetPageState extends State<OrderSheetPage> {
               child: Column(
                 children: [
                   Form(
-                    key: _orderSheetController.formKey,
+                    key: _orderSheetStore.formKey,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -68,8 +74,7 @@ class _OrderSheetPageState extends State<OrderSheetPage> {
                           height: 80,
                           width: Sizes.width(context) * .7,
                           child: TextFormField(
-                            controller:
-                                _orderSheetController.tableTextController,
+                            controller: _orderSheetStore.tableTextController,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
@@ -81,36 +86,54 @@ class _OrderSheetPageState extends State<OrderSheetPage> {
                       ],
                     ),
                   ),
-                  ..._orderSheetController.request.items
-                      .asMap()
-                      .entries
-                      .map(
-                        (e) => OrderSheetItemWidget(
-                          key: Key(e.key.toString()),
-                          item: e.value,
-                          index: e.key,
-                          increaseORdecrease:
-                              _orderSheetController.increaseOrDecreaseQuantity,
-                          removeItem: _orderSheetController.removeItemInRequest,
-                        ),
-                      )
-                      .toList(),
+                  ScopedBuilder<OrderSheetStore, Failure, NewRequest>(
+                    store: _orderSheetStore,
+                    onState: (context, state) {
+                      return Column(
+                        children: state.items
+                            .asMap()
+                            .entries
+                            .map(
+                              (e) => OrderSheetItemWidget(
+                                key: Key(e.key.toString()),
+                                item: e.value,
+                                index: e.key,
+                                increaseORdecrease:
+                                    _orderSheetStore.increaseOrDecreaseQuantity,
+                                removeItem:
+                                    _orderSheetStore.removeItemInRequests,
+                              ),
+                            )
+                            .toList(),
+                      );
+                    },
+                  ),
                   OrderSheetItemWidget(
-                    item: NewItem.empty(),
-                    addItem: _orderSheetController.insertItemONRequest,
-                  )
+                      item: NewItem.empty(),
+                      addItem: _orderSheetStore.insertItemONRequest),
+                  // ..._orderSheetStore.state.items
+                  //     .asMap()
+                  //     .entries
+                  //     .map(
+                  //       (e) => OrderSheetItemWidget(
+                  //         key: Key(e.key.toString()),
+                  //         item: e.value,
+                  //         index: e.key,
+                  //         increaseORdecrease:
+                  //             _orderSheetStore.increaseOrDecreaseQuantity,
+                  //         removeItem: _orderSheetStore.removeItemInRequests,
+                  //       ),
+                  //     )
+                  //     .toList(),
                 ],
               ),
             );
           },
         ),
         floatingActionButton: FloatingActionButton(
+          tooltip: "Enviar Pedido",
           // TODO Check here
-          onPressed: () {
-            _orderSheetController.saveChanges().then((value) => value.fold(
-                (l) => displayMessageOnSnackbar(context, l.errorMessage),
-                (r) => null,),);
-          },
+          onPressed: _orderSheetStore.saveChanges,
           child: const Icon(Icons.save),
         ),
       ),
@@ -120,8 +143,8 @@ class _OrderSheetPageState extends State<OrderSheetPage> {
   @override
   void dispose() {
     super.dispose();
-    _orderSheetController.dispose();
+    _requestStoreListener();
     _orderStoreListener();
-    // _orderSheetController.removeListener(() {});
+    // _orderSheetStore.removeListener(() {});
   }
 }

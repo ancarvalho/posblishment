@@ -169,7 +169,12 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     try {
       final txID = await (_internalDatabase.update(_internalDatabase.bill)
             ..where((tbl) => tbl.id.equals(billID)))
-          .write(BillCompanion(status: Value(status)));
+          .write(
+        BillCompanion(
+          status: Value(status),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
 
       return txID;
     } catch (e, s) {
@@ -191,8 +196,10 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       await _internalDatabase.batch(
         (batch) => batch.insertAll(
           _internalDatabase.payment,
-          Iterable.generate(payments.length,
-              (index) => PaymentAdapter.createPayment(payments[index], billID),),
+          Iterable.generate(
+            payments.length,
+            (index) => PaymentAdapter.createPayment(payments[index], billID),
+          ),
           mode: InsertMode.insertOrFail,
         ),
       );
@@ -410,9 +417,10 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           useColumns: false,
         ),
         leftOuterJoin(
-            _internalDatabase.product,
-            _internalDatabase.product.id
-                .equalsExp(_internalDatabase.item.productId),)
+          _internalDatabase.product,
+          _internalDatabase.product.id
+              .equalsExp(_internalDatabase.item.productId),
+        )
       ])
                 ..where(
                   _internalDatabase.request.billId.equals(billID) &
@@ -535,9 +543,10 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
               .equalsExp(_internalDatabase.request.id),
         ),
         leftOuterJoin(
-            _internalDatabase.product,
-            _internalDatabase.product.id
-                .equalsExp(_internalDatabase.item.productId),)
+          _internalDatabase.product,
+          _internalDatabase.product.id
+              .equalsExp(_internalDatabase.item.productId),
+        )
       ])
                 ..where(
                   _internalDatabase.item.status.isNotIn([
@@ -579,9 +588,10 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
               .equalsExp(_internalDatabase.request.id),
         ),
         leftOuterJoin(
-            _internalDatabase.product,
-            _internalDatabase.product.id
-                .equalsExp(_internalDatabase.item.productId),)
+          _internalDatabase.product,
+          _internalDatabase.product.id
+              .equalsExp(_internalDatabase.item.productId),
+        )
       ])
                 ..where(
                   _internalDatabase.request.billId.equals(billID) &
