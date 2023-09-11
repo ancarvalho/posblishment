@@ -1,13 +1,14 @@
 // import 'package:flutter_triple/flutter_triple.dart';
 import "package:core/core.dart";
+import "package:dartz/dartz.dart";
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:management/src/domain/errors/management_failures.dart';
-import "package:dartz/dartz.dart";
+
 import 'product_store.dart';
 
-class ProductController extends Disposable {
+class ProductController extends Disposable with ChangeNotifier {
   // avoiding inject dependency because disposable state
   final store = Modular.get<ProductStore>();
 
@@ -21,20 +22,35 @@ class ProductController extends Disposable {
   final codeTextController = TextEditingController();
   final variationTextController = TextEditingController();
 
-  final ValueNotifier<String?> _categoryID = ValueNotifier(null);
+  String? _categoryID;
+
+  String? get categoryID => _categoryID;
+
+  set categoryID(String? value) {
+    _categoryID = value;
+    notifyListeners();
+  }
 
   void resetFields(Product? product) {
     codeTextController.text = product?.code.toString() ?? "";
     nameTextController.text = product?.name ?? "";
     descriptionTextController.text = product?.description ?? "";
-    priceTextController.text = product?.price.toString() ?? "";
+    priceTextController.text = product?.price != null ? CurrencyInputFormatter.formatRealCurrency(product?.price) : "";
     variationTextController.text =
         product?.variations != null ? product?.variations?.join(",") ?? "" : "";
-    categoryID = product?.categoryId;
+    _categoryID = product?.categoryId;
+  }
+
+  void clearFields() {
+    codeTextController.text = "";
+    nameTextController.text = "";
+    descriptionTextController.text = "";
+    priceTextController.text = "";
+    variationTextController.text = "";
   }
 
   Future<Either<Failure, void>> saveChanges(String? id) async {
-    if (formKey.currentState!.validate() && categoryID != null) {
+    if (formKey.currentState!.validate() && _categoryID != null) {
       if (id != null) {
         return Right(updateProduct(id));
       } else {
@@ -63,15 +79,9 @@ class ProductController extends Disposable {
         description: descriptionTextController.text,
         price: parseCurrency(priceTextController.text) ?? 0.0,
         variations: variationTextController.text.split(","),
-        categoryId: categoryID!,
+        categoryId: _categoryID!,
       ),
     );
-  }
-
-  String? get categoryID => _categoryID.value;
-
-  set categoryID(String? value) {
-    _categoryID.value = value;
   }
 
   Future<void> updateProduct(String id) async {
@@ -83,7 +93,7 @@ class ProductController extends Disposable {
         description: descriptionTextController.text,
         price: parseCurrency(priceTextController.text) ?? 0.0,
         variations: variationTextController.text.split(","),
-        categoryId: categoryID!,
+        categoryId: _categoryID!,
       ),
     );
   }

@@ -42,15 +42,11 @@ class CustomDropDown extends StatelessWidget {
       elevation: 16,
       validator: validator,
       // TODO check this color
-      style:  TextStyle(color: Theme.of(context).colorScheme.primary),
-      
       decoration: InputDecoration(
-
         labelText: labelText,
-        
-        // labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-        enabledBorder:  UnderlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+        enabledBorder: UnderlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).colorScheme.secondary),
         ),
       ),
       value: value,

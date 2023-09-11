@@ -21,15 +21,22 @@ class _BillTypePageState extends State<BillTypePage> {
 
   @override
   void initState() {
-    billTypeController.resetFields(widget.billType);
-    billTypeController.billType.addListener(() {
-      setState(() {
-        billTypeController.valueTextController.text = "";
+    billTypeController
+      ..resetFields(widget.billType)
+      ..addListener(() {
+        setState(() {});
       });
-    });
-    billTypeController.defaultType.addListener(() {
-      setState(() {});
-    });
+
+    billTypeStore.observer(
+      onState: (error) {
+        Navigator.of(context).canPop()
+            ? Navigator.of(context).pop()
+            : billTypeController.resetFields(widget.billType);
+      },
+      onError: (error) {
+        displayMessageOnSnackbar(context, error.errorMessage);
+      },
+    );
     super.initState();
   }
 
@@ -37,7 +44,7 @@ class _BillTypePageState extends State<BillTypePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        drawer: const DrawerWidget(),
+        drawer: Navigator.of(context).canPop() ? null : const DrawerWidget(),
         appBar: AppBar(
           title: const Text("Tipo de Conta"),
           centerTitle: true,
@@ -58,19 +65,18 @@ class _BillTypePageState extends State<BillTypePage> {
                   controller: billTypeController.valueTextController,
                   decorationName: "Valor",
                   value: billTypeController.valueTextController.text,
-                  enabled:
-                      billTypeController.billType.value != BillTypes.withoutTax,
+                  enabled: billTypeController.billType != BillTypes.withoutTax,
                   keyboardType: TextInputType.number,
-                  inputFormatters: billTypeController.billType.value ==
-                          BillTypes.percentageTax
-                      ? [
-                          FilteringTextInputFormatter.digitsOnly,
-                          PercentageBillTypeValue()
-                        ]
-                      : [
-                          FilteringTextInputFormatter.digitsOnly,
-                          CurrencyInputFormatter()
-                        ],
+                  inputFormatters:
+                      billTypeController.billType == BillTypes.percentageTax
+                          ? [
+                              FilteringTextInputFormatter.digitsOnly,
+                              PercentageBillTypeValue()
+                            ]
+                          : [
+                              FilteringTextInputFormatter.digitsOnly,
+                              CurrencyInputFormatter()
+                            ],
                 ),
                 Padding(
                   padding: Paddings.paddingVertical8(),
@@ -82,16 +88,14 @@ class _BillTypePageState extends State<BillTypePage> {
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       Switch(
-                        value: billTypeController.defaultType.value,
-                        onChanged: (_) {
-                          billTypeController.defaultType.value =
-                              !billTypeController.defaultType.value;
+                        value: billTypeController.defaultType,
+                        onChanged: (v) {
+                          billTypeController.defaultType = v;
                         },
                       ),
                     ],
                   ),
                 ),
-                
                 CustomDropDown(
                   items: <String, String>{
                     for (var billType in BillTypes.values)
@@ -99,12 +103,12 @@ class _BillTypePageState extends State<BillTypePage> {
                   },
                   setValue: (value) {
                     if (value != null) {
-                      billTypeController.billType.value = BillTypes.values
+                      billTypeController.billType = BillTypes.values
                           .where((element) => element.value.contains(value))
                           .first;
                     }
                   },
-                  value: billTypeController.billType.value.value,
+                  value: billTypeController.billType.value,
                   labelText: "Tipos de Conta",
                 ),
               ],
@@ -115,10 +119,7 @@ class _BillTypePageState extends State<BillTypePage> {
           // TODO Check here
           onPressed: () {
             billTypeController.saveChanges(widget.billType?.id).then(
-                  (value) => value.fold(
-                    (l) => displayMessageOnSnackbar(context, l.errorMessage),
-                    (r) => null,
-                  ),
+                  (value) => eitherDisplayError(context, value),
                 );
           },
           child: const Icon(Icons.save),

@@ -11,6 +11,7 @@ class BillTypeAdapter {
       name: billType.name,
       type: billType.type,
       value: billType.value,
+      defaultType: billType.defaultType,
       icon: billType.icon,
     );
   }

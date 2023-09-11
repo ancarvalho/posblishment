@@ -4,6 +4,11 @@ enum PagesRoutes {
     route: "/",
     dependsOnModule: ModulesRoutes.statistics,
   ),
+  cart(
+    name: "Cart",
+    route: "/cart/",
+    dependsOnModule: ModulesRoutes.administration,
+  ),
   //Management
   products(
     name: "Products",

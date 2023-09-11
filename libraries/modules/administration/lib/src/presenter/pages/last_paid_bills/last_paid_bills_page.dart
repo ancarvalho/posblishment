@@ -1,4 +1,4 @@
-import 'package:administration/src/presenter/widgets/last_paid_bills/last_paid_bills_store.dart';
+
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../widgets/bill_paid_card/bill_paid_card_widget.dart';
+import 'last_paid_bills_store.dart';
 
 class LastPaidBillsPage extends StatefulWidget {
   const LastPaidBillsPage({super.key});

@@ -1,13 +1,13 @@
 import 'package:administration/src/presenter/stores/products/products_store.dart';
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
-import 'package:design_system/widgets/drawer/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../widgets/menu_card/menu_card_widget.dart';
 import '../../widgets/search/search_engine.dart';
+import '../cart/cart_store.dart';
 
 // Menu alternative would be create items with image in grid square style
 class MenuPage extends StatefulWidget {
@@ -19,10 +19,16 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   final menuStore = Modular.get<ProductStore>();
+  final cartStore = Modular.get<CartStore>();
+
+  late final Disposer _cartStoreDisposer;
 
   @override
   void initState() {
     menuStore.getAllProducts();
+    _cartStoreDisposer = cartStore.observer(
+      onLoading: (loading) => setState(() {}),
+    );
     super.initState();
   }
 
@@ -36,7 +42,7 @@ class _MenuPageState extends State<MenuPage> {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               onPressed: () {
                 showSearch(context: context, delegate: SearchEngine());
               },
@@ -59,7 +65,29 @@ class _MenuPageState extends State<MenuPage> {
             );
           },
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Modular.to.pushNamed(
+              "${PagesRoutes.cart.dependsOnModule.route}${PagesRoutes.cart.route}",
+            );
+          },
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                child: Text(cartStore.count.toString()),
+              ),
+              const Icon(Icons.shopping_cart),
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _cartStoreDisposer();
+    super.dispose();
   }
 }

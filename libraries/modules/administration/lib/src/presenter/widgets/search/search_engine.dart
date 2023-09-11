@@ -6,29 +6,31 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 class SearchEngine extends SearchDelegate {
   @override
-  final searchFieldLabel = "Pesquisar";
+  String? get searchFieldLabel => "Pesquisar";
 
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-          onPressed: () {
-            query = "";
-          },
-          icon: const Icon(Icons.close),)
+        onPressed: () {
+          query = "";
+        },
+        icon: const Icon(Icons.close),
+      )
     ];
   }
 
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          close(context, null);
-        },
-        icon: AnimatedIcon(
-          icon: AnimatedIcons.menu_arrow,
-          progress: transitionAnimation,
-        ),);
+      onPressed: () {
+        close(context, null);
+      },
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+    );
   }
 
   @override
@@ -43,24 +45,27 @@ class SearchEngine extends SearchDelegate {
     final suggestion = query.isEmpty
         ? productsStore.state
         : productsStore.state
-            .where((element) =>
-                element.name.toLowerCase().contains(query.toLowerCase()),)
+            .where(
+              (element) => [element.code, element.name, element.description]
+                  .join(" ")
+                  .contains(query.toLowerCase()),
+            )
             .toList();
 
     return Scaffold(
-        body: Padding(
-      padding: Paddings.paddingLTRB4(),
-      child: ListView.builder(
-        itemCount: suggestion.length,
-        itemBuilder: (context, index) {
-          return MenuWidgetCard(
-            product: suggestion[index],
-          );
-        },
+      body: Padding(
+        padding: Paddings.paddingLTRB4(),
+        child: ListView.builder(
+          itemCount: suggestion.length,
+          itemBuilder: (context, index) {
+            return MenuWidgetCard(
+              product: suggestion[index],
+            );
+          },
+        ),
       ),
-    ),
 
-        // floatingActionButton: floatingCart(context),
-        );
+      // floatingActionButton: floatingCart(context),
+    );
   }
 }

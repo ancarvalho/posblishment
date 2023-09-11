@@ -31,7 +31,10 @@ class _CategoryPageState extends State<CategoryPage> {
         //TODO check can unpop
         // Navigator.canPop(context);
         //TODO analyse error because context does not exist due widget was disposed
-        Navigator.of(context).pop();
+        Modular.get<CategoriesListStore>().list();
+        Navigator.of(context).canPop()
+            ? Navigator.of(context).pop()
+            : controller.resetFields(widget.category);
       },
       onError: (error) {
         //TODO analyse error because context does not exist due widget was disposed
@@ -55,9 +58,11 @@ class _CategoryPageState extends State<CategoryPage> {
       child: Scaffold(
         drawer: Navigator.of(context).canPop() ? null : const DrawerWidget(),
         appBar: AppBar(
-          title: Text(widget.category != null
-              ? "Atualizar ${widget.category?.name}"
-              : "Criar Categoria",),
+          title: Text(
+            widget.category != null
+                ? "Atualizar ${widget.category?.name}"
+                : "Criar Categoria",
+          ),
           centerTitle: true,
           actions: [
             IconButton(
@@ -98,7 +103,6 @@ class _CategoryPageState extends State<CategoryPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             await controller.saveChanges(widget.category?.id);
-            await Modular.get<CategoriesListStore>().list();
           },
           child: const Icon(Icons.save),
         ),

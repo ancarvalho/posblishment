@@ -7,6 +7,7 @@ import '../../stores/bill/bill_total_store.dart';
 import 'payment_store.dart';
 
 class PaymentController extends Disposable with ChangeNotifier {
+  // TODO change to default set adn get
   ValueNotifier<List<NewPayment>> payments = ValueNotifier([]);
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();

@@ -29,12 +29,17 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   void initState() {
     _paymentStoreObserverDisposer = _paymentStore.observer(
+      onState: (_) {
+        Navigator.pop(context);
+      },
       onError: (error) => displayMessageOnSnackbar(context, error.errorMessage),
     );
-    _billTotalStore.getBillTotal(widget.billID);
+
     _paymentController.addListener(() {
       setState(() {});
     });
+
+    _billTotalStore.getBillTotal(widget.billID);
     super.initState();
   }
 
@@ -101,5 +106,12 @@ class _PaymentPageState extends State<PaymentPage> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _paymentStoreObserverDisposer();
+    _paymentController.dispose();
+    super.dispose();
   }
 }

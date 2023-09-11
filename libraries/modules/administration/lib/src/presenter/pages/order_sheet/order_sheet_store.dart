@@ -4,7 +4,7 @@ import "package:flutter_triple/flutter_triple.dart";
 
 import "../../../domain/errors/administration_errors.dart";
 import "../../../domain/utils/utils.dart";
-import "make_request_store.dart";
+import "../../stores/request/make_request_store.dart";
 
 class OrderSheetStore extends NotifierStore<Failure, NewRequest> {
   OrderSheetStore(this._makeRequestStore) : super(NewRequest.empty());

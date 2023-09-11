@@ -4,7 +4,8 @@ import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_triple/flutter_triple.dart';
+
+import 'bill_total.dart';
 
 class BillPaidCardWidget extends StatefulWidget {
   const BillPaidCardWidget({super.key, required this.bill});
@@ -16,6 +17,7 @@ class BillPaidCardWidget extends StatefulWidget {
 
 class _BillPaidCardWidgetState extends State<BillPaidCardWidget> {
   final _totalBillStore = Modular.get<BillTotalStore>();
+  final billTotal = BillTotalGetter();
 
   @override
   void initState() {
@@ -65,17 +67,36 @@ class _BillPaidCardWidgetState extends State<BillPaidCardWidget> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ScopedBuilder<BillTotalStore, Failure, BillTotal>(
-                    store: _totalBillStore,
-                    onLoading: (context) =>  const CircularProgressIndicator.adaptive(backgroundColor: Color.fromARGB(0, 13, 255, 0),),
-                    onState: (context, state) {
-                      return Text(
-                        "Total: ${CurrencyInputFormatter.formatRealCurrency(state.total)}",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      );
+                  // ScopedBuilder<BillTotalStore, Failure, BillTotal>(
+                  //   store: _totalBillStore,
+                  //   onLoading: (context) =>  const CircularProgressIndicator.adaptive(backgroundColor: Color.fromARGB(0, 13, 255, 0),),
+                  //   onState: (context, state) {
+                  //     return Text(
+                  //       "Total: ${CurrencyInputFormatter.formatRealCurrency(state.total)}",
+                  //       style: Theme.of(context)
+                  //           .textTheme
+                  //           .titleMedium
+                  //           ?.copyWith(fontWeight: FontWeight.w600),
+                  //     );
+                  //   },
+                  // ),
+                  // TODO Improve
+                  FutureBuilder(
+                    future: billTotal
+                        .getBillTotal(widget.bill.id)
+                        .then((value) => value.fold((l) => throw l, (r) => r)),
+                    builder: (context, snapshot) {
+                      if (snapshot.data != null) {
+                        return Text(
+                          "Total: ${CurrencyInputFormatter.formatRealCurrency(snapshot.data?.total)}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        );
+                      } else {
+                        return const Text("");
+                      }
                     },
                   ),
                   Text("finalizada ha ${date.inMinutes} min")

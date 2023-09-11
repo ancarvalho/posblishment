@@ -1,7 +1,9 @@
 import "package:core/core.dart";
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../domain/errors/management_failures.dart';
 import 'category_store.dart';
 
 class CategoryController extends Disposable {
@@ -20,19 +22,23 @@ class CategoryController extends Disposable {
     descriptionTextController.text = category?.description ?? "";
   }
 
-  Future<void> saveChanges(String? id) async {
+  Future<Either<Failure, void>> saveChanges(String? id) async {
     if (formKey.currentState!.validate() && id != null) {
-      // print("Updating ...");
-      await updateProduct(id);
+      return Right(updateCategory(id));
     } else if (formKey.currentState!.validate()) {
-      // print("Creating ...");
-      await createProduct();
-    } else {
-      // print("Invalid Fields");
+      return Right(createCategory());
     }
+    return Left(
+      ManagementError(
+        StackTrace.current,
+        "ManagementError-createOrUpdateCategory",
+        "",
+        "Category name needed",
+      ),
+    );
   }
 
-  Future<void> createProduct() async {
+  Future<void> createCategory() async {
     await store.createCategory(
       Category(
         name: nameTextController.text,
@@ -41,7 +47,7 @@ class CategoryController extends Disposable {
     );
   }
 
-  Future<void> updateProduct(String id) async {
+  Future<void> updateCategory(String id) async {
     await store.updateCategory(
       Category(
         id: id,

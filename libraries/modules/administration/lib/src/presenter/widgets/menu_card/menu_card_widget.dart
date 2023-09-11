@@ -1,14 +1,20 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+
+import '../../pages/cart/cart_store.dart';
 
 class MenuWidgetCard extends StatelessWidget {
   const MenuWidgetCard({super.key, required this.product});
   final Product product;
+  
 
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
+      onTap: () =>  Modular.get<CartStore>().insertProductOnItems(product),
       child: Card(
         child: SizedBox(
           height: Sizes.height(context) / 10,

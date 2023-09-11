@@ -7,6 +7,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../widgets/error/error_widget.dart';
 import '../../widgets/product_card/product_card_widget.dart';
+import '../../widgets/search/search_widget.dart';
 import 'products_list_store.dart';
 
 class ProductsListPage extends StatefulWidget {
@@ -41,8 +42,9 @@ class _ProductsListPageState extends State<ProductsListPage> {
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
-              tooltip: 'Search For Product',
-              onPressed: () {},
+              onPressed: () {
+                showSearch(context: context, delegate: SearchEngine());
+              },
             ),
             IconButton(
               icon: const Icon(Icons.add),

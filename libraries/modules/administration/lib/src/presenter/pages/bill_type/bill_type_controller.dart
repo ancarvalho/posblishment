@@ -2,15 +2,13 @@
 import 'package:administration/src/domain/errors/administration_errors.dart';
 import "package:core/core.dart";
 import 'package:dartz/dartz.dart';
-import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../domain/utils/bill_types_formatter.dart';
 import '../../../domain/utils/format_bill_type_value.dart';
 import 'bill_type_store.dart';
 
-class BillTypeController extends Disposable {
+class BillTypeController extends Disposable with ChangeNotifier {
   // avoiding inject dependency because disposable state
 
   BillTypeController();
@@ -23,19 +21,37 @@ class BillTypeController extends Disposable {
   // final iconTextController = TextEditingController();
   final valueTextController = TextEditingController();
 
-  final billType = ValueNotifier(BillTypes.percentageTax);
-  final defaultType = ValueNotifier<bool>(false);
+  BillTypes _billType = BillTypes.percentageTax;
+
+  BillTypes get billType => _billType;
+
+  set billType(BillTypes type) {
+    _billType = type;
+    valueTextController.text = "";
+    notifyListeners();
+  }
+
+  bool _defaultType = false;
+
+  bool get defaultType => _defaultType;
+
+  set defaultType(bool type) {
+    _defaultType = type;
+    notifyListeners();
+  }
 
   void resetFields(BillType? type) {
     nameTextController.text = type?.name ?? "";
-    // iconTextController.text = type?.icon ?? "";
-    defaultType.value = false;
+
+    defaultType = type?.defaultType ?? false;
     valueTextController.text = type?.value == null
         ? ""
         : type?.type != null
             ? formatBillTypeValue(type!.type, type.value!)
             : "";
-    billType.value = type?.type ?? BillTypes.percentageTax;
+    billType = type?.type ?? BillTypes.percentageTax;
+
+    notifyListeners();
   }
 
   Future<Either<Failure, void>> saveChanges(String? id) async {
@@ -70,10 +86,10 @@ class BillTypeController extends Disposable {
     await billTypeStore.createBillType(
       NewBillType(
         name: nameTextController.text,
-        type: billType.value,
+        type: billType,
         // icon: iconTextController.text,
-        defaultType: defaultType.value,
-        value: parseValue(billType.value, valueTextController.text),
+        defaultType: defaultType,
+        value: parseValue(billType, valueTextController.text),
       ),
     );
   }
@@ -83,9 +99,9 @@ class BillTypeController extends Disposable {
       BillType(
         id: id,
         name: nameTextController.text,
-        type: billType.value,
-        value: parseValue(billType.value, valueTextController.text),
-        defaultType: defaultType.value,
+        type: billType,
+        value: parseValue(billType, valueTextController.text),
+        defaultType: defaultType,
         // icon: iconTextController.text,
       ),
     );
@@ -93,10 +109,11 @@ class BillTypeController extends Disposable {
 
   @override
   void dispose() {
+    super.dispose();
     // formKey.currentState?.dispose();
     nameTextController.dispose();
     // iconTextController.dispose();
     valueTextController.dispose();
-    billType.dispose();
+
   }
 }

@@ -24,8 +24,7 @@ class ProductPage extends StatefulWidget {
 // TODO Instanciate usecases, controller, and store on module
 class _ProductPageState extends State<ProductPage> {
   final controller = ProductController();
-  final store = Modular.get<ProductStore>();
-  final productsStore = Modular.get<ProductListStore>();
+  final productStore = Modular.get<ProductStore>();
   final categoriesLoadStore = Modular.get<CategoriesLoadStore>();
 
   late Disposer _createProductDisposer;
@@ -33,17 +32,21 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   void initState() {
-    _createProductDisposer = store.observer(
+    _createProductDisposer = productStore.observer(
       onError: (error) {
         displayMessageOnSnackbar(context, error.errorMessage);
       },
       onState: (i) {
-        productsStore.list();
+        Modular.get<ProductListStore>().list();
         Navigator.of(context).canPop()
             ? Navigator.of(context).pop()
-            : const DoNothingAndStopPropagationIntent();
+            : controller.resetFields(widget.product);
       },
     );
+
+    controller.addListener(() {
+      setState(() {});
+    });
 
     _observerCategoriesDisposer = categoriesLoadStore.observer(
       onError: (error) {
@@ -150,10 +153,9 @@ class _ProductPageState extends State<ProductPage> {
         floatingActionButton: FloatingActionButton(
           // TODO Check here
           onPressed: () {
-            controller.saveChanges(widget.product?.id).then((value) =>
-                value.fold(
-                    (l) => displayMessageOnSnackbar(context, l.errorMessage),
-                    (r) => null,),);
+            controller
+                .saveChanges(widget.product?.id)
+                .then((value) => eitherDisplayError(context, value));
           },
           child: const Icon(Icons.save),
         ),

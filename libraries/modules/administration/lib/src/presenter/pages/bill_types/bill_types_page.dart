@@ -36,6 +36,15 @@ class _BillTypesPageState extends State<BillTypesPage> {
         appBar: AppBar(
           title: const Text("Tipos de Conta"),
           centerTitle: true,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Modular.to.pushNamed(
+                    "${PagesRoutes.billType.dependsOnModule.route}${PagesRoutes.billType.route}",
+                  );
+                },
+                icon: const Icon(Icons.add))
+          ],
         ),
         //TODO insert a Grid builder based on width minimum of 200px
         body: ScopedBuilder<BillTypesStore, Failure, List<BillType>>(

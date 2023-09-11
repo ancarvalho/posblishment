@@ -30,12 +30,14 @@ class Item {
 
 class NewItem {
   final String productId;
+  final String? name;
   final int? code;
   int quantity;
 
   NewItem({
     required this.productId,
     this.code,
+    this.name,
     required this.quantity,
   });
 
