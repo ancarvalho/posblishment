@@ -75,9 +75,13 @@ class _MenuPageState extends State<MenuPage> {
             children: [
               Positioned(
                 top: 0,
+                right: 0,
                 child: Text(cartStore.count.toString()),
               ),
-              const Icon(Icons.shopping_cart),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12,horizontal: 8),
+                child: const Icon(Icons.shopping_cart),
+              ),
             ],
           ),
         ),

@@ -8,6 +8,7 @@ enum PagesRoutes {
     name: "Cart",
     route: "/cart/",
     dependsOnModule: ModulesRoutes.administration,
+    standAlone: false,
   ),
   //Management
   products(

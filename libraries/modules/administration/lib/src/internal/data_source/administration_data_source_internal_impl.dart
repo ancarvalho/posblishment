@@ -621,7 +621,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
                   (row) => RequestItem(
                     id: row.read<String>("id"),
                     name: row.read<String>("name"),
-                    observation: row.read<String>("observation"),
+                    observation: row.read<String?>("observation"),
                     quantity: row.read<int>("quantity"),
                     status: row.read<int>("status"),
                     billID: row.read<String>("bill_id"),

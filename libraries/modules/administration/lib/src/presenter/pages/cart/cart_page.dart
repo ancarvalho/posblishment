@@ -17,12 +17,31 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   final cartStore = Modular.get<CartStore>();
 
+  late final Disposer _cartStoreDisposer;
+
+  @override
+  void initState() {
+    _cartStoreDisposer = cartStore.observer(
+      onLoading: (loading) => setState(() {}),
+      onState: (state) {
+        Navigator.of(context).canPop()
+            ? Navigator.of(context).pop()
+            : const DoNothingAndStopPropagationIntent();
+      },
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Pedidos"),
         centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: cartStore.clearRequest, icon: const Icon(Icons.clear))
+        ],
       ),
       body: ScopedBuilder<CartStore, Failure, Map<String, NewItem>>(
         store: cartStore,
@@ -49,7 +68,11 @@ class _CartPageState extends State<CartPage> {
                     itemCount: state.length,
                     itemBuilder: (context, index) {
                       return CartCardWidget(
-                          item: state.values.elementAt(index));
+                        item: state.values.elementAt(index),
+                        decreaseQuantity: cartStore.decreaseItemQuantity,
+                        increaseQuantity: cartStore.increaseItemQuantity,
+                        removeItem: cartStore.removeItemInRequests,
+                      );
                     },
                   ),
                 ),
@@ -63,5 +86,11 @@ class _CartPageState extends State<CartPage> {
         child: const Icon(Icons.send),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _cartStoreDisposer();
+    super.dispose();
   }
 }

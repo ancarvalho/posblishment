@@ -58,8 +58,8 @@ class TCPConnection extends DeviceConnection {
   }
 
   @override
-  void send() {
-    this._send(0);
+  void send({int? addWaitingTime}) {
+    this._send(addWaitingTime ?? 0);
   }
 
   Future<void> _send(int addWaitingTime) async {

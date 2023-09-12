@@ -9,7 +9,8 @@ import '../../stores/request/make_request_store.dart';
 class CartStore extends NotifierStore<Failure, Map<String, NewItem>> {
   CartStore(this._makeRequestStore) : super({});
   List<NewItem> get items => state.values.toList();
-  int get count => state.values.fold<int>(0, (previousValue, element) => element.quantity + previousValue);
+  int get count => state.values.fold<int>(
+      0, (previousValue, element) => element.quantity + previousValue);
 
   final MakeRequestStore _makeRequestStore;
 
@@ -18,16 +19,16 @@ class CartStore extends NotifierStore<Failure, Map<String, NewItem>> {
 
   void insertProductOnItems(Product product) {
     // if (product != null) {
-      setLoading(true);
-      // TODO change After to add Variation
-      if (state.containsKey(product.id)) {
-        increaseItemQuantity(product.id);
-      } else {
-        state[product.id] =
-            NewItem(productId: product.id, quantity: 1, name: product.name);
-      }
+    setLoading(true);
+    // TODO change After to add Variation
+    if (state.containsKey(product.id)) {
+      increaseItemQuantity(product.id);
+    } else {
+      state[product.id] =
+          NewItem(productId: product.id, quantity: 1, name: product.name);
+    }
 
-      return setLoading(false);
+    return setLoading(false);
     // }
     // return setError(
     //   AdministrationError(
@@ -44,6 +45,7 @@ class CartStore extends NotifierStore<Failure, Map<String, NewItem>> {
         int.tryParse(tableTextController.text) != null &&
         state.isNotEmpty) {
       await createOrUpdateBill();
+
       return;
     }
     setError(
@@ -61,6 +63,7 @@ class CartStore extends NotifierStore<Failure, Map<String, NewItem>> {
       NewBill(table: int.tryParse(tableTextController.text)),
       NewRequest(items: items),
     );
+    clearRequest();
   }
 
   void removeItemInRequests(String index) {

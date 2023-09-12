@@ -10,5 +10,5 @@ abstract class DeviceConnection {
   bool isConnected();
   Future<DeviceConnection> connect();
   Future<DeviceConnection> disconnect();
-  void send();
+  void send({int? addWaitingTime});
 }

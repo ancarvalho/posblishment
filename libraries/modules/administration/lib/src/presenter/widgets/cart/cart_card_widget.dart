@@ -3,12 +3,17 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 class CartCardWidget extends StatelessWidget {
-  const CartCardWidget({super.key, required this.item});
+  const CartCardWidget(
+      {super.key,
+      required this.item,
+      required this.removeItem,
+      required this.increaseQuantity,
+      required this.decreaseQuantity});
   final NewItem item;
 
-  // final Function(int index) removeItem;
-  // final Function(String index) increaseQuantity;
-  // final Function(String index) decreaseQuantity;
+  final Function(String index) removeItem;
+  final Function(String index) increaseQuantity;
+  final Function(String index) decreaseQuantity;
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +26,19 @@ class CartCardWidget extends StatelessWidget {
               horizontal: Sizes.dp8(context),
               vertical: Sizes.dp9(context),
             ),
-            child: Stack(
-              alignment: AlignmentDirectional.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       item.quantity.toString(),
                       style: const TextStyle(
                         fontSize: 17,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+                    const SizedBox(width: 8,),
                     if (item.name != null)
                       Text(
                         item.name!,
@@ -41,53 +46,61 @@ class CartCardWidget extends StatelessWidget {
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
-                      ),
-                    SizedBox(
-                      width: 30,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(30, 30),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              alignment: Alignment.centerLeft,
-                            ),
-                            child: const Icon(
-                              Icons.keyboard_arrow_up,
-                              size: 30,
-                              // size:
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(30, 30),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              alignment: Alignment.centerLeft,
-                            ),
-                            child: const Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 30,
-                              // size:
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: 30,
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.remove),
-                        tooltip: "Remove Item",
-                      ),
-                    )
+                      ),  
                   ],
                 ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () => increaseQuantity(item.productId),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(30, 30),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            alignment: Alignment.centerLeft,
+                          ),
+                          child: const Icon(
+                            Icons.keyboard_arrow_up,
+                            size: 30,
+                            // size:
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => decreaseQuantity(item.productId),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(30, 30),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            alignment: Alignment.centerLeft,
+                          ),
+                          child: const Icon(
+                            Icons.keyboard_arrow_down,
+                            size: 30,
+                            // size:
+                          ),
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      onPressed: () => removeItem(item.productId),
+                      icon: const Icon(Icons.remove),
+                      tooltip: "Remove Item",
+                    ),
+                  ],
+                ),
+                // SizedBox(
+                //   width: 30,
+                //   child: IconButton(
+                //     onPressed: () => removeItem(item.productId),
+                //     icon: const Icon(Icons.remove),
+                //     tooltip: "Remove Item",
+                //   ),
+                // )
               ],
             ),
           ),
