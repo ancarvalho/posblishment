@@ -4,6 +4,11 @@ enum PagesRoutes {
     route: "/",
     dependsOnModule: ModulesRoutes.statistics,
   ),
+   posPrinter(
+    name: "Printer",
+    route: "/",
+    dependsOnModule: ModulesRoutes.posPrinter,
+  ),
   cart(
     name: "Cart",
     route: "/cart/",
@@ -110,7 +115,8 @@ enum ModulesRoutes {
   administration(name: "Dashboard", route: "/administration"),
   management(name: "Dashboard", route: "/management"),
   stock(name: "Dashboard", route: "/stock"),
-  settings(name: "Settings", route: "/settings");
+  settings(name: "Settings", route: "/settings"),
+  posPrinter(name: "Settings", route: "/printer");
 
   const ModulesRoutes({required this.name, required this.route});
 

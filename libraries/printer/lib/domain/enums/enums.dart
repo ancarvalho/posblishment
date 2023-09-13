@@ -1,3 +1,4 @@
+export 'text_align.dart';
 export 'text_color.dart';
 export 'text_color_reverse.dart';
 export 'text_double_strike.dart';

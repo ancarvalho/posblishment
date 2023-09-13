@@ -11,9 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   core:
-    path: "../../core"
+    path: "../core"
   dependencies:
-    path: "../../dependencies"
+    path: "../dependencies"
 
 dev_dependencies:
   flutter_test:

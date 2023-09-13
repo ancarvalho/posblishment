@@ -1,10 +1,10 @@
 // ignore_for_file: unnecessary_this
 
 abstract class DeviceConnection {
-  List<int> data = [0];
+  List<int> data = [];
 
   void write(List<int> d) {
-    this.data.addAll(d);
+    this.data += d;
   }
 
   bool isConnected();

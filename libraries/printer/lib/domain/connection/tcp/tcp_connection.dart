@@ -11,7 +11,8 @@ class TCPConnection extends DeviceConnection {
   final int port;
   final int timeout;
 
-  TCPConnection({required this.address, this.port = 9100, this.timeout = 3}):super();
+  TCPConnection({required this.address, this.port = 9100, this.timeout = 5})
+      : super();
 
   @override
   bool isConnected() {
@@ -25,8 +26,11 @@ class TCPConnection extends DeviceConnection {
     }
 
     try {
-      this._socket = await Socket.connect(this.address, this.port,
-          timeout: Duration(seconds: this.timeout),);
+      this._socket = await Socket.connect(
+        this.address,
+        this.port,
+        timeout: Duration(seconds: this.timeout),
+      );
     } catch (e, s) {
       throw PrinterError(
         s,
@@ -72,13 +76,16 @@ class TCPConnection extends DeviceConnection {
       );
     }
     try {
-      this._socket?.write(this.data);
-      final waitingTime = addWaitingTime + this.data.length / 8;
-      await this
-          ._socket
-          ?.flush()
-          .timeout(Duration(milliseconds: waitingTime.toInt()));
-      this.data = [0];
+      // the write method converts to a string
+      this._socket?.add(this.data);
+      
+
+      // final waitingTime = addWaitingTime + this.data.length / 8;
+      // await this
+      //     ._socket
+      //     ?.flush()
+      //     .timeout(Duration(milliseconds: waitingTime.toInt()));
+      this.data = [];
     } catch (e, s) {
       throw PrinterError(
         s,

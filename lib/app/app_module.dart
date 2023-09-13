@@ -1,5 +1,6 @@
 import 'package:administration/administration.dart';
 import 'package:core/core.dart';
+import 'package:esc_printer/esc_printer.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:internal_database/internal_database.dart';
 import 'package:management/management.dart';
@@ -18,6 +19,7 @@ class AppModule extends Module {
         StockModule(),
         AdministrationModule(),
         SettingModule(),
+        ESCPrinter()
       ];
 
   @override
@@ -40,5 +42,6 @@ class AppModule extends Module {
     ModuleRoute(ModulesRoutes.administration.route, module: AdministrationModule()),
     ModuleRoute(ModulesRoutes.management.route, module: ManagementModule()),
     ModuleRoute(ModulesRoutes.stock.route, module: StockModule()),
+    ModuleRoute(ModulesRoutes.posPrinter.route, module: ESCPrinter()),
   ];
 }

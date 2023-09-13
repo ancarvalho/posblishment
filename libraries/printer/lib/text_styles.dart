@@ -1,8 +1,10 @@
+// import 'package:flutter/widgets.dart';
 import 'package:printer/domain/enums/enums.dart';
 
 import 'encoding.dart';
 
 class PrinterTextStyle {
+  final TextAlign textAlign;
   final TextColor textColor;
   final TextColorReverse textColorReverse;
   final TextDoubleStrike textDoubleStrike;
@@ -13,6 +15,7 @@ class PrinterTextStyle {
   final EscPosCharsetEncoding charsetEncoding;
   
   PrinterTextStyle( {
+    this.textAlign = TextAlign.textAlignCenter,
     this.textColor = TextColor.textColorBlack,
     this.textDoubleStrike = TextDoubleStrike.textDoubleStrikeOff,
     this.textFont = TextFont.textFontA,
@@ -21,9 +24,11 @@ class PrinterTextStyle {
     this.textUnderline = TextUnderline.textUnderlineOff,
     this.textWeight = TextWeight.textWeightNormal,
     EscPosCharsetEncoding? encoding,
-  }):charsetEncoding = encoding ?? EscPosCharsetEncoding(charsetCode: 16, charsetName: "windows-1252");
+  }):charsetEncoding = encoding ?? EscPosCharsetEncoding(charsetCode: 3, charsetName: "Portuguese");
 
   PrinterTextStyle copyWith(
+      {
+      TextAlign? textAlign,  
       TextColor? textColor,
       TextColorReverse? textColorReverse,
       TextDoubleStrike? textDoubleStrike,
@@ -31,9 +36,10 @@ class PrinterTextStyle {
       TextSize? textSize,
       TextUnderline? textUnderline,
       TextWeight? textWeight,
-      EscPosCharsetEncoding? charsetEncoding
+      EscPosCharsetEncoding? charsetEncoding}
       ) {
     return PrinterTextStyle(
+      textAlign: textAlign ?? this.textAlign,
       textColor: textColor ?? this.textColor,
       textColorReverse: textColorReverse ?? this.textColorReverse,
       textDoubleStrike: textDoubleStrike ?? this.textDoubleStrike,
