@@ -20,7 +20,7 @@ class BasicStatisticsPage extends StatefulWidget {
 
 class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
   final store = Modular.get<BasicStatsStore>();
-  Frequency _frequency = Frequency.today;
+
 
   Future<void> reload(Frequency frequency) async {
     await store.load(frequency);
@@ -29,7 +29,7 @@ class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
   @override
   void initState() {
     super.initState();
-    reload(_frequency);
+    reload(Frequency.today);
   }
 
   @override
@@ -56,9 +56,7 @@ class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
                         child: CustomButton(
                           text: e.displayName,
                           onPressed: () {
-                            setState(() {
-                              _frequency = e;
-                            });
+                            reload(e);
                           },
                         ),
                       ),
@@ -76,7 +74,7 @@ class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
           onError: (context, error) => DashboardErrorWidget(
             error: error,
             reload: () {
-              reload(_frequency);
+              reload(Frequency.today);
             },
           ),
           onLoading: (context) => const LoadingWidget(),

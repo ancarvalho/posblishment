@@ -55,9 +55,7 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
                         child: CustomButton(
                           text: e.displayName,
                           onPressed: () {
-                            setState(() {
-                              _frequency = e;
-                            });
+                            reload(e);
                           },
                         ),
                       ),
@@ -91,10 +89,7 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
                       'data': [
                         ...state
                             .map(
-                              (e) => {
-                                "domain": e.name,
-                                "measure": e.quantity
-                              },
+                              (e) => {"domain": e.name, "measure": e.quantity},
                             )
                             .toList()
                       ],
@@ -111,9 +106,12 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
                   axisLinePointWidth: 10,
                   axisLineColor: Theme.of(context).colorScheme.secondary,
                   //TODO Modify color to a visible on theme
-                  domainLabelColor: Theme.of(context).textTheme.headlineSmall?.color,
-                  measureLabelColor: Theme.of(context).textTheme.headlineSmall?.color,
-                  measureAxisTitleColor: Theme.of(context).colorScheme.secondary,
+                  domainLabelColor:
+                      Theme.of(context).textTheme.headlineSmall?.color,
+                  measureLabelColor:
+                      Theme.of(context).textTheme.headlineSmall?.color,
+                  measureAxisTitleColor:
+                      Theme.of(context).colorScheme.secondary,
                   domainAxisTitleColor: Theme.of(context).colorScheme.secondary,
                   measureLabelPaddingToAxisLine: 16,
                   verticalDirection: false,

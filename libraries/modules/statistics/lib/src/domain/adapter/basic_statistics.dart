@@ -6,7 +6,7 @@ class BasicStatisticsAdapter {
     final billStatistics = BasicStatistics.empty();
 
     for (final bill in billsSubtotal) {
-      final billTotal = calculateTotal(bill.subtotal, bill.billType, bill.subtotal);
+      final billTotal = calculateTotal(bill.subtotal, bill.billType, bill.value);
       if (billTotal.total < bill.totalPaid) {
         billTotal.payment = billTotal.total;
       } else {

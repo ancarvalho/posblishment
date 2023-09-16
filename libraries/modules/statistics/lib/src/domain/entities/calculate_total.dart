@@ -4,7 +4,7 @@ class RaWBillSubtotal {
   final double totalPaid;
   final double subtotal;
   final BillTypes billType;
-  final int? value;
+  final double? value;
 
   RaWBillSubtotal({
     required this.totalPaid,

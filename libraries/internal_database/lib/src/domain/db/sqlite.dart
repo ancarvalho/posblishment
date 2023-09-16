@@ -32,7 +32,7 @@ Future<void>  backupFile(AppDatabase database) async {
   final dbPath = [appDir.path, 'backup.db'].join("/");
 
   final file = File(dbPath);
-  await file.delete();
+  if (file.existsSync()) await file.delete();
 
   await database.customStatement('VACUUM INTO ?', [file.path]);
 }
