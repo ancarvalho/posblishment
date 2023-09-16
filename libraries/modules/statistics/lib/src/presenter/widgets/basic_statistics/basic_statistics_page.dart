@@ -91,21 +91,21 @@ class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
                       context: context,
                       builder: (context) {
                         return InvoicingDialogWidget(
-                          commission: state.commission!,
-                          subtotal: state.subtotal!,
-                          total: state.total!,
+                          commission: state.commission,
+                          subtotal: state.subtotal,
+                          total: state.total,
                         );
                       },
                     );
                   },
                   child: InvoicingWidget(
                     text: "Faturado",
-                    value: state.total!,
+                    value: state.total,
                   ),
                 ),
                 InvoicingWidget(
                   text: "A Faturar",
-                  value: state.notPaid!,
+                  value: state.notPaid,
                 ),
               ],
             ),

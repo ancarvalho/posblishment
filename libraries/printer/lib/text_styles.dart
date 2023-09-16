@@ -36,7 +36,7 @@ class PrinterTextStyle {
       TextSize? textSize,
       TextUnderline? textUnderline,
       TextWeight? textWeight,
-      EscPosCharsetEncoding? charsetEncoding}
+      EscPosCharsetEncoding? charsetEncoding,}
       ) {
     return PrinterTextStyle(
       textAlign: textAlign ?? this.textAlign,
@@ -47,7 +47,7 @@ class PrinterTextStyle {
       textSize: textSize ?? this.textSize,
       textUnderline: textUnderline ?? this.textUnderline,
       textWeight: textWeight ?? this.textWeight,
-      encoding: charsetEncoding
+      encoding: charsetEncoding,
     );
   }
 }

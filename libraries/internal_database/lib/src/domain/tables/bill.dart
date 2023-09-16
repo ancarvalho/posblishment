@@ -10,12 +10,9 @@ class Bill extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
   IntColumn get table => integer().nullable()();
   TextColumn get customerName => text().nullable()();
-
-  IntColumn get status =>
-      integer().map(JsonAwareIntEnumConverter(BillStatus.values))();
-
-  TextColumn get billTypeID => text().references(BillType, #id)();
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  IntColumn get status => integer().map(JsonAwareIntEnumConverter(BillStatus.values))();
+  TextColumn get billTypeId => text().references(BillType, #id)();
+  
+  DateTimeColumn get createdAt => dateTime().withDefault(Constant(DateTime.now()))();
   DateTimeColumn get updatedAt => dateTime().nullable()();
 }

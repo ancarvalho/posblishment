@@ -1,14 +1,14 @@
 class BasicStatistics {
-  double? total;
-  double? subtotal;
-  double? commission;
-  double? notPaid;
+  double total;
+  double subtotal;
+  double commission;
+  double notPaid;
 
   BasicStatistics({
-    this.total,
-    this.subtotal,
-    this.commission,
-    this.notPaid,
+    required this.total,
+    required this.subtotal,
+    required this.commission,
+    required this.notPaid,
   });
 
   factory BasicStatistics.empty() {

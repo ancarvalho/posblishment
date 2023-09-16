@@ -10,16 +10,6 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
 
   ManagementDataSourceInternalImpl(this.appDatabase);
 
-  //  try {
-
-  //   } catch (e, stackTrace) {
-  //     throw ManagementError(
-  //       stackTrace,
-  //       'ManagementDataSource-listAllCategories',
-  //       e,
-  //       e.toString(),
-  //     );
-  //   }
 
   @override
   Future<List<Product>> listAllProducts() async {

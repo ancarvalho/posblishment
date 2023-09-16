@@ -5,13 +5,8 @@ import '../entities/entities.dart';
 import '../enums/frequency.dart';
 
 abstract class StatisticsRepository {
-  Future<Either<Failure, BasicStatistics>> getBasicStatistics(
-      Frequency frequency,);
-  Future<Either<Failure,List<ItemsSold>>> getMostSoldProducts(Frequency frequency);
-  Future<Either<Failure, List<BasicStatistics>>>
-      getMostSoldProductsByCategoryThisToday();
-  Future<Either<Failure, List<BasicStatistics>>>
-      getMostSoldProductsByCategoryThisWeek();
-  Future<Either<Failure, List<BasicStatistics>>>
-      getMostSoldProductsByCategoryThisMonth();
+  Future<Either<Failure, BasicStatistics>> getBasicStatistics(Frequency frequency);
+  Future<Either<Failure, List<ItemSold>>> getMostSoldProducts(Frequency frequency);
+  Future<Either<Failure, List<ItemSold>>>  getMostSoldProductsByCategory(Frequency frequency, String categoryId);
+
 }

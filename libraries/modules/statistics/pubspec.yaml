@@ -16,6 +16,8 @@ dependencies:
     path: "../../core"
   design_system:
     path: "../../design_system"
+  internal_database:
+    path: "../../internal_database"
 
 
 

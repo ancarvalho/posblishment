@@ -13,13 +13,10 @@ class Item extends Table {
   RealColumn get price => real()();
   IntColumn get quantity => integer().withDefault(const Constant(1))();
   IntColumn get totalQuantity => integer().generatedAs(quantity)();
-  IntColumn get status =>
-      integer().map(JsonAwareIntEnumConverter(ItemStatus.values))();
-
+  IntColumn get status => integer().map(JsonAwareIntEnumConverter(ItemStatus.values))();
   TextColumn get productId => text().references(Product, #id)();
   TextColumn get requestId => text().references(Request, #id)();
 
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  DateTimeColumn get createdAt => dateTime().withDefault(Constant(DateTime.now()))();
   DateTimeColumn get updatedAt => dateTime().nullable()();
 }

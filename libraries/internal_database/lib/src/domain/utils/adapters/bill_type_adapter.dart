@@ -12,7 +12,6 @@ class BillTypeAdapter {
       type: billType.type,
       value: billType.value,
       defaultType: billType.defaultType,
-      icon: billType.icon,
     );
   }
 
@@ -33,7 +32,6 @@ class BillTypeAdapter {
       defaultType: billType.defaultType ?? false,
       type: billType.type,
       value: billType.value,
-      icon: billType.icon,
       createdAt: DateTime.now(),
     );
   }
@@ -45,7 +43,6 @@ class BillTypeAdapter {
       defaultType: Value(billType.defaultType ?? false),
       type: Value(billType.type),
       value: Value(billType.value),
-      icon: Value(billType.icon),
       updatedAt: Value(DateTime.now()),
     );
   }

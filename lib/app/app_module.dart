@@ -28,9 +28,7 @@ class AppModule extends Module {
       (i) => SharedPrefHelper(preferences: i()),
     ),
     AsyncBind<SharedPreferences>((i) => SharedPreferences.getInstance()),
-    Bind.lazySingleton<AppDatabase>(
-      (i) => AppDatabase(),
-    )
+    Bind.lazySingleton<AppDatabase>((i) => AppDatabase())
   ];
 
   @override

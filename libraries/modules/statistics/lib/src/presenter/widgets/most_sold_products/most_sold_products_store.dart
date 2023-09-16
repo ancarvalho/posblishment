@@ -5,7 +5,7 @@ import '../../../domain/entities/entities.dart';
 import '../../../domain/enums/frequency.dart';
 import '../../../domain/use_cases/get_most_sold_products.dart';
 
-class MostSoldProductsStore extends StreamStore<Failure, List<ItemsSold>> {
+class MostSoldProductsStore extends StreamStore<Failure, List<ItemSold>> {
   final IGetMostSoldProducts _getMostSoldProducts;
 
   MostSoldProductsStore(this._getMostSoldProducts) : super([]);

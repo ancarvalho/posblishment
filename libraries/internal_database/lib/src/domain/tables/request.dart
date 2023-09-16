@@ -10,9 +10,8 @@ class Request extends Table {
   TextColumn get id => text().withDefault(Constant(const Uuid().v4()))();
   TextColumn get observation => text().nullable()();
   TextColumn get billId => text().references(Bill, #id)();
-  IntColumn get status =>
-      integer().map(JsonAwareIntEnumConverter(RequestStatus.values))();
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(Constant(DateTime.now()))();
+  IntColumn get status => integer().map(JsonAwareIntEnumConverter(RequestStatus.values))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(Constant(DateTime.now()))();
   DateTimeColumn get updatedAt => dateTime().nullable()();
 }

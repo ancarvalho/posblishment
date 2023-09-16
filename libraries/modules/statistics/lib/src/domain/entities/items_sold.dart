@@ -1,11 +1,9 @@
-class ItemsSold {
-  String? id;
-  String? name;
-  double? totalQuantity;
+class ItemSold {
+  final String name;
+  final int quantity;
 
-  ItemsSold({
-    this.id,
-    this.name,
-    this.totalQuantity,
+  ItemSold({
+    required this.name,
+    required this.quantity,
   });
 }

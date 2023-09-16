@@ -1,4 +1,3 @@
-import 'package:administration/src/domain/utils/calculate_bill_total.dart';
 import 'package:administration/src/infra/data_sources/administration_data_source.dart';
 import 'package:core/core.dart';
 
@@ -256,7 +255,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       leftOuterJoin(
         _internalDatabase.billType,
         _internalDatabase.billType.id
-            .equalsExp(_internalDatabase.bill.billTypeID),
+            .equalsExp(_internalDatabase.bill.billTypeId),
       )
     ])
           ..where(_internalDatabase.bill.id.equals(billID)))
@@ -354,7 +353,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   }
 
   Future<List<Item>> getBillValidItemsQuery(String billID) async {
-    var q = _internalDatabase
+    final q = _internalDatabase
         .customSelect(
           "SELECT i.id as id, p.code as code, p.name as name, SUM(i.quantity) as quantity, i.total_quantity as total_quantity, i.price as price, i.status as status, i.request_id as request_id, i.product_id as product_id, i.created_at as created_at, i.updated_at as updated_at "
           "FROM item i "
@@ -537,7 +536,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   @override
   Future<List<Request>> getLastRequests() async {
     try {
-      var requestItems = await _internalDatabase
+      final requestItems = await _internalDatabase
           .customSelect(
             "SELECT r.id as id, p.name as name, i.quantity as quantity, r.observation as observation, r.status as status, r.created_at as created_at, r.updated_at as updated_at, r.bill_id as bill_id "
             "FROM request r "
@@ -592,7 +591,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   Future<List<RequestItem>> getBillValidRequestsQuery(String billID) async {
     // TODO fix array in
     try {
-      var q = _internalDatabase
+      final q = _internalDatabase
           .customSelect(
             "SELECT r.id as id, p.name as name, i.quantity as quantity, r.observation as observation, r.status as status, r.created_at as created_at, r.updated_at as updated_at, r.bill_id as bill_id "
             "FROM request r "
@@ -644,7 +643,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
 
   @override
   Future<List<Request>> getBillValidRequests(String billID) async {
-    var requestItem = await getBillValidRequestsQuery(billID);
+    final requestItem = await getBillValidRequestsQuery(billID);
     return RequestAdapter.transformToRequest(requestItem);
   }
   // Products

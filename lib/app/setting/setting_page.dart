@@ -91,6 +91,11 @@ class _SettingPageState extends State<SettingPage> {
                         },)
                   ],
                 ),
+              // TODO put a warning that could be a slow process
+               TextButton(
+                    onPressed: settingsController.backupDatabase,
+                    child: const Text("Backup"),),
+
                 TextButton(
                     onPressed: () {
                       settingsStore.saveSettings(

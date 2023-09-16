@@ -16,7 +16,7 @@ class DashboardErrorWidget extends StatelessWidget {
     if (error is NoDataFound) {
       return const Center(child: Text('No Data'));
     }
-    if (error is DashboardNoInternetConnection) {
+    if (error is StatisticsNoInternetConnection) {
       return Center(
         child: NoInternetWidget(
           message: AppConstant.noInternetConnection,

@@ -22,7 +22,7 @@ class BillAdapter {
       status: bill.status,
       customerName: bill.customerName,
       table: bill.table,
-      billType: BillTypeAdapter.filterBillType(billTypes, bill.billTypeID),
+      billType: BillTypeAdapter.filterBillType(billTypes, bill.billTypeId),
       createdAt: bill.createdAt,
       updatedAt: bill.updatedAt,
     );
@@ -33,7 +33,7 @@ class BillAdapter {
       id: const Uuid().v4(),
       table: bill.table,
       customerName: bill.customerName,
-      billTypeID: billTypeID,
+      billTypeId: billTypeID,
       status: BillStatus.open,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),

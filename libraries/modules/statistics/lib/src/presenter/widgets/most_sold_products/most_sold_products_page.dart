@@ -71,7 +71,7 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
           height: Sizes.heightPercentile125(context),
         ),
         ScopedBuilder<MostSoldProductsStore, Failure,
-            List<ItemsSold>>.transition(
+            List<ItemSold>>.transition(
           store: store,
           onError: (context, error) => DashboardErrorWidget(
             error: error,
@@ -93,7 +93,7 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
                             .map(
                               (e) => {
                                 "domain": e.name,
-                                "measure": e.totalQuantity
+                                "measure": e.quantity
                               },
                             )
                             .toList()

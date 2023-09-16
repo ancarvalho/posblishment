@@ -797,11 +797,6 @@ class $BillTypeTable extends BillType
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
-  @override
-  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
-      'icon', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
   late final GeneratedColumnWithTypeConverter<BillTypes, int> type =
@@ -837,7 +832,7 @@ class $BillTypeTable extends BillType
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, value, name, icon, type, defaultType, createdAt, updatedAt];
+      [id, value, name, type, defaultType, createdAt, updatedAt];
   @override
   String get aliasedName => _alias ?? 'bill_type';
   @override
@@ -859,10 +854,6 @@ class $BillTypeTable extends BillType
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
-    }
-    if (data.containsKey('icon')) {
-      context.handle(
-          _iconMeta, icon.isAcceptableOrUnknown(data['icon']!, _iconMeta));
     }
     context.handle(_typeMeta, const VerificationResult.success());
     if (data.containsKey('default_type')) {
@@ -894,8 +885,6 @@ class $BillTypeTable extends BillType
           .read(DriftSqlType.double, data['${effectivePrefix}value']),
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      icon: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}icon']),
       type: $BillTypeTable.$convertertype.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}type'])!),
       defaultType: attachedDatabase.typeMapping
@@ -920,7 +909,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
   final String id;
   final double? value;
   final String name;
-  final String? icon;
   final BillTypes type;
   final bool defaultType;
   final DateTime createdAt;
@@ -929,7 +917,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
       {required this.id,
       this.value,
       required this.name,
-      this.icon,
       required this.type,
       required this.defaultType,
       required this.createdAt,
@@ -942,9 +929,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
       map['value'] = Variable<double>(value);
     }
     map['name'] = Variable<String>(name);
-    if (!nullToAbsent || icon != null) {
-      map['icon'] = Variable<String>(icon);
-    }
     {
       final converter = $BillTypeTable.$convertertype;
       map['type'] = Variable<int>(converter.toSql(type));
@@ -963,7 +947,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
       value:
           value == null && nullToAbsent ? const Value.absent() : Value(value),
       name: Value(name),
-      icon: icon == null && nullToAbsent ? const Value.absent() : Value(icon),
       type: Value(type),
       defaultType: Value(defaultType),
       createdAt: Value(createdAt),
@@ -980,7 +963,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
       id: serializer.fromJson<String>(json['id']),
       value: serializer.fromJson<double?>(json['value']),
       name: serializer.fromJson<String>(json['name']),
-      icon: serializer.fromJson<String?>(json['icon']),
       type: $BillTypeTable.$convertertype
           .fromJson(serializer.fromJson<int>(json['type'])),
       defaultType: serializer.fromJson<bool>(json['defaultType']),
@@ -995,7 +977,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
       'id': serializer.toJson<String>(id),
       'value': serializer.toJson<double?>(value),
       'name': serializer.toJson<String>(name),
-      'icon': serializer.toJson<String?>(icon),
       'type':
           serializer.toJson<int>($BillTypeTable.$convertertype.toJson(type)),
       'defaultType': serializer.toJson<bool>(defaultType),
@@ -1008,7 +989,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
           {String? id,
           Value<double?> value = const Value.absent(),
           String? name,
-          Value<String?> icon = const Value.absent(),
           BillTypes? type,
           bool? defaultType,
           DateTime? createdAt,
@@ -1017,7 +997,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
         id: id ?? this.id,
         value: value.present ? value.value : this.value,
         name: name ?? this.name,
-        icon: icon.present ? icon.value : this.icon,
         type: type ?? this.type,
         defaultType: defaultType ?? this.defaultType,
         createdAt: createdAt ?? this.createdAt,
@@ -1029,7 +1008,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
           ..write('id: $id, ')
           ..write('value: $value, ')
           ..write('name: $name, ')
-          ..write('icon: $icon, ')
           ..write('type: $type, ')
           ..write('defaultType: $defaultType, ')
           ..write('createdAt: $createdAt, ')
@@ -1039,8 +1017,8 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, value, name, icon, type, defaultType, createdAt, updatedAt);
+  int get hashCode =>
+      Object.hash(id, value, name, type, defaultType, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1048,7 +1026,6 @@ class BillTypeData extends DataClass implements Insertable<BillTypeData> {
           other.id == this.id &&
           other.value == this.value &&
           other.name == this.name &&
-          other.icon == this.icon &&
           other.type == this.type &&
           other.defaultType == this.defaultType &&
           other.createdAt == this.createdAt &&
@@ -1059,7 +1036,6 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
   final Value<String> id;
   final Value<double?> value;
   final Value<String> name;
-  final Value<String?> icon;
   final Value<BillTypes> type;
   final Value<bool> defaultType;
   final Value<DateTime> createdAt;
@@ -1069,7 +1045,6 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
     this.id = const Value.absent(),
     this.value = const Value.absent(),
     this.name = const Value.absent(),
-    this.icon = const Value.absent(),
     this.type = const Value.absent(),
     this.defaultType = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1080,7 +1055,6 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
     this.id = const Value.absent(),
     this.value = const Value.absent(),
     required String name,
-    this.icon = const Value.absent(),
     required BillTypes type,
     this.defaultType = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1092,7 +1066,6 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
     Expression<String>? id,
     Expression<double>? value,
     Expression<String>? name,
-    Expression<String>? icon,
     Expression<int>? type,
     Expression<bool>? defaultType,
     Expression<DateTime>? createdAt,
@@ -1103,7 +1076,6 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
       if (id != null) 'id': id,
       if (value != null) 'value': value,
       if (name != null) 'name': name,
-      if (icon != null) 'icon': icon,
       if (type != null) 'type': type,
       if (defaultType != null) 'default_type': defaultType,
       if (createdAt != null) 'created_at': createdAt,
@@ -1116,7 +1088,6 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
       {Value<String>? id,
       Value<double?>? value,
       Value<String>? name,
-      Value<String?>? icon,
       Value<BillTypes>? type,
       Value<bool>? defaultType,
       Value<DateTime>? createdAt,
@@ -1126,7 +1097,6 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
       id: id ?? this.id,
       value: value ?? this.value,
       name: name ?? this.name,
-      icon: icon ?? this.icon,
       type: type ?? this.type,
       defaultType: defaultType ?? this.defaultType,
       createdAt: createdAt ?? this.createdAt,
@@ -1146,9 +1116,6 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
-    }
-    if (icon.present) {
-      map['icon'] = Variable<String>(icon.value);
     }
     if (type.present) {
       final converter = $BillTypeTable.$convertertype;
@@ -1175,7 +1142,6 @@ class BillTypeCompanion extends UpdateCompanion<BillTypeData> {
           ..write('id: $id, ')
           ..write('value: $value, ')
           ..write('name: $name, ')
-          ..write('icon: $icon, ')
           ..write('type: $type, ')
           ..write('defaultType: $defaultType, ')
           ..write('createdAt: $createdAt, ')
@@ -1215,11 +1181,11 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
       GeneratedColumn<int>('status', aliasedName, false,
               type: DriftSqlType.int, requiredDuringInsert: true)
           .withConverter<BillStatus>($BillTable.$converterstatus);
-  static const VerificationMeta _billTypeIDMeta =
-      const VerificationMeta('billTypeID');
+  static const VerificationMeta _billTypeIdMeta =
+      const VerificationMeta('billTypeId');
   @override
-  late final GeneratedColumn<String> billTypeID = GeneratedColumn<String>(
-      'bill_type_i_d', aliasedName, false,
+  late final GeneratedColumn<String> billTypeId = GeneratedColumn<String>(
+      'bill_type_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints:
@@ -1240,7 +1206,7 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, table, customerName, status, billTypeID, createdAt, updatedAt];
+      [id, table, customerName, status, billTypeId, createdAt, updatedAt];
   @override
   String get aliasedName => _alias ?? 'bill';
   @override
@@ -1264,13 +1230,13 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
               data['customer_name']!, _customerNameMeta));
     }
     context.handle(_statusMeta, const VerificationResult.success());
-    if (data.containsKey('bill_type_i_d')) {
+    if (data.containsKey('bill_type_id')) {
       context.handle(
-          _billTypeIDMeta,
-          billTypeID.isAcceptableOrUnknown(
-              data['bill_type_i_d']!, _billTypeIDMeta));
+          _billTypeIdMeta,
+          billTypeId.isAcceptableOrUnknown(
+              data['bill_type_id']!, _billTypeIdMeta));
     } else if (isInserting) {
-      context.missing(_billTypeIDMeta);
+      context.missing(_billTypeIdMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
@@ -1297,8 +1263,8 @@ class $BillTable extends Bill with TableInfo<$BillTable, BillData> {
           .read(DriftSqlType.string, data['${effectivePrefix}customer_name']),
       status: $BillTable.$converterstatus.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
-      billTypeID: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}bill_type_i_d'])!,
+      billTypeId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bill_type_id'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -1320,7 +1286,7 @@ class BillData extends DataClass implements Insertable<BillData> {
   final int? table;
   final String? customerName;
   final BillStatus status;
-  final String billTypeID;
+  final String billTypeId;
   final DateTime createdAt;
   final DateTime? updatedAt;
   const BillData(
@@ -1328,7 +1294,7 @@ class BillData extends DataClass implements Insertable<BillData> {
       this.table,
       this.customerName,
       required this.status,
-      required this.billTypeID,
+      required this.billTypeId,
       required this.createdAt,
       this.updatedAt});
   @override
@@ -1345,7 +1311,7 @@ class BillData extends DataClass implements Insertable<BillData> {
       final converter = $BillTable.$converterstatus;
       map['status'] = Variable<int>(converter.toSql(status));
     }
-    map['bill_type_i_d'] = Variable<String>(billTypeID);
+    map['bill_type_id'] = Variable<String>(billTypeId);
     map['created_at'] = Variable<DateTime>(createdAt);
     if (!nullToAbsent || updatedAt != null) {
       map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -1362,7 +1328,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           ? const Value.absent()
           : Value(customerName),
       status: Value(status),
-      billTypeID: Value(billTypeID),
+      billTypeId: Value(billTypeId),
       createdAt: Value(createdAt),
       updatedAt: updatedAt == null && nullToAbsent
           ? const Value.absent()
@@ -1379,7 +1345,7 @@ class BillData extends DataClass implements Insertable<BillData> {
       customerName: serializer.fromJson<String?>(json['customerName']),
       status: $BillTable.$converterstatus
           .fromJson(serializer.fromJson<int>(json['status'])),
-      billTypeID: serializer.fromJson<String>(json['billTypeID']),
+      billTypeId: serializer.fromJson<String>(json['billTypeId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
@@ -1393,7 +1359,7 @@ class BillData extends DataClass implements Insertable<BillData> {
       'customerName': serializer.toJson<String?>(customerName),
       'status':
           serializer.toJson<int>($BillTable.$converterstatus.toJson(status)),
-      'billTypeID': serializer.toJson<String>(billTypeID),
+      'billTypeId': serializer.toJson<String>(billTypeId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
@@ -1404,7 +1370,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           Value<int?> table = const Value.absent(),
           Value<String?> customerName = const Value.absent(),
           BillStatus? status,
-          String? billTypeID,
+          String? billTypeId,
           DateTime? createdAt,
           Value<DateTime?> updatedAt = const Value.absent()}) =>
       BillData(
@@ -1413,7 +1379,7 @@ class BillData extends DataClass implements Insertable<BillData> {
         customerName:
             customerName.present ? customerName.value : this.customerName,
         status: status ?? this.status,
-        billTypeID: billTypeID ?? this.billTypeID,
+        billTypeId: billTypeId ?? this.billTypeId,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
       );
@@ -1424,7 +1390,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           ..write('table: $table, ')
           ..write('customerName: $customerName, ')
           ..write('status: $status, ')
-          ..write('billTypeID: $billTypeID, ')
+          ..write('billTypeId: $billTypeId, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1433,7 +1399,7 @@ class BillData extends DataClass implements Insertable<BillData> {
 
   @override
   int get hashCode => Object.hash(
-      id, table, customerName, status, billTypeID, createdAt, updatedAt);
+      id, table, customerName, status, billTypeId, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1442,7 +1408,7 @@ class BillData extends DataClass implements Insertable<BillData> {
           other.table == this.table &&
           other.customerName == this.customerName &&
           other.status == this.status &&
-          other.billTypeID == this.billTypeID &&
+          other.billTypeId == this.billTypeId &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -1452,7 +1418,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
   final Value<int?> table;
   final Value<String?> customerName;
   final Value<BillStatus> status;
-  final Value<String> billTypeID;
+  final Value<String> billTypeId;
   final Value<DateTime> createdAt;
   final Value<DateTime?> updatedAt;
   final Value<int> rowid;
@@ -1461,7 +1427,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
     this.table = const Value.absent(),
     this.customerName = const Value.absent(),
     this.status = const Value.absent(),
-    this.billTypeID = const Value.absent(),
+    this.billTypeId = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1471,18 +1437,18 @@ class BillCompanion extends UpdateCompanion<BillData> {
     this.table = const Value.absent(),
     this.customerName = const Value.absent(),
     required BillStatus status,
-    required String billTypeID,
+    required String billTypeId,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : status = Value(status),
-        billTypeID = Value(billTypeID);
+        billTypeId = Value(billTypeId);
   static Insertable<BillData> custom({
     Expression<String>? id,
     Expression<int>? table,
     Expression<String>? customerName,
     Expression<int>? status,
-    Expression<String>? billTypeID,
+    Expression<String>? billTypeId,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -1492,7 +1458,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
       if (table != null) 'table': table,
       if (customerName != null) 'customer_name': customerName,
       if (status != null) 'status': status,
-      if (billTypeID != null) 'bill_type_i_d': billTypeID,
+      if (billTypeId != null) 'bill_type_id': billTypeId,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -1504,7 +1470,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
       Value<int?>? table,
       Value<String?>? customerName,
       Value<BillStatus>? status,
-      Value<String>? billTypeID,
+      Value<String>? billTypeId,
       Value<DateTime>? createdAt,
       Value<DateTime?>? updatedAt,
       Value<int>? rowid}) {
@@ -1513,7 +1479,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
       table: table ?? this.table,
       customerName: customerName ?? this.customerName,
       status: status ?? this.status,
-      billTypeID: billTypeID ?? this.billTypeID,
+      billTypeId: billTypeId ?? this.billTypeId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -1536,8 +1502,8 @@ class BillCompanion extends UpdateCompanion<BillData> {
       final converter = $BillTable.$converterstatus;
       map['status'] = Variable<int>(converter.toSql(status.value));
     }
-    if (billTypeID.present) {
-      map['bill_type_i_d'] = Variable<String>(billTypeID.value);
+    if (billTypeId.present) {
+      map['bill_type_id'] = Variable<String>(billTypeId.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -1558,7 +1524,7 @@ class BillCompanion extends UpdateCompanion<BillData> {
           ..write('table: $table, ')
           ..write('customerName: $customerName, ')
           ..write('status: $status, ')
-          ..write('billTypeID: $billTypeID, ')
+          ..write('billTypeId: $billTypeId, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
