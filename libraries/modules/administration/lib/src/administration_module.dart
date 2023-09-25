@@ -1,4 +1,7 @@
 
+import 'package:administration/src/domain/use_cases/close_bill.dart';
+import 'package:administration/src/domain/use_cases/delete_bill_type.dart';
+import 'package:administration/src/domain/use_cases/set_bill_type_default.dart';
 import 'package:administration/src/presenter/pages/bill/bill_page.dart';
 import 'package:administration/src/presenter/pages/bill_type/bill_type_page.dart';
 import 'package:administration/src/presenter/pages/bill_type/bill_type_store.dart';
@@ -28,6 +31,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'domain/repositories/administration_repository.dart';
 
 
+import 'domain/use_cases/cancel_bill_item.dart';
 import 'domain/use_cases/use_cases.dart';
 
 import 'infra/data_sources/administration_data_source.dart';
@@ -52,9 +56,9 @@ class AdministrationModule extends Module {
     Bind.lazySingleton((i) => PaymentStore(i()),export: true,),
     Bind.lazySingleton((i) => MakeRequestStore(i()),export: true,),
     Bind.lazySingleton((i) => OrderSheetStore(i()),export: true,),
-    Bind.lazySingleton((i) => BillTypesStore(i()),export: true,),
     Bind.lazySingleton((i) => BillTypeStore(i()),export: true,),
     Bind.lazySingleton((i) => CartStore(i()),export: true,),
+    Bind.lazySingleton((i) => BillTypesStore(i()),export: true,),
 
 
     //TODO Init Stores
@@ -75,6 +79,10 @@ class AdministrationModule extends Module {
     Bind.lazySingleton<ICancelBill>((i) => CancelBill(i()),),
     Bind.lazySingleton<ICreateOrUpdateBillType>((i) => CreateOrUpdateBillType(i()),),
     Bind.lazySingleton<IGetBillTypes>((i) => GetBillTypes(i()),),
+    Bind.lazySingleton<IDeleteBillType>((i) => DeleteBillType(i()),),
+    Bind.lazySingleton<ICloseBill>((i) => CloseBill(i()),),
+    Bind.lazySingleton<ISetBillTypeDefault>((i) => SetBillTypeDefault(i()),),
+    Bind.lazySingleton<ICancelBillItem>((i) => CancelBillItem(i()),),
 
 
     Bind.lazySingleton<AdministrationRepository>((i) => AdministrationRepositoryImpl(i()),),

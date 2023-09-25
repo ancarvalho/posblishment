@@ -5,7 +5,7 @@ import '../../../domain/use_cases/create_or_update_bill_type.dart';
 
 
 class BillTypeStore extends StreamStore<Failure, bool> {
-  final CreateOrUpdateBillType _createOrUpdateBillType;
+  final ICreateOrUpdateBillType _createOrUpdateBillType;
 
   BillTypeStore( this._createOrUpdateBillType) : super(false);
 

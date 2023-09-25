@@ -2,6 +2,8 @@ import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
+import '../dialog/bill_item_dialog.dart';
+
 // class BillItemWidget extends StatelessWidget {
 //   const BillItemWidget({
 //     super.key,
@@ -26,7 +28,6 @@ import 'package:flutter/material.dart';
 //   }
 // }
 
-
 TableRow billItemWidget({
   required BuildContext context,
   required Item item,
@@ -34,34 +35,38 @@ TableRow billItemWidget({
 }) {
   return TableRow(
     children: <Widget>[
-       Text(item.code.toString(), style: const TextStyle(fontSize: 16)),
+      Text(item.code.toString(), style: const TextStyle(fontSize: 16)),
       Text(item.name, style: const TextStyle(fontSize: 18)),
       Text("${item.quantity}", style: const TextStyle(fontSize: 16)),
       Text(
-          CurrencyInputFormatter.formatRealCurrency(
-              item.price * item.quantity,),
-          style: const TextStyle(fontSize: 16),),
+        CurrencyInputFormatter.formatRealCurrency(
+          item.price * item.quantity,
+        ),
+        style: const TextStyle(fontSize: 16),
+      ),
       Container(
         margin: const EdgeInsets.only(left: 5, bottom: 5, top: 5),
         height: 30,
         width: 30,
         decoration: const BoxDecoration(
-            color: Color.fromARGB(255, 255, 0, 0), shape: BoxShape.circle,),
+          color: Color.fromARGB(255, 255, 0, 0),
+          shape: BoxShape.circle,
+        ),
         child: GestureDetector(
-          // onTap: () {
-          //   showDialog<void>(
-          //       context: context,
-          //       builder: (BuildContext context) {
-
-          //       });
-          // },
-          // onLongPress: () {
-          //   showDialog<void>(
-          //       context: context,
-          //       builder: (BuildContext context) {
-          //         return;
-          //       });
-          // },
+          onTap: () {
+            showDialog<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return CustomBillItemDialog(billId: billId, item: item,);
+                });
+          },
+          onLongPress: () {
+            showDialog<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return CustomBillItemDialog(billId: billId, item: item, quantity: item.quantity,);
+                });
+          },
           child: const Icon(
             Icons.remove,
             size: 18,

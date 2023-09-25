@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../pages/categories_list/categories_list_store.dart';
-import '../dialog/custom_cancel_dialog.dart';
+import '../dialog/custom_delete_dialog.dart';
 import 'category_card_store.dart';
 
 class CategoryCardWidget extends StatefulWidget {
@@ -47,7 +47,7 @@ class _CategoryCardWidgetState extends State<CategoryCardWidget> {
         showDialog(
           context: context,
           builder: (context) {
-            return CustomCancelDialog(
+            return CustomDeleteDialog(
               delete: () async {
                 await controller.deleteCategory(widget.category.id!);
                 await store.list();

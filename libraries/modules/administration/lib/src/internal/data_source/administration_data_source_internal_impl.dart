@@ -2,6 +2,7 @@ import 'package:administration/src/infra/data_sources/administration_data_source
 import 'package:core/core.dart';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:internal_database/internal_database.dart';
 
 import '../../domain/errors/administration_errors.dart';
@@ -44,11 +45,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   @override
   Future<int> cancelBill(String id) {
     try {
-      final txID = (_internalDatabase.update(_internalDatabase.bill)
-            ..where((tbl) => tbl.id.equals(id)))
-          .write(
-        const BillCompanion(status: Value(BillStatus.canceled)),
-      );
+      final txID = updateBillStatus(id, BillStatus.canceled);
       // Cancel requests and items
 
       return txID;
@@ -112,6 +109,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
+  @override
   Future<int> updateBillStatus(String billID, BillStatus status) async {
     try {
       final txID = await (_internalDatabase.update(_internalDatabase.bill)
@@ -360,9 +358,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           "LEFT JOIN product p ON p.id = i.product_id "
           "LEFT JOIN request r ON r.id = i.request_id "
           "WHERE r.bill_id = ? AND i.status IN (0, 1) AND r.status IN (0, 1) "
-          "GROUP BY i.product_id "
-         
-          ,
+          "GROUP BY i.product_id ",
           variables: [
             Variable.withString(billID),
             // Variable.withBlob(
@@ -404,35 +400,6 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   Future<List<Item>> getBillValidItems(String billID) async {
     try {
       return getBillValidItemsQuery(billID);
-      // final _query =
-      //     await (_internalDatabase.select(_internalDatabase.item).join([
-      //   innerJoin(
-      //     _internalDatabase.request,
-      //     _internalDatabase.request.id
-      //         .equalsExp(_internalDatabase.item.requestId),
-      //     useColumns: false,
-      //   ),
-      //   leftOuterJoin(
-      //     _internalDatabase.product,
-      //     _internalDatabase.product.id
-      //         .equalsExp(_internalDatabase.item.productId),
-      //   )
-      // ])
-      //           ..where(
-      //             _internalDatabase.request.billId.equals(billID) &
-      //                 _internalDatabase.item.status.isIn([
-      //                   ItemStatus.preparing.index,
-      //                   ItemStatus.delivered.index,
-      //                 ]),
-      //           ))
-      //         .get();
-
-      // final items =
-      //     _query.map((e) => e.readTable(_internalDatabase.item)).toList();
-      // final products =
-      //     _query.map((e) => e.readTable(_internalDatabase.product)).toList();
-
-      // return ItemAdapter.toItems(items, products);
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -795,12 +762,111 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     try {
       await (_internalDatabase.update(_internalDatabase.billType)
             ..where((tbl) => tbl.id.equals(id)))
-          .write(const BillTypeCompanion(defaultType: Value(false)));
+          .write(const BillTypeCompanion(defaultType: Value(true)));
       return true;
     } catch (e, s) {
       throw AdministrationError(
         s,
         "InternalDatabase-Administration-setDefaultBillType",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  List<UpdateItem> cancelItems(int quantity, List<UpdateItem> items) {
+    var remainingQuantity = quantity;
+    final updatedItems = <UpdateItem>[];
+    for (final item in items) {
+      if (remainingQuantity < 1) break;
+      if (item.quantity > remainingQuantity) {
+        updatedItems.add(
+          UpdateItem(
+            id: item.id,
+            quantity: item.quantity - remainingQuantity,
+            status: ItemStatus.delivered,
+          ),
+        );
+        remainingQuantity = 0;
+        continue;
+      }
+      updatedItems.add(
+        UpdateItem(
+          id: item.id,
+          quantity: 0,
+          status: ItemStatus.canceled,
+        ),
+      );
+      remainingQuantity -= item.quantity;
+    }
+    debugPrint(updatedItems
+        .map((e) => "${e.id} ${e.quantity} ${e.status?.index}")
+        .join(" "));
+    return updatedItems;
+  }
+
+  Future<int> updateItem(UpdateItem item) async {
+    return await _internalDatabase.customUpdate(
+      """
+      UPDATE item 
+      SET quantity = ?, status = ?
+      WHERE id = ?
+      """,
+      updates: {_internalDatabase.item},
+      variables: [
+        Variable.withInt(item.quantity),
+        Variable.withInt(item.status!.index),
+        Variable.withString(item.id),
+      ],
+    );
+  }
+
+  @override
+  Future<void> cancelBillItemQuantity(
+    String billId,
+    String productId,
+    int quantity,
+  ) async {
+    try {
+      final items = await _internalDatabase
+          .customSelect(
+            """
+        SELECT i.id as id, i.quantity as quantity
+        FROM bill b
+        LEFT JOIN request r ON r.bill_id = b.id
+        LEFT JOIN item i ON i.request_id = r.id
+        WHERE i.product_id = ? AND b.id = ? AND r.status IN (0 ,1) AND i.status IN (0, 1)
+      """,
+            readsFrom: {
+              _internalDatabase.bill,
+              _internalDatabase.request,
+              _internalDatabase.item
+            },
+            variables: [
+              Variable.withString(productId),
+              Variable.withString(billId),
+            ],
+          )
+          .get()
+          .then(
+            (value) => value
+                .map(
+                  (row) => UpdateItem(
+                    id: row.read("id"),
+                    quantity: row.read("quantity"),
+                  ),
+                )
+                .toList(),
+          );
+
+      final itemsToCancel = cancelItems(quantity, items);
+      for (final item in itemsToCancel) {
+        await updateItem(item);
+      }
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-cancelBillItemQuantity",
         e,
         e.toString(),
       );
@@ -817,7 +883,33 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     } catch (e, s) {
       throw AdministrationError(
         s,
-        "InternalDatabase-Administration-getBillTypes",
+        "InternalDatabase-Administration-updateBillType",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<int> updateTypeOfBill(String billTypeId, String billId) async {
+    try {
+      final txID = await _internalDatabase.customUpdate(
+        """
+        UPDATE bill b
+        SET bill_type = ?
+        WHERE id = ?
+      """,
+        updates: {_internalDatabase.bill},
+        variables: [
+          Variable.withString(billTypeId),
+          Variable.withString(billId)
+        ],
+      );
+      return txID;
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-updateBillType",
         e,
         e.toString(),
       );

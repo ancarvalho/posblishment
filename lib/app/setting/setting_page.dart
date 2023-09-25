@@ -75,8 +75,9 @@ class _SettingPageState extends State<SettingPage> {
                     settingsController.theme.value =
                         ThemesOptions.values.elementAt(int.parse(value ?? "0"));
                     settingsStore.changeTheme(
-                        theme: ThemesOptions.values
-                            .elementAt(int.parse(value ?? "0")),);
+                      theme: ThemesOptions.values
+                          .elementAt(int.parse(value ?? "0")),
+                    );
                   },
                   labelText: "Tema",
                 ),
@@ -85,24 +86,54 @@ class _SettingPageState extends State<SettingPage> {
                   children: [
                     const Text("Habilitar Comanda"),
                     Switch(
-                        value: settingsController.orderSheetEnabled.value,
-                        onChanged: (v) {
-                          settingsController.orderSheetEnabled.value = v;
-                        },)
+                      value: settingsController.orderSheetEnabled.value,
+                      onChanged: (v) {
+                        settingsController.orderSheetEnabled.value = v;
+                      },
+                    )
                   ],
                 ),
-              // TODO put a warning that could be a slow process
-               TextButton(
-                    onPressed: settingsController.backupDatabase,
-                    child: const Text("Backup"),),
-
+                // TODO put a warning that could be a slow process
                 TextButton(
-                    onPressed: () {
-                      settingsStore.saveSettings(
-                        settingsController.updateSettings(settingsStore.state),
-                      );
-                    },
-                    child: const Text("Salvar"),),
+                  onPressed: () async {
+                    displayMessageOnSnackbar(
+                      context,
+                      "Iniciando Backup",
+                      duration: 1,
+                    );
+                    await settingsController.backupDatabase().then(
+                          (value) => displayMessageOnSnackbar(
+                            context,
+                            "Backup Finalizado",
+                          ),
+                        );
+                  },
+                  child: const Text("Backup"),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    displayMessageOnSnackbar(
+                      context,
+                      "Iniciando Restore",
+                      duration: 1,
+                    );
+                    await settingsController.restoreDatabase().then(
+                          (value) => displayMessageOnSnackbar(
+                            context,
+                            "Restore Finalizado e necessário reiniciar o APP",
+                          ),
+                        );
+                  },
+                  child: const Text("Restore Database"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    settingsStore.saveSettings(
+                      settingsController.updateSettings(settingsStore.state),
+                    );
+                  },
+                  child: const Text("Salvar"),
+                ),
               ],
             ),
           );

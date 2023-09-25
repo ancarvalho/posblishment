@@ -5,7 +5,7 @@ import '../../../domain/use_cases/get_bill_types.dart';
 
 
 class BillTypesStore extends StreamStore<Failure, List<BillType>> {
-  final GetBillTypes _getBillTypes;
+  final IGetBillTypes _getBillTypes;
 
   BillTypesStore( this._getBillTypes) : super([]);
 

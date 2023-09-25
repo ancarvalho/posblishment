@@ -38,7 +38,7 @@ class ProductController extends Disposable with ChangeNotifier {
     priceTextController.text = product?.price != null ? CurrencyInputFormatter.formatRealCurrency(product?.price) : "";
     variationTextController.text =
         product?.variations != null ? product?.variations?.join(",") ?? "" : "";
-    _categoryID = product?.categoryId;
+    _categoryID = _categoryID ?? product?.categoryId; // REview
   }
 
   void clearFields() {

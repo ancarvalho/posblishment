@@ -1,14 +1,16 @@
 import 'package:administration/src/domain/utils/utils.dart';
+import 'package:administration/src/presenter/widgets/bill_card/bill_card_controller.dart';
+import 'package:administration/src/presenter/widgets/dialog/bill_dialog.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-
 class BillCardWidget extends StatelessWidget {
   final Bill bill;
-  const BillCardWidget({super.key, required this.bill});
+  BillCardWidget({super.key, required this.bill});
 
-  // TODO Get Service Type and convert to icons and name
+  final billCardController = BillCardController();
+
   @override
   Widget build(BuildContext context) {
     final date = DateTime.now().difference(bill.createdAt);
@@ -19,23 +21,34 @@ class BillCardWidget extends StatelessWidget {
           arguments: bill.id,
         );
       },
-      onLongPress: () => Modular.to.pushNamed(
-          "${PagesRoutes.payment.dependsOnModule.route}${PagesRoutes.payment.route}",
-          arguments: bill.id,
+      onLongPress: () => showDialog(
+        context: context,
+        builder: (context) => CustomBillDialog(
+          billTable: bill.table,
+          closeBill: () => billCardController.closeBill(bill.id),
+          cancelAllBill: () => billCardController.cancelBill(bill.id),
+          paymentBill: () => Modular.to.pushNamed(
+            "${PagesRoutes.payment.dependsOnModule.route}${PagesRoutes.payment.route}",
+            arguments: bill.id,
+          ),
         ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-              color: transformBillStatusIntoColor(bill.status),),
+            borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+            color: transformBillStatusIntoColor(bill.status),
+          ),
           child: Stack(
             children: [
               Positioned(
                 top: 5,
                 right: 5,
-                child: Icon(transformToIcon(bill.billType?.icon),
-                    color: const Color.fromARGB(255, 255, 254, 254),),
+                child: Icon(
+                  transformToIcon(bill.billType?.icon),
+                  color: const Color.fromARGB(255, 255, 254, 254),
+                ),
               ),
               Center(
                 child: Column(
@@ -52,8 +65,9 @@ class BillCardWidget extends StatelessWidget {
                     Text(
                       bill.table.toString(),
                       style: const TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontSize: 60,),
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 60,
+                      ),
                     ),
                     const SizedBox(
                       height: 10,
@@ -61,9 +75,10 @@ class BillCardWidget extends StatelessWidget {
                     Text(
                       "${date.inMinutes}min",
                       style: const TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontWeight: FontWeight.w900,
-                          fontSize: 17,),
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontWeight: FontWeight.w900,
+                        fontSize: 17,
+                      ),
                     )
                   ],
                 ),

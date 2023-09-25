@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../pages/products_list/products_list_store.dart';
-import '../dialog/custom_cancel_dialog.dart';
+import '../dialog/custom_delete_dialog.dart';
 import 'product_card_store.dart';
 
 class ProductCardWidget extends StatefulWidget {
@@ -50,7 +50,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
         showDialog(
           context: context,
           builder: (context) {
-            return CustomCancelDialog(
+            return CustomDeleteDialog(
               delete: () {
                 store.deleteProduct(widget.product.id);
               },

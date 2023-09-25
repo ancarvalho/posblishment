@@ -102,7 +102,7 @@ class _PrinterTestPageState extends State<PrinterTestPage> {
                       printer?.commands
                         ?..printText(
                             text,
-                            printer?.commands.printerTextStyle.copyWith(
+                            printer?.commands.defaultPrinterTextStyle.copyWith(
                                 textWeight: TextWeight.textWeightBold,
                                 textSize: TextSize.textSizeBig,),)
                         ..feedPaper(20);

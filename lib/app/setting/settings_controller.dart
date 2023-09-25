@@ -4,7 +4,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:internal_database/internal_database.dart';
 import 'package:posblishment/domain/entities/entities.dart';
 import 'package:posblishment/domain/enums/enums.dart';
-import 'package:sqlite3/sqlite3.dart';
 
 class SettingsController extends Disposable {
   SettingsController();
@@ -18,6 +17,10 @@ class SettingsController extends Disposable {
   // don`t think that modular let inject dependencies after start-up
   Future<void> restoreDatabase() async {
     await restoreFile();
+  }
+
+  Future<void> deleteCurrentDb() async {
+    await deleteDb();
   }
 
   Future<void> backupDatabase() async {

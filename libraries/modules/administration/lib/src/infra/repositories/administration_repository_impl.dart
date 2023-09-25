@@ -273,11 +273,56 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
 
   @override
   Future<Either<Failure, BillTotal>> getBillTotalWithPaidAmount(
-      String billID,) async {
+    String billID,
+  ) async {
     try {
       final billTotal =
           await _administrationDataSource.getBillTotalWithPaidAmount(billID);
       return Right(billTotal);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> cancelBillItemQuantity(
+      String billId, String productId, int quantity,) async {
+    try {
+      return Right(
+        await _administrationDataSource.cancelBillItemQuantity(
+          billId,
+          productId,
+          quantity,
+        ),
+      );
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> updateTypeOfBill(
+      String billTypeId, String billId,) async {
+    try {
+      return Right(await _administrationDataSource.updateTypeOfBill(billTypeId, billId));
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+  
+  @override
+  Future<Either<Failure, int>> updateBillStatus(String billID, BillStatus status) async {
+     try {
+      return Right(await _administrationDataSource.updateBillStatus(billID , status));
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+  
+  @override
+  Future<Either<Failure, int>> deleteBillType(String id) async {
+     try {
+      return Right(await _administrationDataSource.deleteBillType(id));
     } on Failure catch (e) {
       return Left(e);
     }

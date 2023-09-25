@@ -21,7 +21,7 @@ Future<File> get databaseFile async {
   return File(dbPath);
 }
 
-Future<void>  backupFile(AppDatabase database) async {
+Future<void> backupFile(AppDatabase database) async {
   // We use `path_provider` to find a suitable path to store our data in.
 
   // if (Platform.isAndroid) {
@@ -37,7 +37,7 @@ Future<void>  backupFile(AppDatabase database) async {
   await database.customStatement('VACUUM INTO ?', [file.path]);
 }
 
-Future<void>  restoreFile() async {
+Future<void> restoreFile() async {
   // We use `path_provider` to find a suitable path to store our data in.
   final appDir = await getExternalStorageDirectory();
   if (appDir == null || !appDir.existsSync()) return;
@@ -51,6 +51,17 @@ Future<void>  restoreFile() async {
   backupDb
     ..execute('VACUUM INTO ?', [tempDb])
     ..dispose();
+
+  // Then replace the existing database file with it.
+  final tempDbFile = File(tempDb);
+  await tempDbFile.copy((await databaseFile).path);
+  await tempDbFile.delete();
+}
+
+Future<void> deleteDb() async {
+  // Vacuum it into a temporary location first to make sure it's working.
+  final tempPath = await getTemporaryDirectory();
+  final tempDb = [tempPath.path, 'import.db'].join("/");
 
   // Then replace the existing database file with it.
   final tempDbFile = File(tempDb);

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import '../../../domain/utils/bill_types_formatter.dart';
+import '../bill_types/bill_types_store.dart';
 import 'bill_type_store.dart';
 
 class BillTypePage extends StatefulWidget {
@@ -19,6 +20,12 @@ class _BillTypePageState extends State<BillTypePage> {
   final billTypeStore = Modular.get<BillTypeStore>();
   final billTypeController = BillTypeController();
 
+  Future<void> popAndLoad() async {
+    await Modular.get<BillTypesStore>()
+        .getBillTypes()
+        .then((value) => Navigator.of(context).pop());
+  }
+
   @override
   void initState() {
     billTypeController
@@ -30,7 +37,7 @@ class _BillTypePageState extends State<BillTypePage> {
     billTypeStore.observer(
       onState: (error) {
         Navigator.of(context).canPop()
-            ? Navigator.of(context).pop()
+            ? popAndLoad()
             : billTypeController.resetFields(widget.billType);
       },
       onError: (error) {

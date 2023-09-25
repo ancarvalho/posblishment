@@ -53,3 +53,11 @@ class MinimizedItem {
     required this.quantity,
   });
 }
+
+class UpdateItem {
+  final String id;
+  final int quantity;
+  final ItemStatus? status;
+
+  UpdateItem({required this.id, required this.quantity, this.status});
+}

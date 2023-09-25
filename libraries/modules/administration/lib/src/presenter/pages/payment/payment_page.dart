@@ -11,6 +11,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../widgets/payment/payment_floating_widget.dart';
 import '../../widgets/payment/payment_methods_widget.dart';
+import '../bills/bills_store.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key, required this.billID});
@@ -30,6 +31,7 @@ class _PaymentPageState extends State<PaymentPage> {
   void initState() {
     _paymentStoreObserverDisposer = _paymentStore.observer(
       onState: (_) {
+        Modular.get<NotPaidBillsStore>().getNotPaidBills();
         Navigator.pop(context);
       },
       onError: (error) => displayMessageOnSnackbar(context, error.errorMessage),

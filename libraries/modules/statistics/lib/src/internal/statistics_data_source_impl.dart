@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import 'package:internal_database/internal_database.dart';
 import 'package:statistics/src/domain/entities/entities.dart';
 import 'package:statistics/src/domain/enums/frequency.dart';
+import 'package:statistics/src/domain/errors/dashboard_failures.dart';
 
 import '../domain/adapter/basic_statistics.dart';
 import '../infra/data_source/statistics_data_source.dart';
@@ -49,9 +50,10 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
   }
 
   Future<double> getNotPaidSubtotal(DateRange interval) async {
-    final b = _appDatabase
-        .customSelect(
-          """
+    try {
+      final b = _appDatabase
+          .customSelect(
+            """
             SELECT 
               SUM(i.quantity * i.price) as subtotal
             FROM bill b
@@ -60,33 +62,38 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
             WHERE b.created_at BETWEEN ? AND ? AND b.status IN (0, 1) AND r.status IN (0,1) AND i.status IN (0,1)
             
       """,
-          variables: [
-            Variable.withDateTime(DateTime.parse(interval.startDate)),
-            Variable.withDateTime(DateTime.parse(interval.endDate)),
-          ],
-          readsFrom: {
-            _appDatabase.payment,
-            _appDatabase.bill,
-            _appDatabase.item,
-            _appDatabase.request,
-            _appDatabase.billType
-          },
-        )
-        .getSingle()
-        .then((value) {
-          return value.read<double>("subtotal");
-        });
+            variables: [
+              Variable.withDateTime(DateTime.parse(interval.startDate)),
+              Variable.withDateTime(DateTime.parse(interval.endDate)),
+            ],
+            readsFrom: {
+              _appDatabase.payment,
+              _appDatabase.bill,
+              _appDatabase.item,
+              _appDatabase.request,
+              _appDatabase.billType
+            },
+          )
+          .getSingle()
+          .then((value) {
+            return value.read<double>("subtotal");
+          });
 
-    return b;
+      return b;
+    } catch (e, s) {
+      throw StatisticsError(
+          s, "StatisticsModule-getNotPaidSubtotal", e, e.toString());
+    }
   }
 
   //Raw Bill
   @override
   Future<BasicStatistics> getBasicStatistics(Frequency frequency) async {
-    final interval = getRange(frequency);
-    final b = await _appDatabase
-        .customSelect(
-          """
+    try {
+      final interval = getRange(frequency);
+      final b = await _appDatabase
+          .customSelect(
+            """
             SELECT 
               SUM(p.value) total_paid, 
               SUM(i.quantity * i.price) as subtotal,
@@ -100,48 +107,53 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
             WHERE b.created_at BETWEEN ? AND ? AND b.status IN (2,3,5) AND r.status IN (0,1) AND i.status IN (0,1)
             GROUP BY b.id
       """,
-          variables: [
-            Variable.withDateTime(DateTime.parse(interval.startDate)),
-            Variable.withDateTime(DateTime.parse(interval.endDate)),
-            // Variable.withString([BillStatus.paid, BillStatus.partiallyPaid, BillStatus.paidWithoutCommission].join(",")),
-            // Variable.withString([RequestStatus.delivered ,RequestStatus.preparing].join(",")),
-            // Variable.withString([ItemStatus.delivered, ItemStatus.preparing].join(","))
-          ],
-          readsFrom: {
-            _appDatabase.payment,
-            _appDatabase.bill,
-            _appDatabase.item,
-            _appDatabase.request,
-            _appDatabase.billType
-          },
-        )
-        .get()
-        .then((value) {
-          return value
-              .map(
-                (row) => RaWBillSubtotal(
-                  totalPaid: row.read<double>("total_paid"),
-                  subtotal: row.read<double>("subtotal"),
-                  billType:
-                      BillTypes.values.elementAt(row.read<int>("bill_type")),
-                  value: row.read<double?>("bill_type_value"),
-                ),
-              )
-              .toList();
-        })
-        .then(BasicStatisticsAdapter.convertFromCalculateTotal);
+            variables: [
+              Variable.withDateTime(DateTime.parse(interval.startDate)),
+              Variable.withDateTime(DateTime.parse(interval.endDate)),
+              // Variable.withString([BillStatus.paid, BillStatus.partiallyPaid, BillStatus.paidWithoutCommission].join(",")),
+              // Variable.withString([RequestStatus.delivered ,RequestStatus.preparing].join(",")),
+              // Variable.withString([ItemStatus.delivered, ItemStatus.preparing].join(","))
+            ],
+            readsFrom: {
+              _appDatabase.payment,
+              _appDatabase.bill,
+              _appDatabase.item,
+              _appDatabase.request,
+              _appDatabase.billType
+            },
+          )
+          .get()
+          .then((value) {
+            return value
+                .map(
+                  (row) => RaWBillSubtotal(
+                    totalPaid: row.read<double>("total_paid"),
+                    subtotal: row.read<double>("subtotal"),
+                    billType:
+                        BillTypes.values.elementAt(row.read<int>("bill_type")),
+                    value: row.read<double?>("bill_type_value"),
+                  ),
+                )
+                .toList();
+          })
+          .then(BasicStatisticsAdapter.convertFromCalculateTotal);
 
-    b.notPaid = await getNotPaidSubtotal(interval);
+      b.notPaid = await getNotPaidSubtotal(interval);
 
-    return b;
+      return b;
+    } catch (e, s) {
+      throw StatisticsError(
+          s, "StatisticsModule-getBasicStatistics", e, e.toString());
+    }
   }
 
   @override
   Future<List<ItemSold>> getMostSoldProducts(Frequency frequency) async {
-    final interval = getRange(frequency);
-    final b = await _appDatabase
-        .customSelect(
-          """
+    try {
+      final interval = getRange(frequency);
+      final b = await _appDatabase
+          .customSelect(
+            """
            SELECT 
             SUM(i.quantity) as total_quantity, 
             p.name as name
@@ -152,39 +164,44 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
            ORDER BY total_quantity
            LIMIT 10
       """,
-          variables: [
-            Variable.withDateTime(DateTime.parse(interval.startDate)),
-            Variable.withDateTime(DateTime.parse(interval.endDate)),
-            Variable.withInt(ItemStatus.canceled.index),
-          ],
-          readsFrom: {
-            _appDatabase.product,
-            _appDatabase.item,
-          },
-        )
-        .get()
-        .then((value) {
-          return value
-              .map(
-                (row) => ItemSold(
-                  name: row.read<String>("name"),
-                  quantity: row.read<int>("total_quantity"),
-                ),
-              )
-              .toList();
-        });
-    // debugPrint(interval.endDate);
+            variables: [
+              Variable.withDateTime(DateTime.parse(interval.startDate)),
+              Variable.withDateTime(DateTime.parse(interval.endDate)),
+              Variable.withInt(ItemStatus.canceled.index),
+            ],
+            readsFrom: {
+              _appDatabase.product,
+              _appDatabase.item,
+            },
+          )
+          .get()
+          .then((value) {
+            return value
+                .map(
+                  (row) => ItemSold(
+                    name: row.read<String>("name"),
+                    quantity: row.read<int>("total_quantity"),
+                  ),
+                )
+                .toList();
+          });
+      // debugPrint(interval.endDate);
 
-    return b;
+      return b;
+    } catch (e, s) {
+      throw StatisticsError(
+          s, "StatisticsModule-getMostSoldProducts", e, e.toString());
+    }
   }
 
   @override
   Future<List<ItemSold>> getMostSoldProductsByCategory(
       Frequency frequency, String categoryId) {
-    final interval = getRange(frequency);
-    final b = _appDatabase
-        .customSelect(
-          """
+    try {
+      final interval = getRange(frequency);
+      final b = _appDatabase
+          .customSelect(
+            """
            SELECT 
             SUM(i.quantity) as total_quantity, 
             p.name as name
@@ -195,29 +212,33 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
            ORDER BY total_quantity
            LIMIT 10
       """,
-          variables: [
-            Variable.withString(interval.startDate),
-            Variable.withString(interval.endDate),
-            Variable.withInt(ItemStatus.canceled.index),
-            Variable.withString(categoryId),
-          ],
-          readsFrom: {
-            _appDatabase.product,
-            _appDatabase.item,
-          },
-        )
-        .get()
-        .then((value) {
-          return value
-              .map(
-                (row) => ItemSold(
-                  name: row.read<String>("name"),
-                  quantity: row.read<int>("quantity"),
-                ),
-              )
-              .toList();
-        });
+            variables: [
+              Variable.withString(interval.startDate),
+              Variable.withString(interval.endDate),
+              Variable.withInt(ItemStatus.canceled.index),
+              Variable.withString(categoryId),
+            ],
+            readsFrom: {
+              _appDatabase.product,
+              _appDatabase.item,
+            },
+          )
+          .get()
+          .then((value) {
+            return value
+                .map(
+                  (row) => ItemSold(
+                    name: row.read<String>("name"),
+                    quantity: row.read<int>("quantity"),
+                  ),
+                )
+                .toList();
+          });
 
-    return b;
+      return b;
+    } catch (e, s) {
+      throw StatisticsError(
+          s, "StatisticsModule-getMostSoldProductsByCategory", e, e.toString());
+    }
   }
 }

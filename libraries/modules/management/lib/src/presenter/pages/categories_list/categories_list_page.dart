@@ -51,7 +51,6 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
                 Modular.to.pushNamed(
                   "${PagesRoutes.category.dependsOnModule.route}${PagesRoutes.category.route}",
                   // TODO Check if dispose is being called on controllers
-                  arguments: Category.empty(),
                 );
               },
             ),
@@ -68,7 +67,7 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
             store: store,
             onState: (context, state) {
               return Padding(
-                padding:  Paddings.paddingLTRB4(),
+                padding: Paddings.paddingLTRB4(),
                 child: ListView.builder(
                   itemCount: state.length,
                   itemBuilder: (context, index) {

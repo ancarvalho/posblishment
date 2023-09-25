@@ -1,6 +1,8 @@
+import 'package:administration/src/domain/errors/administration_errors.dart';
 import 'package:administration/src/domain/repositories/administration_repository.dart';
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 
 // ignore: one_member_abstracts
 abstract class ICreateOrUpdateBill {
@@ -17,14 +19,22 @@ class CreateOrUpdateBill implements ICreateOrUpdateBill {
     NewBill newBill,
     NewRequest request,
   ) async {
-    var bill = await repository
-        .getBillByTable(newBill.table!)
-        .then((value) => value.toOption().toNullable());
-    // var bill = state.toOption().toNullable();
-    bill ??= await repository
-        .createBill(newBill)
-        .then((value) => value.toOption().toNullable());
+    Bill? bill;
+    Failure? failure;
 
-    return repository.createRequest(bill!.id, request);
+    // Ignore if bill does not exist 
+    await repository
+        .getBillByTable(newBill.table!)
+        .then((value) => value.fold((l) => null, (r) => bill = r));
+
+    if (bill == null) {
+      await repository
+          .createBill(newBill)
+          .then((value) => value.fold((l) => failure = l, (r) => bill = r));
+    }
+
+    if (bill != null) return repository.createRequest(bill!.id, request);
+    debugPrint(failure?.errorMessage);
+    return Left(failure!);
   }
 }

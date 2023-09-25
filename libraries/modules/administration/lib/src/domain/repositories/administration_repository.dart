@@ -26,14 +26,24 @@ abstract class AdministrationRepository {
   Future<Either<Failure, BillType>> getDefaultBillType();
   Future<Either<Failure, bool>> removeBillTypeDefaultValue();
   Future<Either<Failure, bool>> setDefaultBillType(String id);
+  Future<Either<Failure, int>> updateTypeOfBill(
+      String billTypeId, String billId);
+  Future<Either<Failure, int>> updateBillStatus(
+      String billID, BillStatus status);
   // Future<Either<Failure, Request>> createRequest(Request request, String billID);
   Future<Either<Failure, List<Request>>> getLastRequests();
   Future<Either<Failure, int>> cancelRequest(String requestID);
   Future<Either<Failure, int>> setRequestDelivered(String requestID);
   Future<Either<Failure, int>> setItemDelivered(String itemID);
   Future<Either<Failure, List<Request>>> getBillValidRequests(String id);
+  Future<Either<Failure, int>> deleteBillType(String id);
 
   Future<Either<Failure, BillTotal>> getBillTotal(String billID);
   Future<Either<Failure, List<Item>>> getBillValidItems(String billID);
-  Future<Either<Failure,BillTotal>> getBillTotalWithPaidAmount(String billID);
+  Future<Either<Failure, BillTotal>> getBillTotalWithPaidAmount(String billID);
+  Future<Either<Failure, void>> cancelBillItemQuantity(
+    String billId,
+    String productId,
+    int quantity,
+  );
 }

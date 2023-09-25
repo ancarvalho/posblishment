@@ -1,11 +1,16 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
-class CustomCancelDialog extends StatelessWidget {
+class CustomDeleteDialog extends StatelessWidget {
   final String name;
   final Function delete;
+  final bool isCategory;
 
-  const CustomCancelDialog({Key? key, required this.name, required this.delete})
+  const CustomDeleteDialog(
+      {Key? key,
+      required this.name,
+      required this.delete,
+      this.isCategory = false})
       : super(key: key);
 
   @override
@@ -35,6 +40,9 @@ class CustomCancelDialog extends StatelessWidget {
             child: const Text('Confirmar'),
           ),
         ),
+        Text(
+          "Deleting a ${isCategory ? "Category" : "Product"} can cause some issues, and you maybe won`t be able to complete this action",
+        )
       ],
     );
   }

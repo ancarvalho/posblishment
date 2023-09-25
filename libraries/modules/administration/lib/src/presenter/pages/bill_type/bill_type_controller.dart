@@ -49,7 +49,7 @@ class BillTypeController extends Disposable with ChangeNotifier {
         : type?.type != null
             ? formatBillTypeValue(type!.type, type.value!)
             : "";
-    billType = type?.type ?? BillTypes.percentageTax;
+    // billType = type?.type ?? BillTypes.percentageTax;
 
     notifyListeners();
   }
