@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:bitmap/bitmap.dart';
+import 'package:flutter/foundation.dart';
 import 'package:printer/domain/enums/printer_size.dart';
 import 'package:printer/domain/errors/printer_erros.dart';
 import 'package:printer/text_styles.dart';
@@ -10,7 +11,7 @@ import 'domain/connection/device_connection.dart';
 import 'domain/entities/table_item.dart';
 import 'domain/enums/text_align.dart';
 
-class Commands {
+class PrinterCommands {
   static const int LF = 0x0A;
 
   static final List<int> RESET_PRINTER = [0x1B, 0x40];
@@ -38,7 +39,7 @@ class Commands {
   final PrinterTextStyle defaultPrinterTextStyle;
   final PrinterSize printerSize;
 
-  Commands({
+  PrinterCommands({
     required this.printerConnection,
     PrinterTextStyle? textStyle,
     this.printerSize = PrinterSize.eightyMM,
@@ -60,7 +61,10 @@ class Commands {
     }
   }
 
-  void printQRCode(String text, {int dotSize = 16, int qrCodeType = QRCODE_2, PrinterTextStyle? printerTextStyle}) {
+  void printQRCode(String text,
+      {int dotSize = 16,
+      int qrCodeType = QRCODE_2,
+      PrinterTextStyle? printerTextStyle}) {
     printerTextStyle ??= defaultPrinterTextStyle;
     if (!printerConnection.isConnected()) {
       return;
@@ -180,7 +184,6 @@ class Commands {
       final newImage = initImage(newByteWidth, bitmapHeight);
       for (var i = 0; i < bitmapHeight; i++) {
         newImage.add(imageBytes[bytesByLine * i + 8]);
-        // System.arraycopy(image, (byteWidth * i + 8), newImage, (newByteWidth * i + nbrWhiteByteToInsert + 8), byteWidth);
       }
       imageBytes = newImage;
     }
@@ -209,19 +212,23 @@ class Commands {
     if (!printerConnection.isConnected()) {
       return;
     }
+
     try {
-      final textBytes = utf8.encode(text); //change to another
+      // final textBytes = latin1.encode(text.replaceAll(RegExp(r'[^\x00-\xFC]+'), " ")); //change to another
+      final textBytes = latin1.encode(text); //change to another
+
       printerConnection
         ..write(genListStyles(printerTextStyle))
         ..write(textBytes);
     } catch (e, s) {
+      debugPrint(e.toString());
       throw PrinterError(s, "PrinterModule-PrintText", e, e.toString());
     }
 
     // return this;
   }
 
-  void textPrinter() {
+  void testPrinter() {
     printerConnection
       ..write(genListStyles(defaultPrinterTextStyle))
       ..write(
@@ -335,72 +342,88 @@ class Commands {
   }
 
   void disconnect() {
-    printerConnection.disconnect();
+    if (printerConnection.isConnected()) printerConnection.disconnect();
   }
 
   // fixed size columns
   void printTable(List<TableItem> table, [PrinterTextStyle? printerTextStyle]) {
     printerTextStyle ??= defaultPrinterTextStyle;
-    final totalColumnsSize = table.fold(0, (previousValue, element) => element.columns + previousValue);
-    if(totalColumnsSize > printerTextStyle.textSize.size) {
-      throw PrinterError(StackTrace.current, "PrinterModule-printTable", "", "Total Columns size Exceeded");
+    final totalColumnsSize = table.fold(
+        0, (previousValue, element) => element.columns + previousValue);
+    if (totalColumnsSize > printerTextStyle.textFont.columns) {
+      throw PrinterError(StackTrace.current, "PrinterModule-printTable", "",
+          "Total Columns size Exceeded");
     }
     final wrappedText = StringBuffer();
     for (final element in table) {
-      final totalAvailable = calculateMaxChar(printerTextStyle, element.columns);
-        if (element.text.length > totalAvailable) {
-          element.text.substring(0, totalAvailable );
-        }
-        else {
-         final difference = totalAvailable - element.text.length; 
-         wrappedText.write(element.text.padRight(difference));
-        }
+      final parsedElement =
+          element.text.replaceAll(RegExp(r'[^\x00-\xFC]+'), "");
+      final totalAvailable =
+          calculateMaxChar(printerTextStyle, element.columns);
+      if (parsedElement.length > totalAvailable) {
+        wrappedText.write(parsedElement.substring(0, totalAvailable));
+      } else {
+        // final difference = totalAvailable - parsedElement.length;
+        wrappedText.write(parsedElement.padRight(totalAvailable));
+      }
     }
-    printText(wrappedText.toString());
-
+    printText("$wrappedText\n");
   }
 
-  
-  void printRow(List<String> texts, [PrinterTextStyle? printerTextStyle]) {
+  void printRow(List<String> texts,
+      [PrinterTextStyle? printerTextStyle, int spacing = 2]) {
     printerTextStyle ??= defaultPrinterTextStyle;
 
-    const spacing = 2;
+    var totalSize = spacing;
+    final parsedText = texts.map((e) {
+      final text = e.replaceAll(RegExp(r'[^\x00-\xFC]+'), "");
+      totalSize += text.length;
+      return text;
+    }).toList();
+
     final totalAvailable = calculateMaxCharPerRoW(printerTextStyle);
-    final totalSize = texts.fold(0, (previousValue, element) => element.length + previousValue) + spacing;
+
     final wrappedText = StringBuffer();
     // define if will be needed any additional parameter for padding
-    if (totalAvailable > totalSize && printerTextStyle.textAlign == TextAlign.textAlignRight ||  printerTextStyle.textAlign == TextAlign.textAlignLeft) {
-      final remaining = ((totalAvailable - totalSize) / texts.length).floor();
-      for (final text in texts) {
-        wrappedText.write(text.padRight(remaining));
+    if (totalAvailable > totalSize &&
+            printerTextStyle.textAlign == TextAlign.textAlignRight ||
+        printerTextStyle.textAlign == TextAlign.textAlignLeft) {
+      final remaining = (totalAvailable - totalSize) + spacing;
+      debugPrint(remaining.toString());
+      if (parsedText.isNotEmpty)
+        wrappedText
+            .write(parsedText[0].padRight(parsedText[0].length + remaining));
+      for (var i = 1; i < parsedText.length && parsedText.length > 1; i++) {
+        wrappedText.write(parsedText[i]);
       }
-    }else {
-      for (final text in texts) {
+    } else {
+      for (final text in parsedText) {
         wrappedText.write(text.padRight(2));
       }
     }
 
-    printText(wrappedText.toString(), printerTextStyle);
-
-
+    printText("$wrappedText\n", printerTextStyle);
   }
-  
-  void printHR(){
+
+  void printHR() {
     final totalAvailable = calculateMaxCharPerRoW(defaultPrinterTextStyle);
-    final spacer = utf8.encode("".padRight(totalAvailable, "_"));
+    final spacer = utf8.encode("".padRight(totalAvailable, "-"));
 
     printerConnection
       ..write(genListStyles(defaultPrinterTextStyle))
       ..write(spacer)
       ..send();
-    
   }
 
   int calculateMaxCharPerRoW(PrinterTextStyle textStyle) {
     return (textStyle.textFont.columns / textStyle.textSize.size).floor();
   }
 
-    int calculateMaxChar(PrinterTextStyle textStyle, int columns) {
+  int calculateMaxChar(PrinterTextStyle textStyle, int columns) {
     return (columns / textStyle.textSize.size).floor();
+  }
+
+  int calculateColumns(PrinterTextStyle textStyle, int chars) {
+    return (chars * textStyle.textSize.size).floor();
   }
 }

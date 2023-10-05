@@ -19,6 +19,9 @@ class Bill {
     required this.createdAt,
     this.updatedAt,
   });
+
+  factory Bill.empty() =>
+      Bill(id: "", status: BillStatus.open, createdAt: DateTime.now());
 }
 
 class NewBill {

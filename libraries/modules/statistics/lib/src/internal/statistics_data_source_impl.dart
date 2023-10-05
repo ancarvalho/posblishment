@@ -13,23 +13,30 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
 
   StatisticsDataSourceImpl(this._appDatabase);
 
+  String formatDate(int year, int month, int day, {String time = "00:00:00"}) {
+    return "$year-${month.toString().padLeft(2, "0")}-${day.toString().padLeft(2, "0")} $time";
+  }
+
   String getStartOfWeek(DateTime date) {
     final weekday = date.weekday;
-    return "${date.year}-${date.month.toString().padLeft(2, "0")}-${date.day - weekday} 00:00:00";
+    return formatDate(date.year, date.month, date.day - weekday);
+    // return "${date.year}-${date.month.toString().padLeft(2, "0")}-${(date.day - weekday).toString().padLeft(2, "0")} 00:00:00";
   }
 
   String getStartOfMonth(DateTime date) {
-    return "${date.year}-${date.month.toString().padLeft(2, "0")}-01 00:00:00";
+    return formatDate(date.year, date.month, 1);
+    // return "${date.year}-${date.month.toString().padLeft(2, "0")}-01 00:00:00";
   }
 
   String getStartOfDay(DateTime date) {
-    return "${date.year}-${date.month.toString().padLeft(2, "0")}-${date.day} 00:00:00";
+     return formatDate(date.year, date.month, date.day);
+    // return "${date.year}-${date.month.toString().padLeft(2, "0")}-${date.day.toString().padLeft(2, "0")} 00:00:00";
   }
 
   DateRange getRange(Frequency frequency) {
     final dateNow = DateTime.now();
-    final endFormattedDate =
-        "${dateNow.year}-${dateNow.month.toString().padLeft(2, "0")}-${dateNow.day} 23:59:59";
+    final endFormattedDate = formatDate(dateNow.year, dateNow.month, dateNow.day, time: "23:59:59");
+        // "${dateNow.year}-${dateNow.month.toString().padLeft(2, "0")}-${dateNow.day.toString().padLeft(2, "0")} 23:59:59";
     switch (frequency) {
       case Frequency.today:
         return DateRange(
@@ -49,7 +56,7 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
     }
   }
 
-  Future<double> getNotPaidSubtotal(DateRange interval) async {
+  Future<double?> getNotPaidSubtotal(DateRange interval) async {
     try {
       final b = _appDatabase
           .customSelect(
@@ -76,7 +83,7 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
           )
           .getSingle()
           .then((value) {
-            return value.read<double>("subtotal");
+            return value.read<double?>("subtotal");
           });
 
       return b;
@@ -138,7 +145,7 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
           })
           .then(BasicStatisticsAdapter.convertFromCalculateTotal);
 
-      b.notPaid = await getNotPaidSubtotal(interval);
+      b.notPaid = await getNotPaidSubtotal(interval) ?? 0;
 
       return b;
     } catch (e, s) {
@@ -159,7 +166,9 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
             p.name as name
            FROM item i
            LEFT JOIN product p ON p.id = i.product_id
-           WHERE i.created_at BETWEEN ? AND ? AND i.status IS NOT ?
+           LEFT JOIN request r ON r.id = i.request_id
+           LEFT JOIN bill b ON b.id = r.id
+           WHERE i.created_at BETWEEN ? AND ? AND i.status IS NOT ? AND b.status IS NOT ? AND r.status IS NOT ?
            GROUP BY i.product_id
            ORDER BY total_quantity
            LIMIT 10
@@ -168,6 +177,8 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
               Variable.withDateTime(DateTime.parse(interval.startDate)),
               Variable.withDateTime(DateTime.parse(interval.endDate)),
               Variable.withInt(ItemStatus.canceled.index),
+              Variable.withInt(BillStatus.canceled.index),
+              Variable.withInt(RequestStatus.canceled.index),
             ],
             readsFrom: {
               _appDatabase.product,

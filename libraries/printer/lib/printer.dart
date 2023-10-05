@@ -10,13 +10,17 @@ class Printer {
     required this.commands,
   });
 
-  static Printer printerTCPConnection({required String address, int? port, int? timeout, PrinterTextStyle? printerTextStyle}) {
+  static PrinterCommands printerTCPConnection(
+      {required String address,
+      int? port,
+      int? timeout,
+      PrinterTextStyle? printerTextStyle}) {
     final printer = TCPConnection(address: address);
-    final commands = Commands(printerConnection: printer, textStyle: printerTextStyle);
+    final commands = PrinterCommands(
+        printerConnection: printer, textStyle: printerTextStyle);
 
-    return Printer._(commands: commands);
+    return commands;
   }
 
-  final Commands commands;
+  final PrinterCommands commands;
 }
-

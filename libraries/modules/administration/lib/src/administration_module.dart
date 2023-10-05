@@ -39,6 +39,7 @@ import 'infra/repositories/administration_repository_impl.dart';
 import 'internal/data_source/administration_data_source_internal_impl.dart';
 import 'presenter/pages/cart/cart_store.dart';
 import 'presenter/pages/order_sheet/order_sheet_page.dart';
+import 'presenter/stores/bill/bill_store.dart';
 
 
 
@@ -54,12 +55,12 @@ class AdministrationModule extends Module {
     Bind.lazySingleton((i) => LastRequestsStore(i()),export: true,),
     Bind.lazySingleton((i) => UndeliveredRequestsStore(i()),export: true,),
     Bind.lazySingleton((i) => PaymentStore(i()),export: true,),
-    Bind.lazySingleton((i) => MakeRequestStore(i()),export: true,),
+    Bind.lazySingleton((i) => MakeRequestStore(i(),i(),i(),),export: true,),
     Bind.lazySingleton((i) => OrderSheetStore(i()),export: true,),
     Bind.lazySingleton((i) => BillTypeStore(i()),export: true,),
     Bind.lazySingleton((i) => CartStore(i()),export: true,),
     Bind.lazySingleton((i) => BillTypesStore(i()),export: true,),
-
+    Bind.lazySingleton((i) => BillStore(i()),export: true,),
 
     //TODO Init Stores
 
@@ -83,6 +84,7 @@ class AdministrationModule extends Module {
     Bind.lazySingleton<ICloseBill>((i) => CloseBill(i()),),
     Bind.lazySingleton<ISetBillTypeDefault>((i) => SetBillTypeDefault(i()),),
     Bind.lazySingleton<ICancelBillItem>((i) => CancelBillItem(i()),),
+    Bind.lazySingleton<IGetRequestItemCategorized>((i) => GetRequestItemCategorized(i()),),
 
 
     Bind.lazySingleton<AdministrationRepository>((i) => AdministrationRepositoryImpl(i()),),

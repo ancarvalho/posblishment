@@ -8,7 +8,7 @@ abstract class AdministrationDataSource {
   Future<List<Bill>> getLastPaidBills();
   // Future<Request> handleBillCreationOrUpdate(NewBill bill, NewRequest request);
   Future<Bill> createBill(NewBill bill);
-  Future<Request> createRequest(String billId, NewRequest request);
+
   Future<Bill> getBill(String billID);
   Future<Bill> getBillByTable(int table);
   Future<int> cancelBill(String billID);
@@ -34,6 +34,8 @@ abstract class AdministrationDataSource {
   );
   Future<List<Request>> getBillValidRequests(String billID);
   Future<List<Request>> getLastRequests();
+  Future<String> createRequest(String billId, NewRequest request);
+  Future<List<RequestItemWithCategory>> getRequestItemWithCategory(String requestId);
 
   Future<int> changeItemStatus(String id, ItemStatus status);
   Future<List<Item>> getBillValidItems(String billID);

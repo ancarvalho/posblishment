@@ -1,19 +1,52 @@
-import "package:administration/src/domain/use_cases/create_or_update_bill.dart";
 import "package:core/core.dart";
 import "package:flutter_triple/flutter_triple.dart";
 
 import "../../../domain/errors/administration_errors.dart";
+import "../../../domain/use_cases/use_cases.dart";
 
-class MakeRequestStore extends StreamStore<Failure, Request> {
-  MakeRequestStore(this._createOrUpdateBill) : super(Request.empty());
+class MakeRequestStore extends StreamStore<Failure, String> {
+  MakeRequestStore(this._createOrUpdateBill, this._getRequestItemCategorized, this.printerExtend)
+      : super("");
 
   final ICreateOrUpdateBill _createOrUpdateBill;
+  final IGetRequestItemCategorized _getRequestItemCategorized;
+  final PrinterAbstract? printerExtend;
 
   Future<void> createOrUpdateBill(NewBill bill, NewRequest request) async {
     if (!isLoading) {
-      return executeEither(() => DartzEitherAdapter.adapter(_createOrUpdateBill(bill, request)));
+      Failure? failure;
+      final requestId = await _createOrUpdateBill(bill, request).then(
+        (value) => value.fold(
+          (l) {
+            failure = l;
+            return null;
+          },
+          (r) => r,
+        ),
+      );
+      if (failure != null) return setError(failure!);
+      final categorizedRequest =
+          await _getRequestItemCategorized(requestId!).then(
+        (value) => value.fold(
+          (l) {
+            failure = l;
+            return null;
+          },
+          (r) => r,
+        ),
+      );
+      if (failure != null) return setError(failure!);
+      // debugPrint(categorizedRequest?.map((e) => "${e.categoryId}${e.categoryName}${e.productName}").join());
+      if (categorizedRequest != null) {
+        printerExtend?.printRequestItemByCategory(categorizedRequest, bill.table!,);
+        update(requestId);
+      }
+      
     }
-    AdministrationError(StackTrace.current,"AdministrationModule-createOrUpdateBill","","Currently Executing Action");
-    
+    AdministrationError(
+        StackTrace.current,
+        "AdministrationModule-createOrUpdateBill",
+        "",
+        "Currently Executing Action");
   }
 }

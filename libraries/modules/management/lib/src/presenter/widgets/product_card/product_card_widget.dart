@@ -46,7 +46,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
           arguments: widget.product,
         );
       },
-      onDoubleTap: () {
+      onLongPress: () {
         showDialog(
           context: context,
           builder: (context) {

@@ -4,9 +4,15 @@ enum PagesRoutes {
     route: "/",
     dependsOnModule: ModulesRoutes.statistics,
   ),
-   posPrinter(
+  posPrinter(
     name: "Printer",
-    route: "/",
+    route: "/printer_test",
+    dependsOnModule: ModulesRoutes.posPrinter,
+    standAlone: false,
+  ),
+  posPrinterConfig(
+    name: "Printer",
+    route: "/printer_config",
     dependsOnModule: ModulesRoutes.posPrinter,
   ),
   cart(

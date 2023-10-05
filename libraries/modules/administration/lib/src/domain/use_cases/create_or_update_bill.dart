@@ -1,4 +1,3 @@
-import 'package:administration/src/domain/errors/administration_errors.dart';
 import 'package:administration/src/domain/repositories/administration_repository.dart';
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
@@ -6,7 +5,7 @@ import 'package:flutter/material.dart';
 
 // ignore: one_member_abstracts
 abstract class ICreateOrUpdateBill {
-  Future<Either<Failure, Request>> call(NewBill bill, NewRequest request);
+  Future<Either<Failure, String>> call(NewBill bill, NewRequest request);
 }
 
 class CreateOrUpdateBill implements ICreateOrUpdateBill {
@@ -15,7 +14,7 @@ class CreateOrUpdateBill implements ICreateOrUpdateBill {
   CreateOrUpdateBill(this.repository);
 
   @override
-  Future<Either<Failure, Request>> call(
+  Future<Either<Failure, String>> call(
     NewBill newBill,
     NewRequest request,
   ) async {

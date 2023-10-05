@@ -5,7 +5,7 @@ abstract class AdministrationRepository {
   Future<Either<Failure, List<Product>>> getAllProducts();
 
   Future<Either<Failure, Bill>> createBill(NewBill bill);
-  Future<Either<Failure, Request>> createRequest(
+  Future<Either<Failure, String>> createRequest(
     String billID,
     NewRequest request,
   );
@@ -31,6 +31,7 @@ abstract class AdministrationRepository {
   Future<Either<Failure, int>> updateBillStatus(
       String billID, BillStatus status);
   // Future<Either<Failure, Request>> createRequest(Request request, String billID);
+  Future<Either<Failure,List<RequestItemWithCategory>>> getRequestItemWithCategory(String requestId);
   Future<Either<Failure, List<Request>>> getLastRequests();
   Future<Either<Failure, int>> cancelRequest(String requestID);
   Future<Either<Failure, int>> setRequestDelivered(String requestID);

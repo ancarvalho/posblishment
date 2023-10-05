@@ -1,6 +1,8 @@
 import 'package:bitmap/bitmap.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:printer/commands.dart';
+
 import 'package:printer/domain/enums/enums.dart';
 import 'package:printer/printer.dart';
 
@@ -14,12 +16,12 @@ class PrinterTestPage extends StatefulWidget {
 class _PrinterTestPageState extends State<PrinterTestPage> {
   late String ip;
   late String text;
-  Printer? printer;
+  PrinterCommands? printer;
 
   Future<void> printImage(String path) async {
-    if (printer != null && printer!.commands.printerConnection.isConnected()) {
+    if (printer != null && printer!.printerConnection.isConnected()) {
       final bitmap = await Bitmap.fromProvider(AssetImage(path));
-      await printer?.commands.printBitmap(bitmap);
+      await printer?.printBitmap(bitmap);
     }
   }
 
@@ -46,8 +48,8 @@ class _PrinterTestPageState extends State<PrinterTestPage> {
                 IconButton(
                   onPressed: () {
                     if (printer != null &&
-                        printer!.commands.printerConnection.isConnected()) {
-                      printer?.commands.disconnect();
+                        printer!.printerConnection.isConnected()) {
+                      printer?.disconnect();
                     } else if (ip.isNotEmpty) {
                       debugPrint(ip);
                       printer = Printer.printerTCPConnection(address: ip);
@@ -62,25 +64,25 @@ class _PrinterTestPageState extends State<PrinterTestPage> {
               children: [
                 IconButton(
                   onPressed: () {
-                    printer?.commands.reset();
+                    printer?.reset();
                   },
                   icon: const Icon(Icons.lock_reset),
                 ),
                 IconButton(
                   onPressed: () {
-                    printer?.commands.feedPaper(220);
+                    printer?.feedPaper(220);
                   },
                   icon: const Icon(Icons.feed),
                 ),
                 IconButton(
                   onPressed: () {
-                    printer?.commands.cutPaper();
+                    printer?.cutPaper();
                   },
                   icon: const Icon(Icons.cut),
                 ),
                 IconButton(
                   onPressed: () {
-                    printer?.commands.textPrinter();
+                    printer?.testPrinter();
                   },
                   icon: const Icon(Icons.airline_seat_recline_extra),
                 ),
@@ -99,10 +101,10 @@ class _PrinterTestPageState extends State<PrinterTestPage> {
                 ),
                 IconButton(
                     onPressed: () {
-                      printer?.commands
+                      printer
                         ?..printText(
                             text,
-                            printer?.commands.defaultPrinterTextStyle.copyWith(
+                            printer?.defaultPrinterTextStyle.copyWith(
                                 textWeight: TextWeight.textWeightBold,
                                 textSize: TextSize.textSizeBig,),)
                         ..feedPaper(20);
@@ -124,7 +126,7 @@ class _PrinterTestPageState extends State<PrinterTestPage> {
                 ),
                 IconButton(
                     onPressed: () {
-                      printer?.commands
+                      printer
                         ?..printQRCode(text)
                         ..feedPaper(20);
                     },

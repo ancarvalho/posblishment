@@ -50,7 +50,10 @@ class CustomBillDialog extends StatelessWidget {
                 height: Sizes.dp10(context),
               ),
               TextButton(
-                onPressed: () => paymentBill(),
+                onPressed: () {
+                  Navigator.pop(context);
+                  paymentBill();
+                },
                 child: const Text('Pagamento'),
               ),
               SizedBox(
@@ -60,7 +63,10 @@ class CustomBillDialog extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Sair'),
+                child: const Text(
+                  'Sair',
+                  style: TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
+                ),
               ),
             ],
           ),

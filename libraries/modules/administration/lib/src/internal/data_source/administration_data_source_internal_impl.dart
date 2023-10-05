@@ -2,7 +2,6 @@ import 'package:administration/src/infra/data_sources/administration_data_source
 import 'package:core/core.dart';
 
 import 'package:drift/drift.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:internal_database/internal_database.dart';
 
 import '../../domain/errors/administration_errors.dart';
@@ -43,12 +42,18 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   }
 
   @override
-  Future<int> cancelBill(String id) {
+  Future<int> cancelBill(String id) async {
     try {
-      final txID = updateBillStatus(id, BillStatus.canceled);
-      // Cancel requests and items
-
-      return txID;
+      final e = await Future.wait([
+        updateBillStatus(id, BillStatus.canceled),
+        cancelAllBillItems(id),
+        cancelBillRequests(id),
+      ]);
+      // final txID = await updateBillStatus(id, BillStatus.canceled);
+      // // Cancel requests and items
+      // await cancelBillRequests(id);
+      // await cancelBillItem(id);
+      return 0;
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -332,14 +337,14 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   }
 
   // Items
-  Future<Item> createItem(NewItem item, String requestID) async {
+  Future<int> createItem(NewItem item, String requestID) async {
     try {
       final product = await getProduct(item.productId);
-      final createdItem = await _internalDatabase
+      final txId = await _internalDatabase
           .into(_internalDatabase.item)
-          .insertReturning(ItemAdapter.createItem(item, product, requestID));
+          .insert(ItemAdapter.createItem(item, product, requestID));
 
-      return ItemAdapter.toItem(createdItem, product.name, product.code);
+      return txId;
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -472,7 +477,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   }
 
   @override
-  Future<Request> createRequest(String billID, NewRequest request) async {
+  Future<String> createRequest(String billID, NewRequest request) async {
     try {
       // Maybe wait all , need generate id for reference to items
       final req = await _internalDatabase
@@ -480,16 +485,11 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           .insertReturning(RequestAdapter.createRequest(request, billID));
 
       // Change to batch (return items currently not supported by drift)
-      final items = await Future.wait(
+      await Future.wait(
         request.items.map((e) => createItem(e, req.id)).toList(),
       );
 
-      return RequestAdapter.fromRequestDataWithItems(
-        req,
-        items
-            .map((e) => MinimizedItem(name: e.name, quantity: e.quantity))
-            .toList(),
-      );
+      return req.id;
     } catch (e, s) {
       throw AdministrationError(
         s,
@@ -533,7 +533,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
                   (row) => RequestItem(
                     id: row.read<String>("id"),
                     name: row.read<String>("name"),
-                    observation: row.read<String>("observation"),
+                    observation: row.read<String?>("observation"),
                     quantity: row.read<int>("quantity"),
                     status: row.read<int>("status"),
                     billID: row.read<String>("bill_id"),
@@ -799,9 +799,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       );
       remainingQuantity -= item.quantity;
     }
-    debugPrint(updatedItems
-        .map((e) => "${e.id} ${e.quantity} ${e.status?.index}")
-        .join(" "));
+
     return updatedItems;
   }
 
@@ -910,6 +908,109 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       throw AdministrationError(
         s,
         "InternalDatabase-Administration-updateBillType",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  Future<int> cancelBillRequests(String billId) async {
+    final q = await _internalDatabase.customUpdate(
+      """
+      UPDATE request 
+      SET status = ?
+      WHERE bill_id = ?
+      """,
+      updates: {_internalDatabase.request},
+      variables: [
+        Variable.withInt(RequestStatus.canceled.index),
+        Variable.withString(billId)
+      ],
+    );
+    return q;
+  }
+
+  // Could Not cancel items if request is executed first
+  Future<void> cancelAllBillItems(String billId) async {
+    final requests = await _internalDatabase
+        .customSelect(
+          """
+    SELECT r.id as request_id
+    FROM bill b
+    LEFT JOIN request r ON r.bill_id = b.id
+    WHERE b.id = ? AND r.status IS NOT ?
+    """,
+          readsFrom: {_internalDatabase.bill, _internalDatabase.request},
+          variables: [
+            Variable.withString(billId),
+            Variable.withInt(RequestStatus.canceled.index)
+          ],
+        )
+        .get()
+        .then(
+            (value) => value.map((e) => e.read<String>("request_id")).toList());
+    if (requests.isNotEmpty) await Future.wait(requests.map(cancelRequestItem));
+  }
+
+  Future<int> cancelRequestItem(String requestId) async {
+    final q = await _internalDatabase.customUpdate(
+      """
+      UPDATE item 
+      SET status = ?
+      WHERE request_id = ?
+      """,
+      updates: {_internalDatabase.request},
+      variables: [
+        Variable.withInt(RequestStatus.canceled.index),
+        Variable.withString(requestId)
+      ],
+    );
+    return q;
+  }
+
+  @override
+  Future<List<RequestItemWithCategory>> getRequestItemWithCategory(
+      String requestId) async {
+    try {
+      final items = await _internalDatabase
+          .customSelect(
+            """
+        SELECT i.quantity as quantity, p.name as product_name, c.name as category_name, c.id as category_id
+        FROM request r
+        LEFT JOIN item i ON i.request_id = r.id
+        LEFT JOIN product p ON p.id = i.product_id
+        LEFT JOIN category c ON c.id = p.category_id
+        WHERE r.id = ? AND i.status IS NOT ?
+        
+      """,
+            readsFrom: {
+              _internalDatabase.request,
+              _internalDatabase.product,
+              _internalDatabase.category,
+              _internalDatabase.item
+            },
+            variables: [
+              Variable.withString(requestId),
+              Variable.withInt(ItemStatus.canceled.index),
+            ],
+          )
+          .get()
+          .then(
+            (value) => value
+                .map((row) => RequestItemWithCategory(
+                      productName: row.read<String>("product_name"),
+                      categoryName: row.read<String>("category_name"),
+                      categoryId: row.read<String>("category_id"),
+                      quantity: row.read<int>("quantity"),
+                    ))
+                .toList(),
+          );
+
+      return items;
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-getRequestItemWithCategory",
         e,
         e.toString(),
       );

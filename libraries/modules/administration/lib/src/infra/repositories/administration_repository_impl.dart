@@ -174,7 +174,7 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   }
 
   @override
-  Future<Either<Failure, Request>> createRequest(
+  Future<Either<Failure, String>> createRequest(
     String billID,
     NewRequest newRequest,
   ) async {
@@ -323,6 +323,16 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
   Future<Either<Failure, int>> deleteBillType(String id) async {
      try {
       return Right(await _administrationDataSource.deleteBillType(id));
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+  
+  @override
+  Future<Either<Failure, List<RequestItemWithCategory>>> getRequestItemWithCategory(String requestId) async {
+    // TODO: implement getRequestItemWithCategory
+    try {
+      return Right(await _administrationDataSource.getRequestItemWithCategory(requestId));
     } on Failure catch (e) {
       return Left(e);
     }

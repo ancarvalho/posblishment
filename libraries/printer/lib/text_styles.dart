@@ -24,7 +24,7 @@ class PrinterTextStyle {
     this.textUnderline = TextUnderline.textUnderlineOff,
     this.textWeight = TextWeight.textWeightNormal,
     EscPosCharsetEncoding? encoding,
-  }):charsetEncoding = encoding ?? EscPosCharsetEncoding(charsetCode: 3, charsetName: "Portuguese");
+  }):charsetEncoding = encoding ?? EscPosCharsetEncoding(charsetCode: 16, charsetName: "Portuguese");
 
   PrinterTextStyle copyWith(
       {

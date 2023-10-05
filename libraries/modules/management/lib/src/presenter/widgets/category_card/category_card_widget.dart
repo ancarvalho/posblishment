@@ -43,7 +43,7 @@ class _CategoryCardWidgetState extends State<CategoryCardWidget> {
           arguments: widget.category,
         );
       },
-      onDoubleTap: () {
+      onLongPress: () {
         showDialog(
           context: context,
           builder: (context) {

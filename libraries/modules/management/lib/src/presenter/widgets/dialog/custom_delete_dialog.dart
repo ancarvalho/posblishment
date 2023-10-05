@@ -18,15 +18,7 @@ class CustomDeleteDialog extends StatelessWidget {
     return SimpleDialog(
       title: Text("Excluir $name"),
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(left: Sizes.dp10(context)),
-          child: TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Cancelar'),
-          ),
-        ),
+        
         SizedBox(
           height: Sizes.dp10(context),
         ),
@@ -38,6 +30,15 @@ class CustomDeleteDialog extends StatelessWidget {
               Navigator.pop(context);
             },
             child: const Text('Confirmar'),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: Sizes.dp10(context)),
+          child: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Sair', style: TextStyle(color: Color.fromARGB(255, 255, 0, 0)),),
           ),
         ),
         Text(
