@@ -85,7 +85,7 @@ class AdministrationModule extends Module {
     Bind.lazySingleton<ISetBillTypeDefault>((i) => SetBillTypeDefault(i()),),
     Bind.lazySingleton<ICancelBillItem>((i) => CancelBillItem(i()),),
     Bind.lazySingleton<IGetRequestItemCategorized>((i) => GetRequestItemCategorized(i()),),
-
+    Bind.lazySingleton<IUpdateTypeOfBill>((i) => UpdateTypeOfBill(i()),),
 
     Bind.lazySingleton<AdministrationRepository>((i) => AdministrationRepositoryImpl(i()),),
 

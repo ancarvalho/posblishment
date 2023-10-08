@@ -24,7 +24,7 @@ class BillCardWidget extends StatelessWidget {
       onLongPress: () => showDialog(
         context: context,
         builder: (context) => CustomBillDialog(
-          billTable: bill.table,
+          bill: bill,
           closeBill: () => billCardController.closeBill(bill.id),
           cancelAllBill: () => billCardController.cancelBill(bill.id),
           paymentBill: () => Modular.to.pushNamed(

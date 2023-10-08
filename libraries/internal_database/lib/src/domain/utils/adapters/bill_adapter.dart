@@ -11,6 +11,7 @@ class BillAdapter {
       status: bill.status,
       customerName: bill.customerName,
       table: bill.table,
+      billTypeId: bill.billTypeId,
       createdAt: bill.createdAt,
       updatedAt: bill.updatedAt,
     );
@@ -22,6 +23,7 @@ class BillAdapter {
       status: bill.status,
       customerName: bill.customerName,
       table: bill.table,
+      billTypeId: bill.billTypeId,
       billType: BillTypeAdapter.filterBillType(billTypes, bill.billTypeId),
       createdAt: bill.createdAt,
       updatedAt: bill.updatedAt,

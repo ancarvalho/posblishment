@@ -7,21 +7,23 @@ class Bill {
   final int? table;
   final String? customerName;
   final BillStatus status;
+  final String billTypeId;
   final BillType? billType;
   final DateTime createdAt;
   final DateTime? updatedAt;
-  const Bill({
+  const Bill( {
     required this.id,
     this.table,
     this.customerName,
     this.billType,
     required this.status,
     required this.createdAt,
+    required this.billTypeId,
     this.updatedAt,
   });
 
   factory Bill.empty() =>
-      Bill(id: "", status: BillStatus.open, createdAt: DateTime.now());
+      Bill(id: "", status: BillStatus.open, createdAt: DateTime.now(), billTypeId: "");
 }
 
 class NewBill {

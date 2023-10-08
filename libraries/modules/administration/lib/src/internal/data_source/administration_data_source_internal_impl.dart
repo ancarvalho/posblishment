@@ -893,8 +893,8 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     try {
       final txID = await _internalDatabase.customUpdate(
         """
-        UPDATE bill b
-        SET bill_type = ?
+        UPDATE bill
+        SET bill_type_id = ?
         WHERE id = ?
       """,
         updates: {_internalDatabase.bill},
