@@ -8,7 +8,7 @@ abstract class PrinterAbstract {
   // void printRequest(int table, Request request);
 
   void printRequestItemByCategory(
-      List<RequestItemWithCategory> requestItemWithCategory, int table);
+      List<RequestItemWithCategory> requestItemWithCategory, int table,);
 
   void printBill(Bill bill, List<Item> items, BillTotal billTotal);
 

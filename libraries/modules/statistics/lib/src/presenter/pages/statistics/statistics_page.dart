@@ -25,12 +25,19 @@ class _StatisticsPageState extends State<StatisticsPage> {
         body: SingleChildScrollView(
           child: Padding(
             padding:  EdgeInsets.symmetric(horizontal: Sizes.width(context)*.02),
-            child: Column(
+            child: Sizes.isMobile(context) ? Column(
               children:  [
                 SizedBox(height: Sizes.heightPercentile125(context),),
                 const BasicStatisticsPage(),
                 SizedBox(height: Sizes.heightPercentile125(context),),
                 const MostSoldProductsPage(),
+              ],
+            ) : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:  [
+                const Expanded(flex: 2, child:  BasicStatisticsPage()),
+                SizedBox(height: Sizes.heightPercentile125(context), child: Ink(),),
+                const Expanded( flex: 2, child : MostSoldProductsPage()),
               ],
             ),
           ),

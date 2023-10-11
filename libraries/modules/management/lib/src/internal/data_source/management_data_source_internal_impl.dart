@@ -165,4 +165,146 @@ class ManagementDataSourceInternalImpl implements ManagementDataSource {
       );
     }
   }
+
+    @override
+  Future<BillType> getBillType(String id) async {
+    try {
+      final billType =
+          await (appDatabase.select(appDatabase.billType)
+                ..where((tbl) => tbl.id.equals(id)))
+              // .map(BillTypeAdapter.convertToBillType)
+              .getSingle();
+      return BillTypeAdapter.convertToBillType(billType);
+    } catch (e, s) {
+      throw ManagementError(
+        s,
+        "InternalDatabase-Management-getBillType",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<BillType> getDefaultBillType() async {
+    try {
+      final billType =
+          await (appDatabase.select(appDatabase.billType)
+                ..where((tbl) => tbl.defaultType.equals(true)))
+              // .map(BillTypeAdapter.convertToBillType)
+              .getSingle();
+      return BillTypeAdapter.convertToBillType(billType);
+    } catch (e, s) {
+      throw ManagementError(
+        s,
+        "InternalDatabase-Management-getDefaultBillType",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<List<BillType>> getBillTypes() {
+    try {
+      final billTypes = appDatabase
+          .select(appDatabase.billType)
+          .map(BillTypeAdapter.convertToBillType)
+          .get();
+      return billTypes;
+    } catch (e, s) {
+      throw ManagementError(
+        s,
+        "InternalDatabase-Management-getBillTypes",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<int> deleteBillType(String id) {
+    try {
+      final billTypes = (appDatabase.delete(appDatabase.billType)
+            ..where((tbl) => tbl.id.equals(id)))
+          .go();
+      return billTypes;
+    } catch (e, s) {
+      throw ManagementError(
+        s,
+        "InternalDatabase-Management-deleteBillType",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<bool> createBillType(NewBillType newBillType) async {
+    try {
+      await appDatabase
+          .into(appDatabase.billType)
+          .insert(BillTypeAdapter.createBillType(newBillType));
+      return true;
+    } catch (e, s) {
+      throw ManagementError(
+        s,
+        "InternalDatabase-Management-createBillType",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<bool> removeBillTypeDefaultValue() async {
+    try {
+      await appDatabase
+          .update(appDatabase.billType)
+          .write(const BillTypeCompanion(defaultType: Value(false)));
+      return true;
+    } catch (e, s) {
+      throw ManagementError(
+        s,
+        "InternalDatabase-Management-removeDefaultValue",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<bool> setDefaultBillType(String id) async {
+    try {
+      await (appDatabase.update(appDatabase.billType)
+            ..where((tbl) => tbl.id.equals(id)))
+          .write(const BillTypeCompanion(defaultType: Value(true)));
+      return true;
+    } catch (e, s) {
+      throw ManagementError(
+        s,
+        "InternalDatabase-Management-setDefaultBillType",
+        e,
+        e.toString(),
+      );
+    }
+  }
+  
+  @override
+  Future<bool> updateBillType(BillType newBillType) async {
+    try {
+      await (appDatabase.update(appDatabase.billType)
+            ..where((tbl) => tbl.id.equals(newBillType.id)))
+          .write(BillTypeAdapter.updateBillType(newBillType));
+      return true;
+    } catch (e, s) {
+      throw ManagementError(
+        s,
+        "InternalDatabase-Management-updateBillType",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
 }

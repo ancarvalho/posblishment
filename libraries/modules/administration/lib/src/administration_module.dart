@@ -1,21 +1,17 @@
 
 import 'package:administration/src/domain/use_cases/close_bill.dart';
-import 'package:administration/src/domain/use_cases/delete_bill_type.dart';
-import 'package:administration/src/domain/use_cases/set_bill_type_default.dart';
 import 'package:administration/src/presenter/pages/bill/bill_page.dart';
-import 'package:administration/src/presenter/pages/bill_type/bill_type_page.dart';
-import 'package:administration/src/presenter/pages/bill_type/bill_type_store.dart';
-import 'package:administration/src/presenter/pages/bill_types/bill_types_page.dart';
-import 'package:administration/src/presenter/pages/bill_types/bill_types_store.dart';
+
 import 'package:administration/src/presenter/pages/bills/bills_page.dart';
-import 'package:administration/src/presenter/pages/bills/bills_store.dart';
+import 'package:administration/src/presenter/widgets/bills/bills_store.dart';
 import 'package:administration/src/presenter/pages/cart/cart_page.dart';
 import 'package:administration/src/presenter/pages/last_paid_bills/last_paid_bills_page.dart';
 import 'package:administration/src/presenter/pages/last_paid_bills/last_paid_bills_store.dart';
 import 'package:administration/src/presenter/pages/last_requests/last_requests_page.dart';
 import 'package:administration/src/presenter/pages/menu/menu_page.dart';
+import 'package:administration/src/presenter/widgets/dialog/bill_types_store.dart';
 
-import 'package:administration/src/presenter/pages/order_sheet/order_sheet_store.dart';
+import 'package:administration/src/presenter/widgets/order_sheet/order_sheet_store.dart';
 import 'package:administration/src/presenter/pages/payment/payment_page.dart';
 import 'package:administration/src/presenter/pages/payment/payment_store.dart';
 import 'package:administration/src/presenter/stores/bill/bill_total_store.dart';
@@ -44,6 +40,7 @@ import 'presenter/stores/bill/bill_store.dart';
 
 
 class AdministrationModule extends Module {
+
   @override
   final List<Bind> binds = [
     Bind.lazySingleton((i) => NotPaidBillsStore(i(), ),export: true,),
@@ -57,10 +54,10 @@ class AdministrationModule extends Module {
     Bind.lazySingleton((i) => PaymentStore(i()),export: true,),
     Bind.lazySingleton((i) => MakeRequestStore(i(),i(),i(),),export: true,),
     Bind.lazySingleton((i) => OrderSheetStore(i()),export: true,),
-    Bind.lazySingleton((i) => BillTypeStore(i()),export: true,),
     Bind.lazySingleton((i) => CartStore(i()),export: true,),
-    Bind.lazySingleton((i) => BillTypesStore(i()),export: true,),
     Bind.lazySingleton((i) => BillStore(i()),export: true,),
+    Bind.lazySingleton((i) => BillTypesStore(i()),export: true,),
+
 
     //TODO Init Stores
 
@@ -78,14 +75,11 @@ class AdministrationModule extends Module {
     Bind.lazySingleton<ICreateOrUpdateBill>((i) => CreateOrUpdateBill(i()),),
     Bind.lazySingleton<ICancelRequest>((i) => CancelRequest(i()),),
     Bind.lazySingleton<ICancelBill>((i) => CancelBill(i()),),
-    Bind.lazySingleton<ICreateOrUpdateBillType>((i) => CreateOrUpdateBillType(i()),),
-    Bind.lazySingleton<IGetBillTypes>((i) => GetBillTypes(i()),),
-    Bind.lazySingleton<IDeleteBillType>((i) => DeleteBillType(i()),),
     Bind.lazySingleton<ICloseBill>((i) => CloseBill(i()),),
-    Bind.lazySingleton<ISetBillTypeDefault>((i) => SetBillTypeDefault(i()),),
     Bind.lazySingleton<ICancelBillItem>((i) => CancelBillItem(i()),),
     Bind.lazySingleton<IGetRequestItemCategorized>((i) => GetRequestItemCategorized(i()),),
     Bind.lazySingleton<IUpdateTypeOfBill>((i) => UpdateTypeOfBill(i()),),
+    Bind.lazySingleton<IGetBillTypes>((i) => GetBillTypes(i()),),
 
     Bind.lazySingleton<AdministrationRepository>((i) => AdministrationRepositoryImpl(i()),),
 
@@ -96,8 +90,7 @@ class AdministrationModule extends Module {
   @override
   final List<ModularRoute> routes = [
 
-    ChildRoute(PagesRoutes.billType.route, child: (_, args) =>  BillTypePage(billType: args.data,)),
-    ChildRoute(PagesRoutes.billTypes.route, child: (_, args) => const BillTypesPage()),
+
     
     ChildRoute(PagesRoutes.bills.route, child: (_, args) => const BillsPage()),
     ChildRoute(PagesRoutes.lastPaidBills.route, child: (_, args) => const LastPaidBillsPage()),

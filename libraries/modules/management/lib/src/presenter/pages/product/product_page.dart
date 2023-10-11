@@ -8,14 +8,15 @@ import 'package:management/src/domain/validators/validators.dart';
 import 'package:management/src/presenter/pages/product/product_controller.dart';
 import 'package:management/src/presenter/pages/product/product_store.dart';
 import 'package:management/src/presenter/stores/categories_load_store.dart';
+import 'package:management/src/presenter/widgets/tags.dart';
 
 import '../../../domain/adapters/adapters.dart';
 import '../../widgets/error/error_widget.dart';
-import '../products_list/products_list_store.dart';
+import '../../widgets/products/products_list_store.dart';
 
 class ProductPage extends StatefulWidget {
   final Product? product;
-  const ProductPage({super.key, required this.product});
+  const ProductPage({super.key,  this.product});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
@@ -128,11 +129,6 @@ class _ProductPageState extends State<ProductPage> {
                         ],
                         // validator: validateCurrency,
                       ),
-                      CustomTextFormField(
-                        controller: controller.variationTextController,
-                        decorationName: "Variações",
-                        value: controller.variationTextController.text,
-                      ),
                       CustomDropDown(
                         items: categoriesToMap(state),
                         setValue: (value) {
@@ -142,6 +138,8 @@ class _ProductPageState extends State<ProductPage> {
                         labelText: "Categorias",
                         validator: validateID,
                       ),
+                      const SizedBox(height: 10),
+                       Tags(textfieldTagsController: controller.variationTextController, items: widget.product?.variations?.split(",")),
                     ],
                   ),
                 ),

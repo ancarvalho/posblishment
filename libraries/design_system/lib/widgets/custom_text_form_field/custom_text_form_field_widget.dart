@@ -13,6 +13,7 @@ class CustomTextFormField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.errorText = "Valor Invalida",
+    this.autofocus = false,
     this.textInputAction,
     this.onFieldSubmitted,
     this.focusNode,
@@ -30,12 +31,13 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final void Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
+  final bool autofocus;
   @override
   Widget build(BuildContext context) {
     if (value != null) {
       controller.text = value!;
     }
-    
+
     return TextFormField(
       controller: controller,
       textInputAction: textInputAction,
@@ -47,6 +49,7 @@ class CustomTextFormField extends StatelessWidget {
       focusNode: focusNode,
       validator: validator,
       enabled: enabled,
+      autofocus: autofocus,
       decoration: InputDecoration(
         labelText: decorationName,
         // errorText: errorText,

@@ -2,9 +2,9 @@ import "package:core/core.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_triple/flutter_triple.dart";
 
-import "../../../domain/errors/administration_errors.dart";
-import "../../../domain/utils/utils.dart";
-import "../../stores/request/make_request_store.dart";
+import '../../../domain/errors/administration_errors.dart';
+import '../../../domain/utils/utils.dart';
+import '../../stores/request/make_request_store.dart';
 
 class OrderSheetStore extends NotifierStore<Failure, NewRequest> {
   OrderSheetStore(this._makeRequestStore) : super(NewRequest.empty());

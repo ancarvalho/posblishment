@@ -9,35 +9,29 @@ class InvoicingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(Sizes.dp12(context)),
+      padding: Paddings.paddingLTRB20().copyWith(left: 30, right: 30),
       decoration: BoxDecoration(
         border: Border.all(
-          width: Sizes.dp4(context),
+          // width: Sizes.dp4(context),
           color: Theme.of(context).colorScheme.secondary,
         ),
         borderRadius: const BorderRadius.all(Radius.circular(20)),
       ),
-      width: Sizes.width(context) * .42,
+      // width: Sizes.width(context) * .42,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             text,
-            style: TextStyle(
-              fontSize: Sizes.dp20(context),
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           SizedBox(
             height: Sizes.dp5(context),
           ),
           Text(
-            "R\$ $value",
-            style: TextStyle(
-              color: const Color.fromARGB(255, 0, 181, 15),
-              fontSize: Sizes.dp23(context),
-              fontWeight: FontWeight.w600,
-            ),
+            "R\$ ${value.toStringAsFixed(2)}",
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600 ,color:  const Color.fromARGB(255, 0, 181, 15)),
           ),
         ],
       ),

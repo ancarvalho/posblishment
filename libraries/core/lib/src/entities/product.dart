@@ -5,7 +5,7 @@ class Product {
   final String? description;
   final double price;
   final bool preparable;
-  final List<String>? variations;
+  final String? variations;
   final String? categoryId;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -33,7 +33,7 @@ class NewProduct {
   final String? description;
   final double price;
   final bool preparable;
-  final List<String>? variations;
+  final String? variations;
   final String categoryId;
 
   const NewProduct({
@@ -58,7 +58,7 @@ class UpdateProductModel {
   final String? description;
   final double price;
   final bool preparable;
-  final List<String>? variations;
+  final String? variations;
   final String categoryId;
 
   const UpdateProductModel( {

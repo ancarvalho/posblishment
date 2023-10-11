@@ -10,23 +10,24 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
+static  List<PagesRoutes> routes = PagesRoutes.values.where((element) => element.standAlone == true).toList();
+
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
-        children: [
-          ...PagesRoutes.values
-              .where((element) => element.standAlone == true)
-              .map(
-                (e) => TextButton(
-                  onPressed: () {
-                    Modular.to.navigate("${e.dependsOnModule.route}${e.route}");
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(e.name),
-                ),
-              )
-        ],
+      child: ListView.builder(
+        itemCount: routes.length,
+        itemBuilder: (context, index) {
+          return TextButton(
+                      onPressed: () {
+                        Modular.to.navigate("${routes[index].dependsOnModule.route}${routes[index].route}");
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(routes[index].name),
+                    );
+        },
+       
       ),
     );
   }

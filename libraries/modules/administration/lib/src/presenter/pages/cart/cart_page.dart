@@ -40,7 +40,7 @@ class _CartPageState extends State<CartPage> {
         centerTitle: true,
         actions: [
           IconButton(
-              onPressed: cartStore.clearRequest, icon: const Icon(Icons.clear))
+              onPressed: cartStore.clearRequest, icon: const Icon(Icons.clear),)
         ],
       ),
       body: ScopedBuilder<CartStore, Failure, Map<String, NewItem>>(

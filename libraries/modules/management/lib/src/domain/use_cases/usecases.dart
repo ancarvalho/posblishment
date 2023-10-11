@@ -1,8 +1,12 @@
 export 'create_category.dart';
+export 'create_or_update_bill_type.dart';
 export 'create_product.dart';
+export 'delete_bill_type.dart';
 export 'delete_category.dart';
 export 'delete_product.dart';
+export 'get_bill_types.dart';
 export 'list_all_categories.dart';
 export 'list_all_products.dart';
+export 'set_bill_type_default.dart';
 export 'update_category.dart';
 export 'update_product.dart';

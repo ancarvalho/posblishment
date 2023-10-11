@@ -1,7 +1,6 @@
 export 'cancel_bill.dart';
 export 'cancel_request.dart';
 export 'create_or_update_bill.dart';
-export 'create_or_update_bill_type.dart';
 // export 'create_request.dart';
 export 'finalize_bill.dart';
 export 'get_all_products.dart';

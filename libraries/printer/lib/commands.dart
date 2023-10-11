@@ -64,7 +64,7 @@ class PrinterCommands {
   void printQRCode(String text,
       {int dotSize = 16,
       int qrCodeType = QRCODE_2,
-      PrinterTextStyle? printerTextStyle}) {
+      PrinterTextStyle? printerTextStyle,}) {
     printerTextStyle ??= defaultPrinterTextStyle;
     if (!printerConnection.isConnected()) {
       return;
@@ -349,10 +349,10 @@ class PrinterCommands {
   void printTable(List<TableItem> table, [PrinterTextStyle? printerTextStyle]) {
     printerTextStyle ??= defaultPrinterTextStyle;
     final totalColumnsSize = table.fold(
-        0, (previousValue, element) => element.columns + previousValue);
+        0, (previousValue, element) => element.columns + previousValue,);
     if (totalColumnsSize > printerTextStyle.textFont.columns) {
       throw PrinterError(StackTrace.current, "PrinterModule-printTable", "",
-          "Total Columns size Exceeded");
+          "Total Columns size Exceeded",);
     }
     final wrappedText = StringBuffer();
     for (final element in table) {
@@ -371,7 +371,7 @@ class PrinterCommands {
   }
 
   void printRow(List<String> texts,
-      [PrinterTextStyle? printerTextStyle, int spacing = 2]) {
+      [PrinterTextStyle? printerTextStyle, int spacing = 2,]) {
     printerTextStyle ??= defaultPrinterTextStyle;
 
     var totalSize = spacing;

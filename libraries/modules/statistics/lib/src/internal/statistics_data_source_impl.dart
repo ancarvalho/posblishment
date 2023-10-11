@@ -89,7 +89,7 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
       return b;
     } catch (e, s) {
       throw StatisticsError(
-          s, "StatisticsModule-getNotPaidSubtotal", e, e.toString());
+          s, "StatisticsModule-getNotPaidSubtotal", e, e.toString(),);
     }
   }
 
@@ -150,7 +150,7 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
       return b;
     } catch (e, s) {
       throw StatisticsError(
-          s, "StatisticsModule-getBasicStatistics", e, e.toString());
+          s, "StatisticsModule-getBasicStatistics", e, e.toString(),);
     }
   }
 
@@ -201,13 +201,13 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
       return b;
     } catch (e, s) {
       throw StatisticsError(
-          s, "StatisticsModule-getMostSoldProducts", e, e.toString());
+          s, "StatisticsModule-getMostSoldProducts", e, e.toString(),);
     }
   }
 
   @override
   Future<List<ItemSold>> getMostSoldProductsByCategory(
-      Frequency frequency, String categoryId) {
+      Frequency frequency, String categoryId,) {
     try {
       final interval = getRange(frequency);
       final b = _appDatabase
@@ -249,7 +249,7 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
       return b;
     } catch (e, s) {
       throw StatisticsError(
-          s, "StatisticsModule-getMostSoldProductsByCategory", e, e.toString());
+          s, "StatisticsModule-getMostSoldProductsByCategory", e, e.toString(),);
     }
   }
 }

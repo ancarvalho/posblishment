@@ -58,14 +58,14 @@ TableRow billItemWidget({
                 context: context,
                 builder: (BuildContext context) {
                   return CustomBillItemDialog(billId: billId, item: item,);
-                });
+                },);
           },
           onLongPress: () {
             showDialog<void>(
                 context: context,
                 builder: (BuildContext context) {
                   return CustomBillItemDialog(billId: billId, item: item, quantity: item.quantity,);
-                });
+                },);
           },
           child: const Icon(
             Icons.remove,

@@ -10,6 +10,7 @@ class Product extends Table {
   RealColumn get price => real()();
   IntColumn get code => integer().nullable().unique()();
   BoolColumn get preparable => boolean().withDefault(const Constant(false))();
+  TextColumn get variations => text().nullable()();
   TextColumn get categoryId => text().references(Category, #id)();
 
   DateTimeColumn get createdAt => dateTime().withDefault(Constant(DateTime.now()))();

@@ -11,6 +11,7 @@ class ProductAdapter {
       name: product.name,
       description: product.description,
       price: product.price,
+      variations: product.variations,
       preparable: product.preparable,
       categoryId: product.categoryId,
       createdAt: product.createdAt,
@@ -27,6 +28,7 @@ class ProductAdapter {
       price: product.price,
       preparable: product.preparable,
       categoryId: product.categoryId,
+      variations: product.variations,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -38,6 +40,7 @@ class ProductAdapter {
       name: Value(product.name),
       description: Value(product.description),
       price: Value(product.price),
+      variations: Value(product.variations),
       preparable: Value(product.preparable),
       categoryId: Value(product.categoryId),
       updatedAt: Value(DateTime.now()),

@@ -14,14 +14,14 @@ class CustomBillItemDialog extends StatelessWidget {
   final int? quantity;
 
   const CustomBillItemDialog(
-      {Key? key, required this.item, required this.billId, this.quantity})
+      {Key? key, required this.item, required this.billId, this.quantity,})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final cancelBillItems = Modular.get<ICancelBillItem>();
     final controller = TextEditingController(
-        text: quantity != null ? quantity.toString() : "1");
+        text: quantity != null ? quantity.toString() : "1",);
     return SimpleDialog(
       title: Text("Cancelar ${item.name}"),
       alignment: Alignment.center,
@@ -40,7 +40,7 @@ class CustomBillItemDialog extends StatelessWidget {
                     decorationName: "Qnt",
                     controller: controller,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly]),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],),
               ),
               TextButton(
                 onPressed: () {

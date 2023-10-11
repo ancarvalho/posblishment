@@ -14,10 +14,10 @@ class Printer {
       {required String address,
       int? port,
       int? timeout,
-      PrinterTextStyle? printerTextStyle}) {
+      PrinterTextStyle? printerTextStyle,}) {
     final printer = TCPConnection(address: address);
     final commands = PrinterCommands(
-        printerConnection: printer, textStyle: printerTextStyle);
+        printerConnection: printer, textStyle: printerTextStyle,);
 
     return commands;
   }

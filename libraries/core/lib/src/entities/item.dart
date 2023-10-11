@@ -7,6 +7,7 @@ class Item {
   final double price;
   final int quantity;
   final int totalQuantity;
+  final String? variation;
   final ItemStatus status;
   final String productId;
   final String requestId;
@@ -22,6 +23,7 @@ class Item {
     required this.totalQuantity,
     required this.status,
     required this.productId,
+    this.variation,
     required this.requestId,
     required this.createdAt,
     this.updatedAt,
@@ -32,11 +34,13 @@ class NewItem {
   final String productId;
   final String? name;
   final int? code;
+  final String? variation;
   int quantity;
 
   NewItem({
     required this.productId,
     this.code,
+    this.variation,
     this.name,
     required this.quantity,
   });

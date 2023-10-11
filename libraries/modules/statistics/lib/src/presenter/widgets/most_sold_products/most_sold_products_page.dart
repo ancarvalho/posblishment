@@ -19,16 +19,23 @@ class MostSoldProductsPage extends StatefulWidget {
 
 class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
   final store = Modular.get<MostSoldProductsStore>();
-  Frequency _frequency = Frequency.today;
+  final freq = ValueNotifier(Frequency.today);
 
-  Future<void> reload(Frequency frequency) async {
-    await store.load(frequency);
+  Future<void> reload() async {
+    await store.load(freq.value);
+  }
+
+  void changeFreqAndReload(Frequency frequency) {
+    setState(() {
+      freq.value = frequency;
+      Future.microtask(reload);
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    reload(_frequency);
+    reload();
   }
 
   @override
@@ -36,14 +43,15 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
               "Mais Vendidos",
-              style: TextStyle(
-                fontSize: Sizes.dp27(context),
-                fontWeight: FontWeight.w700,
-              ),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontSize: Sizes.isMobile(context)
+                        ? Sizes.dp22(context)
+                        : Sizes.dp11(context),
+                  ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -54,9 +62,8 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 2),
                         child: CustomButton(
                           text: e.displayName,
-                          onPressed: () {
-                            reload(e);
-                          },
+                          isSelected: freq.value == e,
+                          onPressed: () => changeFreqAndReload(e),
                         ),
                       ),
                     )
@@ -73,9 +80,7 @@ class _MostSoldProductsPageState extends State<MostSoldProductsPage> {
           store: store,
           onError: (context, error) => DashboardErrorWidget(
             error: error,
-            reload: () {
-              reload(_frequency);
-            },
+            reload: reload,
           ),
           onLoading: (context) => const CircularProgressIndicator(),
           onState: (context, state) => Column(

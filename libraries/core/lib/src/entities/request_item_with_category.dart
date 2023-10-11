@@ -8,5 +8,5 @@ class RequestItemWithCategory {
       {required this.productName,
       required this.categoryName,
       required this.categoryId,
-      required this.quantity});
+      required this.quantity,});
 }

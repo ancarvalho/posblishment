@@ -1,6 +1,6 @@
-import 'package:administration/src/domain/repositories/administration_repository.dart';
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
+import 'package:management/src/domain/repositories/management_repository.dart';
 
 // ignore: one_member_abstracts
 abstract class ISetBillTypeDefault {
@@ -8,7 +8,7 @@ abstract class ISetBillTypeDefault {
 }
 
 class SetBillTypeDefault implements ISetBillTypeDefault {
-  final AdministrationRepository repository;
+  final ManagementRepository repository;
 
   SetBillTypeDefault(this.repository);
 

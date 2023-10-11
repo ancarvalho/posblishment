@@ -5,13 +5,13 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/validators/validators.dart';
-import '../categories_list/categories_list_store.dart';
+import '../../widgets/categories/categories_list_store.dart';
 import 'category_controller.dart';
 import 'category_store.dart';
 
 class CategoryPage extends StatefulWidget {
   final Category? category;
-  const CategoryPage({super.key, required this.category});
+  const CategoryPage({super.key, this.category});
 
   @override
   State<CategoryPage> createState() => _CategoryPageState();

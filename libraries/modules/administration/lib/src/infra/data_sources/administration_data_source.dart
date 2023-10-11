@@ -17,14 +17,8 @@ abstract class AdministrationDataSource {
   Future<BillTotal> getBillTotal(String billID);
   Future<int> updateTypeOfBill(String billTypeId, String billId);
 
-  Future<BillType> getDefaultBillType();
-  Future<BillType> getBillType(String id);
-  Future<bool> updateBillType(BillType billType);
-  Future<bool> createBillType(NewBillType newBillType);
   Future<List<BillType>> getBillTypes();
-  Future<int> deleteBillType(String id);
-  Future<bool> removeBillTypeDefaultValue();
-  Future<bool> setDefaultBillType(String id);
+
   // Requests
   // Future<Request> createRequest(NewRequest request, String billID);
   Future<int> changeRequestStatus(

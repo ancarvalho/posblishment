@@ -4,6 +4,8 @@ import 'package:flutter_triple/flutter_triple.dart';
 import '../../../domain/use_cases/create_or_update_bill_type.dart';
 
 
+
+
 class BillTypeStore extends StreamStore<Failure, bool> {
   final ICreateOrUpdateBillType _createOrUpdateBillType;
 

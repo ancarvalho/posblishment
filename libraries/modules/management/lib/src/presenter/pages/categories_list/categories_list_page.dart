@@ -2,12 +2,9 @@ import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_triple/flutter_triple.dart';
-import 'package:management/src/presenter/widgets/category_card/category_card_store.dart';
 
-import '../../widgets/category_card/category_card_widget.dart';
-import '../../widgets/error/error_widget.dart';
-import 'categories_list_store.dart';
+import '../../widgets/categories/categories_widget.dart';
+import '../../widgets/category/category_widget.dart';
 
 class CategoriesListPage extends StatefulWidget {
   const CategoriesListPage({super.key});
@@ -17,18 +14,7 @@ class CategoriesListPage extends StatefulWidget {
 }
 
 class _CategoriesListPageState extends State<CategoriesListPage> {
-  final store = Modular.get<CategoriesListStore>();
-  final controller = Modular.get<CategoryCardStore>();
-
-  Future<void> reload() async {
-    await store.list();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    reload();
-  }
+  final index = ValueNotifier<int?>(null);
 
   @override
   Widget build(BuildContext context) {
@@ -39,47 +25,46 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
           title: const Text("Categorias"),
           centerTitle: true,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              tooltip: 'Search For Category',
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              tooltip: 'Create New Category',
-              onPressed: () {
-                Modular.to.pushNamed(
-                  "${PagesRoutes.category.dependsOnModule.route}${PagesRoutes.category.route}",
-                  // TODO Check if dispose is being called on controllers
-                );
-              },
-            ),
+            // IconButton(
+            //   icon: const Icon(Icons.search),
+            //   tooltip: 'Search For Category',
+            //   onPressed: () {},
+            // ),
+            if (Sizes.isMobile(context))
+              IconButton(
+                icon: const Icon(Icons.add),
+                tooltip: 'Create New Category',
+                onPressed: () {
+                  Modular.to.pushNamed(
+                    "${PagesRoutes.category.dependsOnModule.route}${PagesRoutes.category.route}",
+                    // TODO Check if dispose is being called on controllers
+                  );
+                },
+              ),
           ],
         ),
-        body: RefreshIndicator(
-          onRefresh: reload,
-          child: ScopedBuilder<CategoriesListStore, Failure, List<Category>>(
-            onLoading: (context) => const LoadingWidget(),
-            onError: (context, error) => ManagementErrorWidget(
-              error: error,
-              reload: reload,
-            ),
-            store: store,
-            onState: (context, state) {
-              return Padding(
-                padding: Paddings.paddingLTRB4(),
-                child: ListView.builder(
-                  itemCount: state.length,
-                  itemBuilder: (context, index) {
-                    return CategoryCardWidget(
-                      category: state[index],
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        ),
+        body: Sizes.isMobile(context)
+            ? const CategoriesWidget()
+            : Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: CategoriesWidget(
+                      setIndex: (i) {
+                        index.value = i;
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    // key: UniqueKey(),
+                    flex: 3,
+                    child: CategoryWidget(
+                      index: index.value,
+                    ),
+                  )
+                ],
+              ),
       ),
     );
   }

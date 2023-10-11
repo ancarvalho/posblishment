@@ -1,5 +1,3 @@
-import 'package:administration/src/presenter/pages/bill_types/bill_types_store.dart';
-import 'package:administration/src/presenter/widgets/bill_items/bill_items_store.dart';
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +5,7 @@ import "package:flutter_modular/flutter_modular.dart";
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/use_cases/use_cases.dart';
+import 'bill_types_store.dart';
 
 class ChangeBillTypeDialog extends StatelessWidget {
   // TODO change for suit better another models
@@ -14,7 +13,7 @@ class ChangeBillTypeDialog extends StatelessWidget {
   final Bill bill;
 
   const ChangeBillTypeDialog(
-      {Key? key, required this.bill})
+      {Key? key, required this.bill,})
       : super(key: key);
 
   @override

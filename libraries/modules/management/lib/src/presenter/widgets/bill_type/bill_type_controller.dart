@@ -1,11 +1,11 @@
 // import 'package:flutter_triple/flutter_triple.dart';
-import 'package:administration/src/domain/errors/administration_errors.dart';
 import "package:core/core.dart";
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:management/src/domain/errors/management_failures.dart';
+import 'package:management/src/domain/utils/format_bill_type_value.dart';
 
-import '../../../domain/utils/format_bill_type_value.dart';
 import 'bill_type_store.dart';
 
 class BillTypeController extends Disposable with ChangeNotifier {
@@ -21,7 +21,7 @@ class BillTypeController extends Disposable with ChangeNotifier {
   // final iconTextController = TextEditingController();
   final valueTextController = TextEditingController();
 
-  BillTypes _billType = BillTypes.percentageTax;
+  late BillTypes _billType ;
 
   BillTypes get billType => _billType;
 
@@ -49,7 +49,15 @@ class BillTypeController extends Disposable with ChangeNotifier {
         : type?.type != null
             ? formatBillTypeValue(type!.type, type.value!)
             : "";
-    // billType = type?.type ?? BillTypes.percentageTax;
+    billType = type?.type ?? BillTypes.percentageTax;
+
+    notifyListeners();
+  }
+
+  void clearFields() {
+    nameTextController.text = "";
+    defaultType = false;
+    valueTextController.text = "";
 
     notifyListeners();
   }
@@ -61,7 +69,7 @@ class BillTypeController extends Disposable with ChangeNotifier {
       return Right(createBillType());
     }
     return Left(
-      AdministrationError(
+      ManagementError(
         StackTrace.current,
         "AdministrationModule-saveChanges",
         "",
@@ -114,6 +122,5 @@ class BillTypeController extends Disposable with ChangeNotifier {
     nameTextController.dispose();
     // iconTextController.dispose();
     valueTextController.dispose();
-
   }
 }

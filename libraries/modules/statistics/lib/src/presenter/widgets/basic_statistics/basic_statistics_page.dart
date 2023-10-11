@@ -20,31 +20,40 @@ class BasicStatisticsPage extends StatefulWidget {
 
 class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
   final store = Modular.get<BasicStatsStore>();
+  final freq = ValueNotifier(Frequency.today);
 
+  Future<void> reload() async {
+    await store.load(freq.value);
+  }
 
-  Future<void> reload(Frequency frequency) async {
-    await store.load(frequency);
+  void changeFreqAndReload(Frequency frequency) {
+    setState(() {
+      freq.value = frequency;
+      Future.microtask(reload);
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    reload(Frequency.today);
+    reload();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
               "Faturamento",
-              style: TextStyle(
-                fontSize: Sizes.dp27(context),
-                fontWeight: FontWeight.w700,
-              ),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontSize: Sizes.isMobile(context)
+                        ? Sizes.dp22(context)
+                        : Sizes.dp11(context),
+                  ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -55,9 +64,8 @@ class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
                         padding: const EdgeInsets.all(2),
                         child: CustomButton(
                           text: e.displayName,
-                          onPressed: () {
-                            reload(e);
-                          },
+                          isSelected: e == freq.value,
+                          onPressed: () => changeFreqAndReload(e),
                         ),
                       ),
                     )
@@ -73,9 +81,7 @@ class _BasicStatisticsPageState extends State<BasicStatisticsPage> {
           store: store,
           onError: (context, error) => DashboardErrorWidget(
             error: error,
-            reload: () {
-              reload(Frequency.today);
-            },
+            reload: reload,
           ),
           onLoading: (context) => const LoadingWidget(),
           onState: (context, state) => Padding(

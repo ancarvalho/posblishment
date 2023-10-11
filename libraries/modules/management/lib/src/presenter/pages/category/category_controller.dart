@@ -22,6 +22,13 @@ class CategoryController extends Disposable {
     descriptionTextController.text = category?.description ?? "";
   }
 
+
+  void clearFields() {
+    nameTextController.text =  "";
+    descriptionTextController.text = "";
+  }
+
+
   Future<Either<Failure, void>> saveChanges(String? id) async {
     if (formKey.currentState!.validate() && id != null) {
       return Right(updateCategory(id));

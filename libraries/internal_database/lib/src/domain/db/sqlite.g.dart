@@ -360,6 +360,12 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
             SqlDialect.postgres: '',
           }),
           defaultValue: const Constant(false));
+  static const VerificationMeta _variationsMeta =
+      const VerificationMeta('variations');
+  @override
+  late final GeneratedColumn<String> variations = GeneratedColumn<String>(
+      'variations', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _categoryIdMeta =
       const VerificationMeta('categoryId');
   @override
@@ -391,6 +397,7 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
         price,
         code,
         preparable,
+        variations,
         categoryId,
         createdAt,
         updatedAt
@@ -435,6 +442,12 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
           preparable.isAcceptableOrUnknown(
               data['preparable']!, _preparableMeta));
     }
+    if (data.containsKey('variations')) {
+      context.handle(
+          _variationsMeta,
+          variations.isAcceptableOrUnknown(
+              data['variations']!, _variationsMeta));
+    }
     if (data.containsKey('category_id')) {
       context.handle(
           _categoryIdMeta,
@@ -472,6 +485,8 @@ class $ProductTable extends Product with TableInfo<$ProductTable, ProductData> {
           .read(DriftSqlType.int, data['${effectivePrefix}code']),
       preparable: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}preparable'])!,
+      variations: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}variations']),
       categoryId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}category_id'])!,
       createdAt: attachedDatabase.typeMapping
@@ -494,6 +509,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
   final double price;
   final int? code;
   final bool preparable;
+  final String? variations;
   final String categoryId;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -504,6 +520,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
       required this.price,
       this.code,
       required this.preparable,
+      this.variations,
       required this.categoryId,
       required this.createdAt,
       this.updatedAt});
@@ -520,6 +537,9 @@ class ProductData extends DataClass implements Insertable<ProductData> {
       map['code'] = Variable<int>(code);
     }
     map['preparable'] = Variable<bool>(preparable);
+    if (!nullToAbsent || variations != null) {
+      map['variations'] = Variable<String>(variations);
+    }
     map['category_id'] = Variable<String>(categoryId);
     map['created_at'] = Variable<DateTime>(createdAt);
     if (!nullToAbsent || updatedAt != null) {
@@ -538,6 +558,9 @@ class ProductData extends DataClass implements Insertable<ProductData> {
       price: Value(price),
       code: code == null && nullToAbsent ? const Value.absent() : Value(code),
       preparable: Value(preparable),
+      variations: variations == null && nullToAbsent
+          ? const Value.absent()
+          : Value(variations),
       categoryId: Value(categoryId),
       createdAt: Value(createdAt),
       updatedAt: updatedAt == null && nullToAbsent
@@ -556,6 +579,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
       price: serializer.fromJson<double>(json['price']),
       code: serializer.fromJson<int?>(json['code']),
       preparable: serializer.fromJson<bool>(json['preparable']),
+      variations: serializer.fromJson<String?>(json['variations']),
       categoryId: serializer.fromJson<String>(json['categoryId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
@@ -571,6 +595,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
       'price': serializer.toJson<double>(price),
       'code': serializer.toJson<int?>(code),
       'preparable': serializer.toJson<bool>(preparable),
+      'variations': serializer.toJson<String?>(variations),
       'categoryId': serializer.toJson<String>(categoryId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime?>(updatedAt),
@@ -584,6 +609,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
           double? price,
           Value<int?> code = const Value.absent(),
           bool? preparable,
+          Value<String?> variations = const Value.absent(),
           String? categoryId,
           DateTime? createdAt,
           Value<DateTime?> updatedAt = const Value.absent()}) =>
@@ -594,6 +620,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
         price: price ?? this.price,
         code: code.present ? code.value : this.code,
         preparable: preparable ?? this.preparable,
+        variations: variations.present ? variations.value : this.variations,
         categoryId: categoryId ?? this.categoryId,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
@@ -607,6 +634,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
           ..write('price: $price, ')
           ..write('code: $code, ')
           ..write('preparable: $preparable, ')
+          ..write('variations: $variations, ')
           ..write('categoryId: $categoryId, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -616,7 +644,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
 
   @override
   int get hashCode => Object.hash(id, name, description, price, code,
-      preparable, categoryId, createdAt, updatedAt);
+      preparable, variations, categoryId, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -627,6 +655,7 @@ class ProductData extends DataClass implements Insertable<ProductData> {
           other.price == this.price &&
           other.code == this.code &&
           other.preparable == this.preparable &&
+          other.variations == this.variations &&
           other.categoryId == this.categoryId &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -639,6 +668,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
   final Value<double> price;
   final Value<int?> code;
   final Value<bool> preparable;
+  final Value<String?> variations;
   final Value<String> categoryId;
   final Value<DateTime> createdAt;
   final Value<DateTime?> updatedAt;
@@ -650,6 +680,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
     this.price = const Value.absent(),
     this.code = const Value.absent(),
     this.preparable = const Value.absent(),
+    this.variations = const Value.absent(),
     this.categoryId = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -662,6 +693,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
     required double price,
     this.code = const Value.absent(),
     this.preparable = const Value.absent(),
+    this.variations = const Value.absent(),
     required String categoryId,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -676,6 +708,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
     Expression<double>? price,
     Expression<int>? code,
     Expression<bool>? preparable,
+    Expression<String>? variations,
     Expression<String>? categoryId,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -688,6 +721,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
       if (price != null) 'price': price,
       if (code != null) 'code': code,
       if (preparable != null) 'preparable': preparable,
+      if (variations != null) 'variations': variations,
       if (categoryId != null) 'category_id': categoryId,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -702,6 +736,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
       Value<double>? price,
       Value<int?>? code,
       Value<bool>? preparable,
+      Value<String?>? variations,
       Value<String>? categoryId,
       Value<DateTime>? createdAt,
       Value<DateTime?>? updatedAt,
@@ -713,6 +748,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
       price: price ?? this.price,
       code: code ?? this.code,
       preparable: preparable ?? this.preparable,
+      variations: variations ?? this.variations,
       categoryId: categoryId ?? this.categoryId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -741,6 +777,9 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
     if (preparable.present) {
       map['preparable'] = Variable<bool>(preparable.value);
     }
+    if (variations.present) {
+      map['variations'] = Variable<String>(variations.value);
+    }
     if (categoryId.present) {
       map['category_id'] = Variable<String>(categoryId.value);
     }
@@ -765,6 +804,7 @@ class ProductCompanion extends UpdateCompanion<ProductData> {
           ..write('price: $price, ')
           ..write('code: $code, ')
           ..write('preparable: $preparable, ')
+          ..write('variations: $variations, ')
           ..write('categoryId: $categoryId, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -1915,6 +1955,12 @@ class $ItemTable extends Item with TableInfo<$ItemTable, ItemData> {
       GeneratedColumn<int>('status', aliasedName, false,
               type: DriftSqlType.int, requiredDuringInsert: true)
           .withConverter<ItemStatus>($ItemTable.$converterstatus);
+  static const VerificationMeta _variationMeta =
+      const VerificationMeta('variation');
+  @override
+  late final GeneratedColumn<String> variation = GeneratedColumn<String>(
+      'variation', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _productIdMeta =
       const VerificationMeta('productId');
   @override
@@ -1954,6 +2000,7 @@ class $ItemTable extends Item with TableInfo<$ItemTable, ItemData> {
         quantity,
         totalQuantity,
         status,
+        variation,
         productId,
         requestId,
         createdAt,
@@ -1988,6 +2035,10 @@ class $ItemTable extends Item with TableInfo<$ItemTable, ItemData> {
               data['total_quantity']!, _totalQuantityMeta));
     }
     context.handle(_statusMeta, const VerificationResult.success());
+    if (data.containsKey('variation')) {
+      context.handle(_variationMeta,
+          variation.isAcceptableOrUnknown(data['variation']!, _variationMeta));
+    }
     if (data.containsKey('product_id')) {
       context.handle(_productIdMeta,
           productId.isAcceptableOrUnknown(data['product_id']!, _productIdMeta));
@@ -2027,6 +2078,8 @@ class $ItemTable extends Item with TableInfo<$ItemTable, ItemData> {
           .read(DriftSqlType.int, data['${effectivePrefix}total_quantity'])!,
       status: $ItemTable.$converterstatus.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
+      variation: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}variation']),
       productId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}product_id'])!,
       requestId: attachedDatabase.typeMapping
@@ -2053,6 +2106,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
   final int quantity;
   final int totalQuantity;
   final ItemStatus status;
+  final String? variation;
   final String productId;
   final String requestId;
   final DateTime createdAt;
@@ -2063,6 +2117,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
       required this.quantity,
       required this.totalQuantity,
       required this.status,
+      this.variation,
       required this.productId,
       required this.requestId,
       required this.createdAt,
@@ -2076,6 +2131,9 @@ class ItemData extends DataClass implements Insertable<ItemData> {
     {
       final converter = $ItemTable.$converterstatus;
       map['status'] = Variable<int>(converter.toSql(status));
+    }
+    if (!nullToAbsent || variation != null) {
+      map['variation'] = Variable<String>(variation);
     }
     map['product_id'] = Variable<String>(productId);
     map['request_id'] = Variable<String>(requestId);
@@ -2092,6 +2150,9 @@ class ItemData extends DataClass implements Insertable<ItemData> {
       price: Value(price),
       quantity: Value(quantity),
       status: Value(status),
+      variation: variation == null && nullToAbsent
+          ? const Value.absent()
+          : Value(variation),
       productId: Value(productId),
       requestId: Value(requestId),
       createdAt: Value(createdAt),
@@ -2111,6 +2172,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
       totalQuantity: serializer.fromJson<int>(json['totalQuantity']),
       status: $ItemTable.$converterstatus
           .fromJson(serializer.fromJson<int>(json['status'])),
+      variation: serializer.fromJson<String?>(json['variation']),
       productId: serializer.fromJson<String>(json['productId']),
       requestId: serializer.fromJson<String>(json['requestId']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -2127,6 +2189,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
       'totalQuantity': serializer.toJson<int>(totalQuantity),
       'status':
           serializer.toJson<int>($ItemTable.$converterstatus.toJson(status)),
+      'variation': serializer.toJson<String?>(variation),
       'productId': serializer.toJson<String>(productId),
       'requestId': serializer.toJson<String>(requestId),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -2140,6 +2203,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
           int? quantity,
           int? totalQuantity,
           ItemStatus? status,
+          Value<String?> variation = const Value.absent(),
           String? productId,
           String? requestId,
           DateTime? createdAt,
@@ -2150,6 +2214,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
         quantity: quantity ?? this.quantity,
         totalQuantity: totalQuantity ?? this.totalQuantity,
         status: status ?? this.status,
+        variation: variation.present ? variation.value : this.variation,
         productId: productId ?? this.productId,
         requestId: requestId ?? this.requestId,
         createdAt: createdAt ?? this.createdAt,
@@ -2163,6 +2228,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
           ..write('quantity: $quantity, ')
           ..write('totalQuantity: $totalQuantity, ')
           ..write('status: $status, ')
+          ..write('variation: $variation, ')
           ..write('productId: $productId, ')
           ..write('requestId: $requestId, ')
           ..write('createdAt: $createdAt, ')
@@ -2173,7 +2239,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
 
   @override
   int get hashCode => Object.hash(id, price, quantity, totalQuantity, status,
-      productId, requestId, createdAt, updatedAt);
+      variation, productId, requestId, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2183,6 +2249,7 @@ class ItemData extends DataClass implements Insertable<ItemData> {
           other.quantity == this.quantity &&
           other.totalQuantity == this.totalQuantity &&
           other.status == this.status &&
+          other.variation == this.variation &&
           other.productId == this.productId &&
           other.requestId == this.requestId &&
           other.createdAt == this.createdAt &&
@@ -2194,6 +2261,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
   final Value<double> price;
   final Value<int> quantity;
   final Value<ItemStatus> status;
+  final Value<String?> variation;
   final Value<String> productId;
   final Value<String> requestId;
   final Value<DateTime> createdAt;
@@ -2204,6 +2272,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
     this.price = const Value.absent(),
     this.quantity = const Value.absent(),
     this.status = const Value.absent(),
+    this.variation = const Value.absent(),
     this.productId = const Value.absent(),
     this.requestId = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2215,6 +2284,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
     required double price,
     this.quantity = const Value.absent(),
     required ItemStatus status,
+    this.variation = const Value.absent(),
     required String productId,
     required String requestId,
     this.createdAt = const Value.absent(),
@@ -2229,6 +2299,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
     Expression<double>? price,
     Expression<int>? quantity,
     Expression<int>? status,
+    Expression<String>? variation,
     Expression<String>? productId,
     Expression<String>? requestId,
     Expression<DateTime>? createdAt,
@@ -2240,6 +2311,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
       if (price != null) 'price': price,
       if (quantity != null) 'quantity': quantity,
       if (status != null) 'status': status,
+      if (variation != null) 'variation': variation,
       if (productId != null) 'product_id': productId,
       if (requestId != null) 'request_id': requestId,
       if (createdAt != null) 'created_at': createdAt,
@@ -2253,6 +2325,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
       Value<double>? price,
       Value<int>? quantity,
       Value<ItemStatus>? status,
+      Value<String?>? variation,
       Value<String>? productId,
       Value<String>? requestId,
       Value<DateTime>? createdAt,
@@ -2263,6 +2336,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
       price: price ?? this.price,
       quantity: quantity ?? this.quantity,
       status: status ?? this.status,
+      variation: variation ?? this.variation,
       productId: productId ?? this.productId,
       requestId: requestId ?? this.requestId,
       createdAt: createdAt ?? this.createdAt,
@@ -2286,6 +2360,9 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
     if (status.present) {
       final converter = $ItemTable.$converterstatus;
       map['status'] = Variable<int>(converter.toSql(status.value));
+    }
+    if (variation.present) {
+      map['variation'] = Variable<String>(variation.value);
     }
     if (productId.present) {
       map['product_id'] = Variable<String>(productId.value);
@@ -2312,6 +2389,7 @@ class ItemCompanion extends UpdateCompanion<ItemData> {
           ..write('price: $price, ')
           ..write('quantity: $quantity, ')
           ..write('status: $status, ')
+          ..write('variation: $variation, ')
           ..write('productId: $productId, ')
           ..write('requestId: $requestId, ')
           ..write('createdAt: $createdAt, ')

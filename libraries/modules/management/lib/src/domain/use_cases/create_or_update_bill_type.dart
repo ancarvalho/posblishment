@@ -1,6 +1,7 @@
-import 'package:administration/src/domain/repositories/administration_repository.dart';
+
 import 'package:core/core.dart';
 import 'package:dartz/dartz.dart';
+import 'package:management/src/domain/repositories/management_repository.dart';
 
 // ignore: one_member_abstracts
 abstract class ICreateOrUpdateBillType {
@@ -9,7 +10,7 @@ abstract class ICreateOrUpdateBillType {
 }
 
 class CreateOrUpdateBillType implements ICreateOrUpdateBillType {
-  final AdministrationRepository repository;
+  final ManagementRepository repository;
 
   CreateOrUpdateBillType(this.repository);
 

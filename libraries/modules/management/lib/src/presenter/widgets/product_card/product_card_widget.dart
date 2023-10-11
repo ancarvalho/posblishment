@@ -3,13 +3,15 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../pages/products_list/products_list_store.dart';
 import '../dialog/custom_delete_dialog.dart';
+import '../products/products_list_store.dart';
 import 'product_card_store.dart';
 
 class ProductCardWidget extends StatefulWidget {
   final Product product;
-  const ProductCardWidget({super.key, required this.product});
+  final Function()? setIndex;
+  const ProductCardWidget(
+      {super.key, required this.product,  this.setIndex,});
 
   @override
   State<ProductCardWidget> createState() => _ProductCardWidgetState();
@@ -40,12 +42,14 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Modular.to.pushNamed(
-          "${PagesRoutes.product.dependsOnModule.route}${PagesRoutes.product.route}",
-          arguments: widget.product,
-        );
-      },
+      onTap: Sizes.isMobile(context)
+          ? () => Modular.to.pushNamed(
+                "${PagesRoutes.product.dependsOnModule.route}${PagesRoutes.product.route}",
+                arguments: widget.product,
+              )
+          : () => widget.setIndex!() // TODO retrieve data
+
+      ,
       onLongPress: () {
         showDialog(
           context: context,
@@ -60,13 +64,14 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
         );
       },
       child: Card(
-        child: SizedBox(
-          height: Sizes.height(context) / 10,
+        child: ConstrainedBox(
+          // height: 180,
+          constraints: const BoxConstraints(
+              maxHeight: 130, minWidth: 150, maxWidth: 200, minHeight: 90,),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: Sizes.dp8(context),
-              vertical: Sizes.dp9(context),
-            ),
+            padding: Sizes.isMobile(context)
+                ? Paddings.paddingVertical4()
+                : Paddings.paddingLTRB4(),
             child: Stack(
               alignment: AlignmentDirectional.center,
               children: [

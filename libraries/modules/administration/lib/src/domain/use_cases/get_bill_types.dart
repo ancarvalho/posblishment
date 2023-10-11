@@ -8,7 +8,7 @@ abstract class IGetBillTypes {
 }
 
 class GetBillTypes implements IGetBillTypes {
-  final AdministrationRepository repository;
+    final AdministrationRepository repository;
 
   GetBillTypes(this.repository);
 

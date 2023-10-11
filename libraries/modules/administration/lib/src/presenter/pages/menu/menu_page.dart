@@ -80,7 +80,7 @@ class _MenuPageState extends State<MenuPage> {
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12,horizontal: 8),
-                child: const Icon(Icons.shopping_cart),
+                child: Icon(Icons.shopping_cart),
               ),
             ],
           ),

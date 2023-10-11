@@ -167,4 +167,87 @@ class ManagementRepositoryImpl implements ManagementRepository {
       );
     }
   }
+
+
+   @override
+  Future<Either<Failure, List<BillType>>> getBillTypes() async {
+    try {
+      final billTypes = await _dataSource.getBillTypes();
+      return Right(billTypes);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, BillType>> getDefaultBillType() async {
+    try {
+      final billType = await _dataSource.getDefaultBillType();
+      return Right(billType);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, BillType>> getBillType(String id) async {
+    try {
+      final billType = await _dataSource.getBillType(id);
+      return Right(billType);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> createBillType(NewBillType newBillType) async {
+    try {
+      final billType =
+          await _dataSource.createBillType(newBillType);
+      return Right(billType);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateBillType(BillType billType) async {
+    try {
+      final billTypeUpdated =
+          await _dataSource.updateBillType(billType);
+      return Right(billTypeUpdated);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> removeBillTypeDefaultValue() async {
+    try {
+      final billTypeUpdated =
+          await _dataSource.removeBillTypeDefaultValue();
+      return Right(billTypeUpdated);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> setDefaultBillType(String id) async {
+    try {
+      final billTypeUpdated =
+          await _dataSource.setDefaultBillType(id);
+      return Right(billTypeUpdated);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+    @override
+  Future<Either<Failure, int>> deleteBillType(String id) async {
+     try {
+      return Right(await _dataSource.deleteBillType(id));
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
 }

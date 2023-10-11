@@ -47,6 +47,6 @@ class MakeRequestStore extends StreamStore<Failure, String> {
         StackTrace.current,
         "AdministrationModule-createOrUpdateBill",
         "",
-        "Currently Executing Action");
+        "Currently Executing Action",);
   }
 }

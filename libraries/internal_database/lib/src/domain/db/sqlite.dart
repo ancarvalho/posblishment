@@ -78,8 +78,7 @@ DatabaseConnection connect() {
   );
 }
 
-@DriftDatabase(
-    tables: [Product, Category, Bill, Item, Payment, Request, BillType, ProductVariation])
+@DriftDatabase(tables: [Product, Category, Bill, Item, Payment, Request, BillType])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(connect());
 

@@ -1,8 +1,8 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:management/src/presenter/pages/products_list/products_list_store.dart';
 import 'package:management/src/presenter/widgets/product_card/product_card_widget.dart';
+import 'package:management/src/presenter/widgets/products/products_list_store.dart';
 
 class SearchEngine extends SearchDelegate {
   @override

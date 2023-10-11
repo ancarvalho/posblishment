@@ -5,8 +5,13 @@ import '../../design_system.dart';
 class CustomButton extends StatefulWidget {
   final Function onPressed;
   final String text;
+  final bool isSelected;
 
-  const CustomButton({Key? key, required this.onPressed, required this.text})
+  const CustomButton(
+      {Key? key,
+      required this.onPressed,
+      required this.text,
+      this.isSelected = false,})
       : super(key: key);
 
   @override
@@ -16,16 +21,16 @@ class CustomButton extends StatefulWidget {
 class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: Sizes.width(context) * .14,
-      height: Sizes.width(context) / 12,
+    return Padding(
+      padding: EdgeInsets.all(Sizes.width(context)*.001),
       child: TextButton(
         style: TextButton.styleFrom(
           foregroundColor: Theme.of(context).colorScheme.secondary,
+          backgroundColor: widget.isSelected
+              ? Theme.of(context).colorScheme.secondary
+              : null,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              Sizes.dp10(context),
-            ),
+            borderRadius: BorderRadius.circular(30),
             side: BorderSide(
               color: Theme.of(context).colorScheme.secondary,
             ),
@@ -36,10 +41,10 @@ class _CustomButtonState extends State<CustomButton> {
         },
         child: Text(
           widget.text,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: Sizes.dp16(context),
-          ),
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge?.copyWith(fontSize: Sizes.isMobile(context) ? Sizes.dp14(context) : Sizes.dp7(context))
+              ,
         ),
       ),
     );

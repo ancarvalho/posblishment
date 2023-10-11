@@ -1,4 +1,4 @@
-import 'package:administration/src/presenter/pages/bills/bills_store.dart';
+import 'package:administration/src/presenter/widgets/bills/bills_store.dart';
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +6,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../widgets/bill_card/bill_card_widget.dart';
+import '../../widgets/bills/bills_widget.dart';
+import '../../widgets/order_sheet/order_sheet_widget.dart';
 
 class BillsPage extends StatefulWidget {
   const BillsPage({super.key});
@@ -15,51 +17,24 @@ class BillsPage extends StatefulWidget {
 }
 
 class _BillsPageState extends State<BillsPage> {
-  final notPaidBillsStore = Modular.get<NotPaidBillsStore>();
-
-  Future<void> loadData() async{
-    await notPaidBillsStore.getNotPaidBills();
-  }
-
-  @override
-  void initState() {
-    loadData();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        drawer: const DrawerWidget(),
-        appBar: AppBar(
-          title: const Text("Contas"),
-          centerTitle: true,
-        ),
-        //TODO insert a Grid builder based on width minimum of 200px
-        body: ScopedBuilder<NotPaidBillsStore, Failure, List<Bill>>(
-          store: notPaidBillsStore,
-          onState: (context, state) {
-            return RefreshIndicator(
-              onRefresh: loadData,
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 250,
-                  childAspectRatio: .9,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                ),
-                itemCount: state.length,
-                itemBuilder: (context, index) {
-                  return BillCardWidget(
-                    bill: state[index],
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ),
+          drawer: const DrawerWidget(),
+          appBar: AppBar(
+            title: const Text("Contas"),
+            centerTitle: true,
+          ),
+          //TODO insert a Grid builder based on width minimum of 200px
+          body: Sizes.isMobile(context)
+              ? const BillsWidget()
+              : Row(
+                  children: const [
+                    Expanded(flex: 2, child: OrderSheetWidget()),
+                    Expanded(flex: 2, child: BillsWidget()),
+                  ],
+                ),),
     );
   }
 }

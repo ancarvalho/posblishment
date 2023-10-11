@@ -5,6 +5,7 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:management/src/domain/errors/management_failures.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 
 import 'product_store.dart';
 
@@ -20,7 +21,9 @@ class ProductController extends Disposable with ChangeNotifier {
   final descriptionTextController = TextEditingController();
   final priceTextController = TextEditingController();
   final codeTextController = TextEditingController();
-  final variationTextController = TextEditingController();
+  // final variationTextController = TextEditingController();
+  final TextfieldTagsController variationTextController =
+      TextfieldTagsController();
 
   String? _categoryID;
 
@@ -35,9 +38,9 @@ class ProductController extends Disposable with ChangeNotifier {
     codeTextController.text = product?.code.toString() ?? "";
     nameTextController.text = product?.name ?? "";
     descriptionTextController.text = product?.description ?? "";
-    priceTextController.text = product?.price != null ? CurrencyInputFormatter.formatRealCurrency(product?.price) : "";
-    variationTextController.text =
-        product?.variations != null ? product?.variations?.join(",") ?? "" : "";
+    priceTextController.text = product?.price != null
+        ? CurrencyInputFormatter.formatRealCurrency(product?.price)
+        : "";
     _categoryID = _categoryID ?? product?.categoryId; // REview
   }
 
@@ -46,7 +49,7 @@ class ProductController extends Disposable with ChangeNotifier {
     nameTextController.text = "";
     descriptionTextController.text = "";
     priceTextController.text = "";
-    variationTextController.text = "";
+    variationTextController.clearTags();
   }
 
   Future<Either<Failure, void>> saveChanges(String? id) async {
@@ -71,6 +74,14 @@ class ProductController extends Disposable with ChangeNotifier {
     return CurrencyInputFormatter.formatToDouble(value);
   }
 
+  String? getVariations() {
+    final variations = (variationTextController.getTags != null &&
+            variationTextController.getTags!.isNotEmpty)
+        ? variationTextController.getTags?.join(",")
+        : null;
+    return variations;
+  }
+
   Future<void> createProduct() async {
     return store.createProduct(
       NewProduct(
@@ -78,7 +89,7 @@ class ProductController extends Disposable with ChangeNotifier {
         name: nameTextController.text,
         description: descriptionTextController.text,
         price: parseCurrency(priceTextController.text) ?? 0.0,
-        variations: variationTextController.text.split(","),
+        variations: getVariations(),
         categoryId: _categoryID!,
       ),
     );
@@ -92,7 +103,7 @@ class ProductController extends Disposable with ChangeNotifier {
         name: nameTextController.text,
         description: descriptionTextController.text,
         price: parseCurrency(priceTextController.text) ?? 0.0,
-        variations: variationTextController.text.split(","),
+        variations: getVariations(),
         categoryId: _categoryID!,
       ),
     );

@@ -23,7 +23,7 @@ class PrinterExtend implements PrinterAbstract {
 
   @override
   void printRequestItemByCategory(
-      List<RequestItemWithCategory> requestItemWithCategory, int table) {
+      List<RequestItemWithCategory> requestItemWithCategory, int table,) {
     final categorizedProduct = <String, List<RequestItemWithCategory>>{};
     for (final item in requestItemWithCategory) {
       if (categorizedProduct.containsKey(item.categoryName)) {
@@ -106,7 +106,7 @@ class PrinterExtend implements PrinterAbstract {
         ),
         TableItem(
           text: CurrencyInputFormatter.formatRealCurrency(
-              item.quantity * item.price),
+              item.quantity * item.price,),
           columns: 3,
         ),
       ]);
@@ -122,16 +122,16 @@ class PrinterExtend implements PrinterAbstract {
             CurrencyInputFormatter.formatRealCurrency(billTotal.subtotal)
           ],
           printer?.defaultPrinterTextStyle
-              .copyWith(textAlign: TextAlign.textAlignRight))
+              .copyWith(textAlign: TextAlign.textAlignRight),)
       ..printRow(
           ["", CurrencyInputFormatter.formatRealCurrency(billTotal.commission)],
           printer?.defaultPrinterTextStyle
-              .copyWith(textAlign: TextAlign.textAlignRight))
+              .copyWith(textAlign: TextAlign.textAlignRight),)
       ..printRow(
           ["TOTAL", CurrencyInputFormatter.formatRealCurrency(billTotal.total)],
           printer?.defaultPrinterTextStyle.copyWith(
               textAlign: TextAlign.textAlignRight,
-              textSize: TextSize.textSizeBig));
+              textSize: TextSize.textSizeBig,),);
   }
 
   int calculateTimeSpent(DateTime time) {

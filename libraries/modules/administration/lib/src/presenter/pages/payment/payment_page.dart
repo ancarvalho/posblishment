@@ -11,7 +11,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../widgets/payment/payment_floating_widget.dart';
 import '../../widgets/payment/payment_methods_widget.dart';
-import '../bills/bills_store.dart';
+import '../../widgets/bills/bills_store.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key, required this.billID});

@@ -52,12 +52,12 @@ enum PagesRoutes {
   billType(
     name: "Bill Type",
     route: "/bill_type/",
-    dependsOnModule: ModulesRoutes.administration,
+    dependsOnModule: ModulesRoutes.management,
   ),
   billTypes(
     name: "Bill Types",
     route: "/bill_types/",
-    dependsOnModule: ModulesRoutes.administration,
+    dependsOnModule: ModulesRoutes.management,
   ),
   bill(
     name: "Bill",

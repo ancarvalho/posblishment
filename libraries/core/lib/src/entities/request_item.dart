@@ -16,5 +16,5 @@ class RequestItem {
       required this.status,
       required this.billID, 
       required this.createdAt,
-      required this.updatedAt});
+      required this.updatedAt,});
 }

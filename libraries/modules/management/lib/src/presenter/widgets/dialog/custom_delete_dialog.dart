@@ -10,7 +10,7 @@ class CustomDeleteDialog extends StatelessWidget {
       {Key? key,
       required this.name,
       required this.delete,
-      this.isCategory = false})
+      this.isCategory = false,})
       : super(key: key);
 
   @override

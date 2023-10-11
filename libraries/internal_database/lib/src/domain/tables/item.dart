@@ -14,6 +14,7 @@ class Item extends Table {
   IntColumn get quantity => integer().withDefault(const Constant(1))();
   IntColumn get totalQuantity => integer().generatedAs(quantity)();
   IntColumn get status => integer().map(JsonAwareIntEnumConverter(ItemStatus.values))();
+  TextColumn get variation => text().nullable()();
   TextColumn get productId => text().references(Product, #id)();
   TextColumn get requestId => text().references(Request, #id)();
 

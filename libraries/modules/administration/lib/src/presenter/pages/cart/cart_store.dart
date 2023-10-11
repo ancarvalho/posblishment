@@ -10,22 +10,24 @@ class CartStore extends NotifierStore<Failure, Map<String, NewItem>> {
   CartStore(this._makeRequestStore) : super({});
   List<NewItem> get items => state.values.toList();
   int get count => state.values.fold<int>(
-      0, (previousValue, element) => element.quantity + previousValue);
+      0, (previousValue, element) => element.quantity + previousValue,);
 
   final MakeRequestStore _makeRequestStore;
 
   final tableTextController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  void insertProductOnItems(Product product) {
+  void insertProductOnItems(Product product, String? variation) {
+    final productKey = variation != null ? "${product.id}-$variation" : product.id;
+
     // if (product != null) {
     setLoading(true);
     // TODO change After to add Variation
-    if (state.containsKey(product.id)) {
-      increaseItemQuantity(product.id);
+    if (state.containsKey(productKey)) {
+      increaseItemQuantity(productKey);
     } else {
-      state[product.id] =
-          NewItem(productId: product.id, quantity: 1, name: product.name);
+      state[productKey] =
+          NewItem(productId: product.id, quantity: 1, name: product.name, variation: variation);
     }
 
     return setLoading(false);

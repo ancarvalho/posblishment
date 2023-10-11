@@ -1,4 +1,5 @@
 import 'package:administration/src/presenter/widgets/bill_items/bill_items_widget.dart';
+import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/bill_requests/bill_requests_widget.dart';
@@ -26,24 +27,40 @@ class _BillPageState extends State<BillPage> with TickerProviderStateMixin {
         appBar: AppBar(
           title: const Text("Conta"),
           centerTitle: true,
-          bottom: TabBar(
-            controller: _tabController,
-            tabs:const  [
-              Tab(icon: Icon(Icons.list_alt_outlined),),
-              Tab(icon: Icon(Icons.line_style_sharp)),
-            ],
-          ),
+          bottom: Sizes.isMobile(context)
+              ? TabBar(
+                  controller: _tabController,
+                  tabs: const [
+                    Tab(
+                      icon: Icon(Icons.list_alt_outlined),
+                    ),
+                    Tab(icon: Icon(Icons.line_style_sharp)),
+                  ],
+                )
+              : null,
         ),
-        body: TabBarView(
-          // TODO fix the scroll controller https://stackoverflow.com/questions/53826661/flutter-tabcontroller-index-does-not-respond-to-changes-in-the-tabbarview
-          physics: const NeverScrollableScrollPhysics(),
-          controller: _tabController,
-          children: [
-        
-            BillItemsWidget(billID: widget.billID),
-            BillRequestsWidget(billID: widget.billID)
-          ],
-        ),
+        body: Sizes.isMobile(context)
+            ? TabBarView(
+                // TODO fix the scroll controller https://stackoverflow.com/questions/53826661/flutter-tabcontroller-index-does-not-respond-to-changes-in-the-tabbarview
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _tabController,
+                children: [
+                  BillItemsWidget(billID: widget.billID),
+                  BillRequestsWidget(billID: widget.billID)
+                ],
+              )
+            : Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: BillItemsWidget(billID: widget.billID),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: BillRequestsWidget(billID: widget.billID),
+                  )
+                ],
+              ),
       ),
     );
   }

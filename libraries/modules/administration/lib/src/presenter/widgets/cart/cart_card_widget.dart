@@ -8,7 +8,7 @@ class CartCardWidget extends StatelessWidget {
       required this.item,
       required this.removeItem,
       required this.increaseQuantity,
-      required this.decreaseQuantity});
+      required this.decreaseQuantity,});
   final NewItem item;
 
   final Function(String index) removeItem;

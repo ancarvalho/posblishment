@@ -20,16 +20,11 @@ abstract class AdministrationRepository {
   Future<Either<Failure, int>> cancelBill(String billID);
 
   Future<Either<Failure, List<BillType>>> getBillTypes();
-  Future<Either<Failure, BillType>> getBillType(String id);
-  Future<Either<Failure, bool>> createBillType(NewBillType newBillType);
-  Future<Either<Failure, bool>> updateBillType(BillType newBillType);
-  Future<Either<Failure, BillType>> getDefaultBillType();
-  Future<Either<Failure, bool>> removeBillTypeDefaultValue();
-  Future<Either<Failure, bool>> setDefaultBillType(String id);
+
   Future<Either<Failure, int>> updateTypeOfBill(
-      String billTypeId, String billId);
+      String billTypeId, String billId,);
   Future<Either<Failure, int>> updateBillStatus(
-      String billID, BillStatus status);
+      String billID, BillStatus status,);
   // Future<Either<Failure, Request>> createRequest(Request request, String billID);
   Future<Either<Failure,List<RequestItemWithCategory>>> getRequestItemWithCategory(String requestId);
   Future<Either<Failure, List<Request>>> getLastRequests();
@@ -37,7 +32,7 @@ abstract class AdministrationRepository {
   Future<Either<Failure, int>> setRequestDelivered(String requestID);
   Future<Either<Failure, int>> setItemDelivered(String itemID);
   Future<Either<Failure, List<Request>>> getBillValidRequests(String id);
-  Future<Either<Failure, int>> deleteBillType(String id);
+
 
   Future<Either<Failure, BillTotal>> getBillTotal(String billID);
   Future<Either<Failure, List<Item>>> getBillValidItems(String billID);
