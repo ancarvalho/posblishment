@@ -3,9 +3,9 @@ import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:posblishment/app/settings/presenter/pages/settings/settings_store.dart';
 
 import "../app_module.dart";
-
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -15,15 +15,22 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-
   // get the settings last path and push trough or home if it's null?
   Future<void> _startSplashPage() async {
     await Future.wait([
       Modular.isModuleReady<AppModule>(),
       Future.delayed(const Duration(seconds: 2)),
-    ]).then(
-      (value) => Modular.to.navigate(PagesRoutes.statistics.dependsOnModule.route+PagesRoutes.statistics.route),
-    );
+    ]).then((value) {
+      _connectToPrinter();
+      return Modular.to.navigate(PagesRoutes.statistics.dependsOnModule.route + PagesRoutes.statistics.route);
+    });
+  }
+
+  void _connectToPrinter() {
+    final settings = SettingStore().state;
+    if(settings.enablePrinter && settings.printerIp != null && settings.printerPort != null) {
+      Modular.get<PrinterAbstract>().connect(settings.printerIp!, port: settings.printerPort);
+    }
   }
 
   @override

@@ -1,5 +1,8 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+
+import '../../widgets/bill_type/bill_type_store.dart';
 import '../../widgets/bill_type/bill_type_widget.dart';
 
 
@@ -12,7 +15,7 @@ class BillTypePage extends StatefulWidget {
 }
 
 class _BillTypePageState extends State<BillTypePage> {
- 
+ final billTypeStore = Modular.get<BillTypeStore>();
 
 
 
@@ -24,6 +27,12 @@ class _BillTypePageState extends State<BillTypePage> {
         appBar: AppBar(
           title: const Text("Tipo de Conta"),
           centerTitle: true,
+          actions: [
+            IconButton(
+                onPressed: billTypeStore.clearFields,
+                icon: const Icon(Icons.clear),
+              ),
+          ],
         ),
         //TODO insert a Grid builder based on width minimum of 200px
         body:  BillTypeWidget(index: widget.index,)

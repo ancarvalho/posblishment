@@ -1,18 +1,19 @@
-import '../enums/establishment_type.dart';
+
+import 'package:core/core.dart';
 
 class Establishment {
   final String name;
-  final EstablishmentType establishmentType;
+  final EstablishmentTypes establishmentType;
 
   Establishment({
     required this.name,
-    this.establishmentType = EstablishmentType.restaurant,
+    this.establishmentType = EstablishmentTypes.restaurant,
   });
 
   static Establishment fromMap(dynamic map) {
     return Establishment(
       name: map["name"],
-      establishmentType: EstablishmentType.values
+      establishmentType: EstablishmentTypes.values
           .elementAt(int.tryParse(map["establishment_type"]) ?? 0),
     );
   }
@@ -26,7 +27,7 @@ class Establishment {
 
   Establishment copyWith({
     String? name,
-    EstablishmentType? establishmentType,
+    EstablishmentTypes? establishmentType,
   }) {
     return Establishment(
       name: name ?? this.name,

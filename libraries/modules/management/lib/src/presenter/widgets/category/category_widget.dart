@@ -5,7 +5,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/validators/validators.dart';
-import '../../pages/category/category_controller.dart';
 import '../../pages/category/category_store.dart';
 import '../../widgets/categories/categories_list_store.dart';
 
@@ -18,8 +17,8 @@ class CategoryWidget extends StatefulWidget {
 }
 
 class _CategoryWidgetState extends State<CategoryWidget> {
-  final controller = CategoryController();
-  final store = Modular.get<CategoryStore>();
+  // final controller = CategoryController();
+  final categoryStore = Modular.get<CategoryStore>();
   final categoriesStore = Modular.get<CategoriesListStore>();
 
   late Disposer _disposer;
@@ -27,8 +26,9 @@ class _CategoryWidgetState extends State<CategoryWidget> {
 
   @override
   void initState() {
-    
-    _disposer = store.observer(
+    if (widget.index != null) category = categoriesStore.state[widget.index!];
+    categoryStore.resetFields(category);
+    _disposer = categoryStore.observer(
       onState: (i) {
         //TODO check can unpop
         // Navigator.canPop(context);
@@ -36,7 +36,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         Modular.get<CategoriesListStore>().list();
         Navigator.of(context).canPop()
             ? Navigator.of(context).pop()
-            : controller.clearFields();
+            : categoryStore.clearFields();
       },
       onError: (error) {
         //TODO analyse error because context does not exist due widget was disposed
@@ -48,7 +48,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
 
   @override
   void dispose() {
-    controller.dispose();
+    // categoryStore.dispose();
     //solves 1st error but couses the observer to error
     _disposer();
     super.dispose();
@@ -56,8 +56,6 @@ class _CategoryWidgetState extends State<CategoryWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.index != null) category = categoriesStore.state[widget.index!];
-    controller.resetFields(category);
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -65,20 +63,24 @@ class _CategoryWidgetState extends State<CategoryWidget> {
             padding:
                 EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
             child: Form(
-              key: controller.formKey,
+              key: categoryStore.formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CustomTextFormField(
-                    controller: controller.nameTextController,
+                    controller:
+                        categoryStore.nameTextController,
                     decorationName: "Nome",
-                    value: controller.nameTextController.text,
+                    value: categoryStore
+                        .nameTextController.text,
                     validator: validateNome,
                   ),
                   CustomTextFormField(
-                    controller: controller.descriptionTextController,
+                    controller: categoryStore
+                        .descriptionTextController,
                     decorationName: "Description",
-                    value: controller.descriptionTextController.text,
+                    value: categoryStore
+                        .descriptionTextController.text,
                     validator: validateDescription,
                   ),
                 ],
@@ -88,7 +90,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await controller.saveChanges(category?.id);
+            await categoryStore.saveChanges(category?.id);
           },
           child: const Icon(Icons.save),
         ),

@@ -55,6 +55,7 @@ class SearchEngine extends SearchDelegate {
         itemBuilder: (context, index) {
           return ProductCardWidget(
             product: suggestion[index],
+            index: index,
           );
         },
       ),

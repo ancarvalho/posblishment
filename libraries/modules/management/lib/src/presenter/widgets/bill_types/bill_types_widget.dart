@@ -6,10 +6,11 @@ import 'package:flutter_triple/flutter_triple.dart';
 import 'package:management/src/presenter/widgets/bill_type_card/bill_type_card_widget.dart';
 import 'package:management/src/presenter/widgets/error/error_widget.dart';
 
+import '../bill_type/bill_type_store.dart';
 import 'bill_types_store.dart';
 
 class BillTypesWidget extends StatefulWidget {
-  final Function(int index)? setIndex ;
+  final Function(int index)? setIndex;
   const BillTypesWidget({super.key, this.setIndex});
 
   @override
@@ -18,6 +19,7 @@ class BillTypesWidget extends StatefulWidget {
 
 class _BillTypesWidgetState extends State<BillTypesWidget> {
   final billTypesStore = Modular.get<BillTypesStore>();
+  final billTypeStore = Modular.get<BillTypeStore>();
 
   Future<void> loadData() async {
     await billTypesStore.getBillTypes();
@@ -46,7 +48,10 @@ class _BillTypesWidgetState extends State<BillTypesWidget> {
               itemCount: state.length,
               itemBuilder: (context, index) {
                 return BillTypeCardWidget(
-                  setIndex: widget.setIndex,
+                  setIndex: (index) {
+                    billTypeStore.resetFields(billTypesStore.state[index]);
+                    widget.setIndex!(index);
+                  },
                   index: index,
                   billType: state[index],
                 );

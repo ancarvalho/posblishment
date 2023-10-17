@@ -4,8 +4,7 @@ import 'package:esc_printer/esc_printer.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:internal_database/internal_database.dart';
 import 'package:management/management.dart';
-import 'package:posblishment/app/setting/setting_module.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:posblishment/app/settings/settings_module.dart';
 import 'package:statistics/statistics.dart';
 import 'package:stock/stock.dart';
 import 'splash/splash_module.dart';
@@ -24,10 +23,8 @@ class AppModule extends Module {
 
   @override
   final List<Bind> binds = [
-    Bind.lazySingleton<SharedPrefHelper>(
-      (i) => SharedPrefHelper(preferences: i()),
-    ),
-    AsyncBind<SharedPreferences>((i) => SharedPreferences.getInstance()),
+
+    // AsyncBind<SharedPreferences>((i) => SharedPreferences.getInstance()),
     Bind.lazySingleton<AppDatabase>((i) => AppDatabase())
   ];
 

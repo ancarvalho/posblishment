@@ -9,8 +9,9 @@ import 'category_card_store.dart';
 
 class CategoryCardWidget extends StatefulWidget {
   final Category category;
-  final Function setIndex;
-  const CategoryCardWidget({super.key, required this.category, required this.setIndex});
+  final Function? setIndex;
+  final int index;
+  const CategoryCardWidget({super.key, required this.category,  this.setIndex, required this.index});
 
   @override
   State<CategoryCardWidget> createState() => _CategoryCardWidgetState();
@@ -41,9 +42,9 @@ class _CategoryCardWidgetState extends State<CategoryCardWidget> {
       onTap: Sizes.isMobile(context)
           ? () => Modular.to.pushNamed(
                 "${PagesRoutes.category.dependsOnModule.route}${PagesRoutes.category.route}",
-                arguments: widget.category,
+                arguments: widget.index,
               )
-          : () => widget.setIndex(),
+          : () => widget.setIndex!(),
       onLongPress: () {
         showDialog(
           context: context,

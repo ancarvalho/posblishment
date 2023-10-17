@@ -6,6 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import '../../widgets/product/product_widget.dart';
 import '../../widgets/products/products.dart';
 import '../../widgets/search/search_widget.dart';
+import '../product/product_store.dart';
 
 class ProductsListPage extends StatefulWidget {
   const ProductsListPage({super.key});
@@ -16,6 +17,8 @@ class ProductsListPage extends StatefulWidget {
 
 class _ProductsListPageState extends State<ProductsListPage> {
   final index = ValueNotifier<int?>(null);
+  final productStore = Modular.get<ProductStore>();
+  
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +45,11 @@ class _ProductsListPageState extends State<ProductsListPage> {
                       // arguments: Product.empty(),
                     );
                   },
+                ) else
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  tooltip: 'Clear Fields',
+                  onPressed: productStore.clearFields,
                 ),
             ],
           ),
@@ -54,6 +62,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
                       child: ProductsWidget(
                         setIndex: (i) {
                           index.value = i;
+
                           setState(() {});
                         },
                       ),

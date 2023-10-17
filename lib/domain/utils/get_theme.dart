@@ -1,7 +1,6 @@
+import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-
-import '../enums/themes.dart';
 
 ThemeData getTheme(ThemesOptions theme) {
   switch (theme) {

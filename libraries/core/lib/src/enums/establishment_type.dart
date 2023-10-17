@@ -1,0 +1,1 @@
+enum EstablishmentTypes { restaurant, quiosque }

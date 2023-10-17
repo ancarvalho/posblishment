@@ -1,22 +1,17 @@
 import "package:core/core.dart";
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
-import 'package:management/src/domain/validators/validators.dart';
-import 'package:management/src/presenter/pages/product/product_controller.dart';
 import 'package:management/src/presenter/pages/product/product_store.dart';
 import 'package:management/src/presenter/stores/categories_load_store.dart';
-import 'package:management/src/presenter/widgets/tags.dart';
+import 'package:management/src/presenter/widgets/product/product_widget.dart';
 
-import '../../../domain/adapters/adapters.dart';
-import '../../widgets/error/error_widget.dart';
 import '../../widgets/products/products_list_store.dart';
 
 class ProductPage extends StatefulWidget {
-  final Product? product;
-  const ProductPage({super.key,  this.product});
+  final int? index;
+  const ProductPage({super.key, this.index});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
@@ -24,39 +19,43 @@ class ProductPage extends StatefulWidget {
 
 // TODO Instanciate usecases, controller, and store on module
 class _ProductPageState extends State<ProductPage> {
-  final controller = ProductController();
   final productStore = Modular.get<ProductStore>();
-  final categoriesLoadStore = Modular.get<CategoriesLoadStore>();
+  final productsStore = Modular.get<ProductListStore>();
+  // final categoriesLoadStore = Modular.get<CategoriesLoadStore>();
 
-  late Disposer _createProductDisposer;
-  late Disposer _observerCategoriesDisposer;
+  // late Disposer _createProductDisposer;
+  // late Disposer _observerCategoriesDisposer;
+
+  Product? product;
 
   @override
   void initState() {
-    _createProductDisposer = productStore.observer(
-      onError: (error) {
-        displayMessageOnSnackbar(context, error.errorMessage);
-      },
-      onState: (i) {
-        Modular.get<ProductListStore>().list();
-        Navigator.of(context).canPop()
-            ? Navigator.of(context).pop()
-            : controller.resetFields(widget.product);
-      },
-    );
+    if (widget.index != null) product = productsStore.state[widget.index!];
 
-    controller.addListener(() {
-      setState(() {});
-    });
+    // _createProductDisposer = productStore.observer(
+    //   onError: (error) {
+    //     displayMessageOnSnackbar(context, error.errorMessage);
+    //   },
+    //   onState: (i) {
+    //     Modular.get<ProductListStore>().list();
+    //     Navigator.of(context).canPop()
+    //         ? Navigator.of(context).pop()
+    //         : productStore.productController.resetFields(product);
+    //   },
+    // );
 
-    _observerCategoriesDisposer = categoriesLoadStore.observer(
-      onError: (error) {
-        displayMessageOnSnackbar(context, "Need Create Categories First");
-      },
-    );
+    // productStore.productController.addListener(() {
+    //   setState(() {});
+    // });
 
-    categoriesLoadStore.load();
-    controller.resetFields(widget.product);
+    // _observerCategoriesDisposer = categoriesLoadStore.observer(
+    //   onError: (error) {
+    //     displayMessageOnSnackbar(context, "Need Create Categories First");
+    //   },
+    // );
+
+    // categoriesLoadStore.load();
+    // productStore.productController.resetFields(product);
     super.initState();
   }
 
@@ -67,7 +66,7 @@ class _ProductPageState extends State<ProductPage> {
         drawer: Navigator.of(context).canPop() ? null : const DrawerWidget(),
         appBar: AppBar(
           title: Text(
-            widget.product != null ? widget.product!.name : "Criar Produto",
+            product != null ? product!.name : "Criar Produto",
           ),
           centerTitle: true,
           actions: [
@@ -75,97 +74,21 @@ class _ProductPageState extends State<ProductPage> {
               icon: const Icon(Icons.clear),
               tooltip: 'Reset Fields',
               onPressed: () {
-                controller.resetFields(widget.product);
+                productStore.resetFields(product);
               },
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child: ScopedBuilder<CategoriesLoadStore, Failure, List<Category>>(
-            store: categoriesLoadStore,
-            onError: (context, error) => ManagementErrorWidget(
-              error: error,
-              reload: categoriesLoadStore.load,
-            ),
-            onState: (context, state) {
-              return Padding(
-                padding: Paddings.paddingForm(),
-                child: Form(
-                  key: controller.formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomTextFormField(
-                        controller: controller.codeTextController,
-                        decorationName: "Código",
-                        value: controller.codeTextController.text,
-                        keyboardType: TextInputType.number,
-                        // ERROR ON Editing on Start
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                      ),
-                      CustomTextFormField(
-                        controller: controller.nameTextController,
-                        decorationName: "Nome",
-                        value: controller.nameTextController.text,
-                        validator: validateNome,
-                      ),
-                      CustomTextFormField(
-                        controller: controller.descriptionTextController,
-                        decorationName: "Description",
-                        value: controller.descriptionTextController.text,
-                        validator: validateDescription,
-                      ),
-                      CustomTextFormField(
-                        controller: controller.priceTextController,
-                        decorationName: "Price",
-                        value: controller.priceTextController.text,
-                        keyboardType: TextInputType.number,
-                        // ERROR ON Editing on Start
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          CurrencyInputFormatter(),
-                        ],
-                        // validator: validateCurrency,
-                      ),
-                      CustomDropDown(
-                        items: categoriesToMap(state),
-                        setValue: (value) {
-                          controller.categoryID = value;
-                        },
-                        value: controller.categoryID,
-                        labelText: "Categorias",
-                        validator: validateID,
-                      ),
-                      const SizedBox(height: 10),
-                       Tags(textfieldTagsController: controller.variationTextController, items: widget.product?.variations?.split(",")),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          // ScopedBuilder<ProductStore, Failure, e.Product>(),
-        ),
-        floatingActionButton: FloatingActionButton(
-          // TODO Check here
-          onPressed: () {
-            controller
-                .saveChanges(widget.product?.id)
-                .then((value) => eitherDisplayError(context, value));
-          },
-          child: const Icon(Icons.save),
-        ),
+        body: ProductWidget(index: widget.index,)
       ),
     );
   }
 
   @override
   void dispose() {
-    controller.dispose();
-    _createProductDisposer();
-    _observerCategoriesDisposer();
+    // productStore.dispose();
+    // _createProductDisposer();
+    // _observerCategoriesDisposer();
     super.dispose();
   }
 }

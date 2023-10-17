@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:core/core.dart';
 import 'package:flutter_triple/flutter_triple.dart';
-import 'package:posblishment/domain/enums/enums.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../domain/entities/entities.dart';
+import '../../../../../domain/entities/entities.dart';
 
 class SettingStore extends StreamStore<Failure, Settings> {
   static SettingStore? _instance;

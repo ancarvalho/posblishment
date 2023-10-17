@@ -4,7 +4,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:management/src/domain/use_cases/usecases.dart';
 import 'package:management/src/presenter/pages/bill_type/bill_type_page.dart';
 import 'package:management/src/presenter/pages/bill_types/bill_types_page.dart';
-import 'package:management/src/presenter/pages/category/category_controller.dart';
 import 'package:management/src/presenter/pages/product/product_store.dart';
 import 'package:management/src/presenter/stores/categories_load_store.dart';
 import 'package:management/src/presenter/widgets/bill_type/bill_type_store.dart';
@@ -21,7 +20,6 @@ import 'presenter/pages/categories_list/categories_list_page.dart';
 import 'presenter/pages/category/category_page.dart';
 import 'presenter/pages/category/category_store.dart';
 //products
-import 'presenter/pages/product/product_controller.dart';
 import 'presenter/pages/product/product_page.dart';
 import 'presenter/pages/products_list/products_list_page.dart';
 import 'presenter/widgets/categories/categories_list_store.dart';
@@ -43,8 +41,8 @@ class ManagementModule extends Module {
     Bind.lazySingleton((i) => CategoryStore(i(), i()),export: true,),
 
 
-    Bind.lazySingleton((i) => ProductController(),export: true,),
-    Bind.lazySingleton((i) => CategoryController(),export: true,),
+    // Bind.lazySingleton((i) => ProductController(),export: true,),
+    // Bind.lazySingleton((i) => CategoryController(),export: true,),
     Bind.lazySingleton((i) => CategoryCardStore(i(), ),export: true,),
     Bind.lazySingleton((i) => ProductCardStore(i(), ),export: true,),
 
@@ -75,9 +73,10 @@ class ManagementModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ChildRoute(PagesRoutes.products.route, child: (_, args) => const ProductsListPage()),
-    ChildRoute(PagesRoutes.product.route, child: (_, args) => ProductPage(product: args.data,)),
+    ChildRoute(PagesRoutes.product.route, child: (_, args) => ProductPage(index: args.data,)),
+    
     ChildRoute(PagesRoutes.categories.route, child: (_, args) => const CategoriesListPage()),
-    ChildRoute(PagesRoutes.category.route, child: (_, args) => CategoryPage(category: args.data,)),
+    ChildRoute(PagesRoutes.category.route, child: (_, args) => CategoryPage(index: args.data,)),
 
     ChildRoute(PagesRoutes.billType.route, child: (_, args) =>  BillTypePage(index: args.data,)),
     ChildRoute(PagesRoutes.billTypes.route, child: (_, args) => const BillTypesPage()),

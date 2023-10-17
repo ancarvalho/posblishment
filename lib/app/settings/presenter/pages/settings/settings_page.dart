@@ -1,12 +1,11 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_triple/flutter_triple.dart';
-import 'package:posblishment/app/setting/settings_controller.dart';
+import 'package:posblishment/app/settings/presenter/pages/settings/settings_controller.dart';
 import 'package:posblishment/domain/entities/entities.dart';
-import 'package:posblishment/domain/enums/enums.dart';
-
-import 'setting_store.dart';
+import 'settings_store.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
@@ -21,9 +20,9 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   void initState() {
-    settingsController.resetFields(settingsStore.state);
+    settingsController..resetFields(settingsStore.state)
     //TODO modify later
-    settingsController.orderSheetEnabled.addListener(() {
+    ..addListener(() {
       setState(() {});
     });
     super.initState();
@@ -51,18 +50,19 @@ class _SettingPageState extends State<SettingPage> {
                       decorationName: "Nome do Estabelecimento",
                       controller:
                           settingsController.establishmentNameTextController,
-                      value: state.establishment.name,
+                      value: state.establishment?.name,
                     ),
                     CustomDropDown(
                       items: <String, String>{
-                        for (var establishmentType in EstablishmentType.values)
-                          establishmentType.index.toString(): establishmentType.name
+                        for (var establishmentType in EstablishmentTypes.values)
+                          establishmentType.index.toString():
+                              establishmentType.name
                       },
-                      value: settingsController.establishmentType.value.index
+                      value: settingsController.establishmentType.index
                           .toString(),
                       setValue: (value) {
-                        settingsController.establishmentType.value =
-                            EstablishmentType.values
+                        settingsController.establishmentType =
+                            EstablishmentTypes.values
                                 .elementAt(int.parse(value ?? "0"));
                       },
                       labelText: "Tipo de Estabelecimento",
@@ -72,10 +72,10 @@ class _SettingPageState extends State<SettingPage> {
                         for (var themeOption in ThemesOptions.values)
                           themeOption.index.toString(): themeOption.name
                       },
-                      value: settingsController.theme.value.index.toString(),
+                      value: settingsController.theme.index.toString(),
                       setValue: (value) {
-                        settingsController.theme.value =
-                            ThemesOptions.values.elementAt(int.parse(value ?? "0"));
+                        settingsController.theme = ThemesOptions.values
+                            .elementAt(int.parse(value ?? "0"));
                         settingsStore.changeTheme(
                           theme: ThemesOptions.values
                               .elementAt(int.parse(value ?? "0")),
@@ -88,13 +88,58 @@ class _SettingPageState extends State<SettingPage> {
                       children: [
                         const Text("Habilitar Comanda"),
                         Switch(
-                          value: settingsController.orderSheetEnabled.value,
+                          value: settingsController.orderSheetEnabled,
                           onChanged: (v) {
-                            settingsController.orderSheetEnabled.value = v;
+                            settingsController.orderSheetEnabled = v;
                           },
                         )
                       ],
                     ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Text("Habilitar Impressora  "),
+                        Switch(
+                          value: settingsController.enablePrinter,
+                          onChanged: (v) {
+                            settingsController.enablePrinter = v;
+                          },
+                        )
+                      ],
+                    ),
+
+                    if (settingsController.enablePrinter)
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: CustomTextFormField(
+                              decorationName: "Ip da impressora",
+                              controller:
+                                  settingsController.printerIpTextController,
+                              keyboardType: TextInputType.number,
+                              value: settingsController
+                                  .printerIpTextController.text,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: CustomTextFormField(
+                              decorationName: "Porta",
+                              controller:
+                                  settingsController.printerPortTextController,
+                              value: settingsController
+                                  .printerPortTextController.text,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
                     // TODO put a warning that could be a slow process
                     TextButton(
                       onPressed: () async {
@@ -131,7 +176,8 @@ class _SettingPageState extends State<SettingPage> {
                     TextButton(
                       onPressed: () {
                         settingsStore.saveSettings(
-                          settingsController.updateSettings(settingsStore.state),
+                          settingsController
+                              .updateSettings(settingsStore.state),
                         );
                       },
                       child: const Text("Salvar"),

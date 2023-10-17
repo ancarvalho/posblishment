@@ -5,7 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 import 'package:posblishment/domain/entities/entities.dart';
 import 'package:posblishment/domain/utils/get_theme.dart';
-import 'setting/setting_store.dart';
+import 'settings/presenter/pages/settings/settings_store.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

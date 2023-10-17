@@ -3,8 +3,10 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../widgets/categories/categories_list_store.dart';
 import '../../widgets/categories/categories_widget.dart';
 import '../../widgets/category/category_widget.dart';
+import '../category/category_store.dart';
 
 class CategoriesListPage extends StatefulWidget {
   const CategoriesListPage({super.key});
@@ -15,6 +17,7 @@ class CategoriesListPage extends StatefulWidget {
 
 class _CategoriesListPageState extends State<CategoriesListPage> {
   final index = ValueNotifier<int?>(null);
+  final categoryStore = Modular.get<CategoryStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +43,12 @@ class _CategoriesListPageState extends State<CategoriesListPage> {
                     // TODO Check if dispose is being called on controllers
                   );
                 },
+              )
+            else
+              IconButton(
+                icon: const Icon(Icons.clear),
+                tooltip: 'Create New Category',
+                onPressed: categoryStore.clearFields,
               ),
           ],
         ),

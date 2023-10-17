@@ -9,9 +9,14 @@ import 'product_card_store.dart';
 
 class ProductCardWidget extends StatefulWidget {
   final Product product;
+  final int index;
   final Function()? setIndex;
-  const ProductCardWidget(
-      {super.key, required this.product,  this.setIndex,});
+  const ProductCardWidget({
+    super.key,
+    required this.product,
+    required this.index,
+    this.setIndex,
+  });
 
   @override
   State<ProductCardWidget> createState() => _ProductCardWidgetState();
@@ -45,7 +50,7 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
       onTap: Sizes.isMobile(context)
           ? () => Modular.to.pushNamed(
                 "${PagesRoutes.product.dependsOnModule.route}${PagesRoutes.product.route}",
-                arguments: widget.product,
+                arguments: widget.index,
               )
           : () => widget.setIndex!() // TODO retrieve data
 
@@ -67,7 +72,11 @@ class _ProductCardWidgetState extends State<ProductCardWidget> {
         child: ConstrainedBox(
           // height: 180,
           constraints: const BoxConstraints(
-              maxHeight: 130, minWidth: 150, maxWidth: 200, minHeight: 90,),
+            maxHeight: 130,
+            minWidth: 150,
+            maxWidth: 200,
+            minHeight: 90,
+          ),
           child: Padding(
             padding: Sizes.isMobile(context)
                 ? Paddings.paddingVertical4()
