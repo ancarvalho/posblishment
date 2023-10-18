@@ -4,8 +4,10 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:management/src/domain/use_cases/usecases.dart';
 import 'package:management/src/presenter/pages/bill_type/bill_type_page.dart';
 import 'package:management/src/presenter/pages/bill_types/bill_types_page.dart';
+import 'package:management/src/presenter/pages/product/product_controller.dart';
 import 'package:management/src/presenter/pages/product/product_store.dart';
 import 'package:management/src/presenter/stores/categories_load_store.dart';
+import 'package:management/src/presenter/widgets/bill_type/bill_type_controller.dart';
 import 'package:management/src/presenter/widgets/bill_type/bill_type_store.dart';
 import 'package:management/src/presenter/widgets/bill_types/bill_types_store.dart';
 
@@ -17,6 +19,7 @@ import 'internal/data_source/management_data_source_internal_impl.dart';
 //
 //category
 import 'presenter/pages/categories_list/categories_list_page.dart';
+import 'presenter/pages/category/category_controller.dart';
 import 'presenter/pages/category/category_page.dart';
 import 'presenter/pages/category/category_store.dart';
 //products
@@ -41,14 +44,15 @@ class ManagementModule extends Module {
     Bind.lazySingleton((i) => CategoryStore(i(), i()),export: true,),
 
 
-    // Bind.lazySingleton((i) => ProductController(),export: true,),
-    // Bind.lazySingleton((i) => CategoryController(),export: true,),
+    Bind.lazySingleton((i) => ProductController(i(), i()),export: true,),
+    Bind.lazySingleton((i) => CategoryController(i(), i()),export: true,),
     Bind.lazySingleton((i) => CategoryCardStore(i(), ),export: true,),
     Bind.lazySingleton((i) => ProductCardStore(i(), ),export: true,),
 
 
     Bind.lazySingleton((i) => BillTypeStore(i(), ),export: true,),
     Bind.lazySingleton((i) => BillTypesStore(i(), ),export: true,),
+      Bind.lazySingleton((i) => BillTypeController(i(), i()),export: true,),
 
     Bind.lazySingleton<ManagementRepository>((i) => ManagementRepositoryImpl(i()),),
 
@@ -73,12 +77,12 @@ class ManagementModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ChildRoute(PagesRoutes.products.route, child: (_, args) => const ProductsListPage()),
-    ChildRoute(PagesRoutes.product.route, child: (_, args) => ProductPage(index: args.data,)),
+    ChildRoute(PagesRoutes.product.route, child: (_, args) => const ProductPage()),
     
     ChildRoute(PagesRoutes.categories.route, child: (_, args) => const CategoriesListPage()),
-    ChildRoute(PagesRoutes.category.route, child: (_, args) => CategoryPage(index: args.data,)),
+    ChildRoute(PagesRoutes.category.route, child: (_, args) => const CategoryPage()),
 
-    ChildRoute(PagesRoutes.billType.route, child: (_, args) =>  BillTypePage(index: args.data,)),
+    ChildRoute(PagesRoutes.billType.route, child: (_, args) =>  const BillTypePage()),
     ChildRoute(PagesRoutes.billTypes.route, child: (_, args) => const BillTypesPage()),
   ];
 

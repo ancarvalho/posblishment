@@ -1,73 +1,89 @@
-// import "package:core/core.dart";
-// import 'package:dartz/dartz.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_modular/flutter_modular.dart';
+import "package:core/core.dart";
+import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
+import 'package:management/src/presenter/widgets/categories/categories_list_store.dart';
 
-// import '../../../domain/errors/management_failures.dart';
-// import 'category_store.dart';
+import '../../../domain/errors/management_failures.dart';
+import 'category_store.dart';
 
-// class CategoryController extends Disposable {
-//   // avoiding inject dependency because disposable state
-//   final store = Modular.get<CategoryStore>();
+class CategoryController with ChangeNotifier {
+  // avoiding inject dependency because disposable state
 
-//   final formKey = GlobalKey<FormState>();
+  final CategoryStore categoryStore;
+  final CategoriesListStore categoriesStore;
 
-//   final nameTextController = TextEditingController();
-//   final descriptionTextController = TextEditingController();
+  CategoryController(this.categoryStore, this.categoriesStore);
 
-//   CategoryController();
+  final formKey = GlobalKey<FormState>();
 
-//   void resetFields(Category? category) {
-//     nameTextController.text = category?.name ?? "";
-//     descriptionTextController.text = category?.description ?? "";
-//   }
+  final nameTextController = TextEditingController();
+  final descriptionTextController = TextEditingController();
 
+  int? _index;
 
-//   void clearFields() {
-//     nameTextController.text =  "";
-//     descriptionTextController.text = "";
-//   }
+  int? get index => _index;
 
+  set index(int? type) {
+    _index = type;
+    notifyListeners();
+  }
 
-//   Future<Either<Failure, void>> saveChanges(String? id) async {
-//     if (formKey.currentState!.validate() && id != null) {
-//       return Right(updateCategory(id));
-//     } else if (formKey.currentState!.validate()) {
-//       return Right(createCategory());
-//     }
-//     return Left(
-//       ManagementError(
-//         StackTrace.current,
-//         "ManagementError-createOrUpdateCategory",
-//         "",
-//         "Category name needed",
-//       ),
-//     );
-//   }
+  void resetFields() {
+    if (index != null) {
+      final category = categoriesStore.state[index!];
+      nameTextController.text = category.name;
+      descriptionTextController.text = category.description ?? "";
+    } else {
+      clearFields();
+    }
+  }
 
-//   Future<void> createCategory() async {
-//     await store.createCategory(
-//       Category(
-//         name: nameTextController.text,
-//         description: descriptionTextController.text,
-//       ),
-//     );
-//   }
+  void clearFields() {
+    nameTextController.text = "";
+    descriptionTextController.text = "";
+    _index = null;
+  }
 
-//   Future<void> updateCategory(String id) async {
-//     await store.updateCategory(
-//       Category(
-//         id: id,
-//         name: nameTextController.text,
-//         description: descriptionTextController.text,
-//       ),
-//     );
-//   }
+  Future<Either<Failure, void>> saveChanges() async {
+    if (formKey.currentState!.validate() && index != null) {
+      final id = categoriesStore.state[index!].id;
+      return Right(updateCategory(id!));
+    } else if (formKey.currentState!.validate()) {
+      return Right(createCategory());
+    }
+    return Left(
+      ManagementError(
+        StackTrace.current,
+        "ManagementError-createOrUpdateCategory",
+        "",
+        "Category name needed",
+      ),
+    );
+  }
 
-//   @override
-//   void dispose() {
-//     // formKey.currentState?.dispose();
-//     nameTextController.dispose();
-//     descriptionTextController.dispose();
-//   }
-// }
+  Future<void> createCategory() async {
+    await categoryStore.createCategory(
+      Category(
+        name: nameTextController.text,
+        description: descriptionTextController.text,
+      ),
+    );
+  }
+
+  Future<void> updateCategory(String id) async {
+    await categoryStore.updateCategory(
+      Category(
+        id: id,
+        name: nameTextController.text,
+        description: descriptionTextController.text,
+      ),
+    );
+  }
+
+  // @override
+  // void dispose() {
+  //   // formKey.currentState?.dispose();
+  //   nameTextController.dispose();
+  //   descriptionTextController.dispose();
+  // }
+}

@@ -5,12 +5,13 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/validators/validators.dart';
+import '../../pages/category/category_controller.dart';
 import '../../pages/category/category_store.dart';
 import '../../widgets/categories/categories_list_store.dart';
 
 class CategoryWidget extends StatefulWidget {
-  final int? index;
-  const CategoryWidget({super.key, this.index});
+  // final int? index;
+  const CategoryWidget({super.key});
 
   @override
   State<CategoryWidget> createState() => _CategoryWidgetState();
@@ -19,15 +20,23 @@ class CategoryWidget extends StatefulWidget {
 class _CategoryWidgetState extends State<CategoryWidget> {
   // final controller = CategoryController();
   final categoryStore = Modular.get<CategoryStore>();
-  final categoriesStore = Modular.get<CategoriesListStore>();
+  // final categoriesStore = Modular.get<CategoriesListStore>();
+  final categoryController = Modular.get<CategoryController>();
 
   late Disposer _disposer;
   Category? category;
 
   @override
   void initState() {
-    if (widget.index != null) category = categoriesStore.state[widget.index!];
-    categoryStore.resetFields(category);
+    // if (widget.index != null) category = categoriesStore.state[widget.index!];
+    // categoryController
+    //   ..index = widget.index
+    //   ..resetFields();
+
+    categoryController.addListener(() {
+      setState(() {});
+    });
+    
     _disposer = categoryStore.observer(
       onState: (i) {
         //TODO check can unpop
@@ -36,7 +45,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         Modular.get<CategoriesListStore>().list();
         Navigator.of(context).canPop()
             ? Navigator.of(context).pop()
-            : categoryStore.clearFields();
+            : categoryController.clearFields();
       },
       onError: (error) {
         //TODO analyse error because context does not exist due widget was disposed
@@ -63,24 +72,20 @@ class _CategoryWidgetState extends State<CategoryWidget> {
             padding:
                 EdgeInsets.symmetric(horizontal: Sizes.width(context) * .02),
             child: Form(
-              key: categoryStore.formKey,
+              key: categoryController.formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CustomTextFormField(
-                    controller:
-                        categoryStore.nameTextController,
+                    controller: categoryController.nameTextController,
                     decorationName: "Nome",
-                    value: categoryStore
-                        .nameTextController.text,
+                    value: categoryController.nameTextController.text,
                     validator: validateNome,
                   ),
                   CustomTextFormField(
-                    controller: categoryStore
-                        .descriptionTextController,
+                    controller: categoryController.descriptionTextController,
                     decorationName: "Description",
-                    value: categoryStore
-                        .descriptionTextController.text,
+                    value: categoryController.descriptionTextController.text,
                     validator: validateDescription,
                   ),
                 ],
@@ -90,7 +95,9 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await categoryStore.saveChanges(category?.id);
+            await categoryController.saveChanges().then(
+                  (value) => eitherDisplayError(context, value),
+                );
           },
           child: const Icon(Icons.save),
         ),

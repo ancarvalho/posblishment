@@ -3,19 +3,18 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../../domain/use_cases/delete_product.dart';
+import '../../pages/product/product_controller.dart';
 import '../dialog/custom_delete_dialog.dart';
-import '../products/products_list_store.dart';
-import 'product_card_store.dart';
 
 class ProductCardWidget extends StatefulWidget {
   final Product product;
   final int index;
-  final Function()? setIndex;
+
   const ProductCardWidget({
     super.key,
     required this.product,
     required this.index,
-    this.setIndex,
   });
 
   @override
@@ -23,45 +22,35 @@ class ProductCardWidget extends StatefulWidget {
 }
 
 class _ProductCardWidgetState extends State<ProductCardWidget> {
-  final store = Modular.get<ProductCardStore>();
-  final productsStore = Modular.get<ProductListStore>();
+  final deleteProduct = Modular.get<IDeleteProduct>();
+  // final productsStore = Modular.get<ProductListStore>();
 
-  @override
-  void initState() {
-    store.observer(
-      onError: (error) {
-        // TODO replace by some instance
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.toString()),
-          ),
-        );
-      },
-      onState: (error) {
-        productsStore.list();
-      },
-    );
-    super.initState();
-  }
+  final productController = Modular.get<ProductController>();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: Sizes.isMobile(context)
-          ? () => Modular.to.pushNamed(
-                "${PagesRoutes.product.dependsOnModule.route}${PagesRoutes.product.route}",
-                arguments: widget.index,
-              )
-          : () => widget.setIndex!() // TODO retrieve data
+      onTap: () {
+        productController
+          ..index = widget.index
+          ..resetFields();
 
-      ,
+        if (Sizes.isMobile(context)) {
+          Modular.to.pushNamed(
+            "${PagesRoutes.product.dependsOnModule.route}${PagesRoutes.product.route}",
+            arguments: widget.index,
+          );
+        }
+      },
       onLongPress: () {
         showDialog(
           context: context,
           builder: (context) {
             return CustomDeleteDialog(
               delete: () {
-                store.deleteProduct(widget.product.id);
+                deleteProduct
+                    .call(widget.product.id)
+                    .then((value) => eitherDisplayError(context, value));
               },
               name: widget.product.name,
             );

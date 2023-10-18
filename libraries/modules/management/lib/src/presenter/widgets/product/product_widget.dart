@@ -10,13 +10,13 @@ import 'package:management/src/presenter/stores/categories_load_store.dart';
 import 'package:management/src/presenter/widgets/tags.dart';
 
 import '../../../domain/adapters/adapters.dart';
+import '../../pages/product/product_controller.dart';
 import '../../widgets/error/error_widget.dart';
 import '../../widgets/products/products_list_store.dart';
 
 class ProductWidget extends StatefulWidget {
-  final int? index;
-  // final Function reset
-  const ProductWidget({super.key, this.index});
+
+  const ProductWidget({super.key});
 
   @override
   State<ProductWidget> createState() => _ProductWidgetState();
@@ -26,7 +26,9 @@ class ProductWidget extends StatefulWidget {
 class _ProductWidgetState extends State<ProductWidget> {
   final productStore = Modular.get<ProductStore>();
   final categoriesLoadStore = Modular.get<CategoriesLoadStore>();
-  final productsStore = Modular.get<ProductListStore>();
+  // final productsStore = Modular.get<ProductListStore>();
+
+  final productController = Modular.get<ProductController>();
 
   late Disposer _createProductDisposer;
   late Disposer _observerCategoriesDisposer;
@@ -35,8 +37,7 @@ class _ProductWidgetState extends State<ProductWidget> {
 
   @override
   void initState() {
-    if (widget.index != null) product = productsStore.state[widget.index!];
-    productStore.resetFields(product);
+  
     _createProductDisposer = productStore.observer(
       onError: (error) {
         displayMessageOnSnackbar(context, error.errorMessage);
@@ -45,7 +46,7 @@ class _ProductWidgetState extends State<ProductWidget> {
         Modular.get<ProductListStore>().list();
         Navigator.of(context).canPop()
             ? Navigator.of(context).pop()
-            : productStore.clearFields();
+            : productController.clearFields();
       },
     );
 
@@ -74,14 +75,14 @@ class _ProductWidgetState extends State<ProductWidget> {
             return Padding(
               padding: Paddings.paddingForm(),
               child: Form(
-                key: productStore.formKey,
+                key: productController.formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CustomTextFormField(
-                      controller: productStore.codeTextController,
+                      controller: productController.codeTextController,
                       decorationName: "Código",
-                      value: productStore.codeTextController.text,
+                      value: productController.codeTextController.text,
                       keyboardType: TextInputType.number,
                       // ERROR ON Editing on Start
                       inputFormatters: [
@@ -89,21 +90,21 @@ class _ProductWidgetState extends State<ProductWidget> {
                       ],
                     ),
                     CustomTextFormField(
-                      controller: productStore.nameTextController,
+                      controller: productController.nameTextController,
                       decorationName: "Nome",
-                      value: productStore.nameTextController.text,
+                      value: productController.nameTextController.text,
                       validator: validateNome,
                     ),
                     CustomTextFormField(
-                      controller: productStore.descriptionTextController,
+                      controller: productController.descriptionTextController,
                       decorationName: "Description",
-                      value: productStore.descriptionTextController.text,
+                      value: productController.descriptionTextController.text,
                       validator: validateDescription,
                     ),
                     CustomTextFormField(
-                      controller: productStore.priceTextController,
+                      controller: productController.priceTextController,
                       decorationName: "Price",
-                      value: productStore.priceTextController.text,
+                      value: productController.priceTextController.text,
                       keyboardType: TextInputType.number,
                       // ERROR ON Editing on Start
                       inputFormatters: [
@@ -115,16 +116,16 @@ class _ProductWidgetState extends State<ProductWidget> {
                     CustomDropDown(
                       items: categoriesToMap(state),
                       setValue: (value) {
-                        productStore.categoryId.value = value;
+                        productController.categoryID = value;
                       },
-                      value: productStore.categoryId.value,
+                      value: productController.categoryID,
                       labelText: "Categorias",
                       validator: validateID,
                     ),
                     const SizedBox(height: 10),
                     Tags(
                       textfieldTagsController:
-                          productStore.variationTextController,
+                          productController.variationTextController,
                       items: product?.variations?.split(","),
                     ),
                   ],
@@ -138,8 +139,8 @@ class _ProductWidgetState extends State<ProductWidget> {
       floatingActionButton: FloatingActionButton(
         // TODO Check here
         onPressed: () {
-          productStore.saveChanges(product?.id);
-          // .then((value) => eitherDisplayError(context, value));
+          productController.saveChanges()
+          .then((value) => eitherDisplayError(context, value));
         },
         child: const Icon(Icons.save),
       ),

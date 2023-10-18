@@ -2,7 +2,7 @@ import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import '../../widgets/bill_type/bill_type_store.dart';
+import 'package:management/src/presenter/widgets/bill_type/bill_type_controller.dart';
 import '../../widgets/bill_type/bill_type_widget.dart';
 import '../../widgets/bill_types/bill_types_widget.dart';
 
@@ -14,8 +14,8 @@ class BillTypesPage extends StatefulWidget {
 }
 
 class _BillTypesPageState extends State<BillTypesPage> {
-  final index = ValueNotifier<int?>(null);
-  final billTypeStore = Modular.get<BillTypeStore>();
+  // final index = ValueNotifier<int?>(null);
+  final billTypeController = Modular.get<BillTypeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +29,7 @@ class _BillTypesPageState extends State<BillTypesPage> {
             if (Sizes.isMobile(context))
               IconButton(
                 onPressed: () {
+                  billTypeController.clearFields();
                   Modular.to.pushNamed(
                     "${PagesRoutes.billType.dependsOnModule.route}${PagesRoutes.billType.route}",
                   );
@@ -37,7 +38,7 @@ class _BillTypesPageState extends State<BillTypesPage> {
               )
             else
               IconButton(
-                onPressed: billTypeStore.clearFields,
+                onPressed: billTypeController.clearFields,
                 icon: const Icon(Icons.clear),
               ),
           ],
@@ -46,21 +47,16 @@ class _BillTypesPageState extends State<BillTypesPage> {
         body: Sizes.isMobile(context)
             ? const BillTypesWidget()
             : Row(
-                children: [
+                children: const [
                   Expanded(
                     flex: 2,
-                    child: BillTypesWidget(
-                      setIndex: (i) {
-                        index.value = i;
-                        setState(() {});
-                      },
-                    ),
+                    child: BillTypesWidget(),
                   ),
                   Expanded(
                     flex: 3,
                     child: BillTypeWidget(
-                      index: index.value,
-                    ),
+                        // index: index.value,
+                        ),
                   ),
                 ],
               ),

@@ -11,8 +11,8 @@ import '../../widgets/error/error_widget.dart';
 import 'categories_list_store.dart';
 
 class CategoriesWidget extends StatefulWidget {
-  const CategoriesWidget({super.key, this.setIndex});
-  final Function(int index)? setIndex;
+  const CategoriesWidget({super.key, });
+  // final Function(int index)? setIndex;
   @override
   State<CategoriesWidget> createState() => _CategoriesWidgetState();
 }
@@ -52,10 +52,11 @@ class _CategoriesWidgetState extends State<CategoriesWidget> {
                 return CategoryCardWidget(
                     category: state[index],
                     index: index,
-                    setIndex: () {
-                      widget.setIndex!(index);
-                      categoryStore.resetFields(store.state[index]);
-                    });
+                    // setIndex: () {
+                    //   widget.setIndex!(index);
+                    //   categoryStore.resetFields(store.state[index]);
+                    // }
+                    );
               },
             ),
           );

@@ -6,11 +6,12 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:management/src/domain/utils/bill_types_formatter.dart';
 
 import '../../widgets/bill_types/bill_types_store.dart';
+import 'bill_type_controller.dart';
 import 'bill_type_store.dart';
 
 class BillTypeWidget extends StatefulWidget {
-  const BillTypeWidget({super.key, this.index});
-  final int? index;
+  const BillTypeWidget({super.key});
+  // final int? index;
 
   @override
   State<BillTypeWidget> createState() => _BillTypeWidgetState();
@@ -18,7 +19,8 @@ class BillTypeWidget extends StatefulWidget {
 
 class _BillTypeWidgetState extends State<BillTypeWidget> {
   final billTypeStore = Modular.get<BillTypeStore>();
-  final billTypesStore = Modular.get<BillTypesStore>();
+  // final billTypesStore = Modular.get<BillTypesStore>();
+  final billTypesController = Modular.get<BillTypeController>();
 
   Future<void> popAndLoad() async {
     await Modular.get<BillTypesStore>()
@@ -26,24 +28,30 @@ class _BillTypeWidgetState extends State<BillTypeWidget> {
         .then((value) => Navigator.of(context).pop());
   }
 
-  BillType? billType;
+  // BillType? billType;
 
   @override
   void initState() {
-    billType = widget.index != null ? billTypesStore.state[widget.index!] : null;
-    billTypeStore
-      ..resetFields(billType)
-      ..observer(
-        onState: (error) {
-          Navigator.of(context).canPop()
-              ? popAndLoad()
-              : billTypeStore.clearFields();
-        },
-        onLoading: (isLoading) => setState(() {}),
-        onError: (error) {
-          displayMessageOnSnackbar(context, error.errorMessage);
-        },
-      );
+    // billType = widget.index != null ? billTypesStore.state[widget.index!] : null;
+    // billTypesController
+    //   ..index = widget.index
+    //   ..resetFields();
+
+    billTypesController.addListener(() {
+      setState(() {});
+    });
+
+    billTypeStore.observer(
+      onState: (error) {
+        Navigator.of(context).canPop()
+            ? popAndLoad()
+            : billTypesController.clearFields();
+      },
+      onLoading: (isLoading) => setState(() {}),
+      onError: (error) {
+        displayMessageOnSnackbar(context, error.errorMessage);
+      },
+    );
     super.initState();
   }
 
@@ -57,23 +65,23 @@ class _BillTypeWidgetState extends State<BillTypeWidget> {
           child: Padding(
             padding: Paddings.paddingForm(),
             child: Form(
-              key: billTypeStore.formKey,
+              key: billTypesController.formKey,
               child: Column(
                 children: [
                   CustomTextFormField(
-                    controller: billTypeStore.nameTextController,
+                    controller: billTypesController.nameTextController,
                     decorationName: "Nome",
-                    value: billTypeStore.nameTextController.text,
+                    value: billTypesController.nameTextController.text,
                   ),
                   CustomTextFormField(
-                    controller: billTypeStore.valueTextController,
+                    controller: billTypesController.valueTextController,
                     decorationName: "Valor",
-                    value: billTypeStore.valueTextController.text,
+                    value: billTypesController.valueTextController.text,
                     enabled:
-                        billTypeStore.billType.value != BillTypes.withoutTax,
+                        billTypesController.billType != BillTypes.withoutTax,
                     keyboardType: TextInputType.number,
                     inputFormatters:
-                        billTypeStore.billType.value == BillTypes.percentageTax
+                        billTypesController.billType == BillTypes.percentageTax
                             ? [
                                 FilteringTextInputFormatter.digitsOnly,
                                 PercentageBillTypeValue()
@@ -93,9 +101,9 @@ class _BillTypeWidgetState extends State<BillTypeWidget> {
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Switch(
-                          value: billTypeStore.defaultType.value,
+                          value: billTypesController.defaultType,
                           onChanged: (v) {
-                            billTypeStore.defaultType.value = v;
+                            billTypesController.defaultType = v;
                           },
                         ),
                       ],
@@ -108,12 +116,12 @@ class _BillTypeWidgetState extends State<BillTypeWidget> {
                     },
                     setValue: (value) {
                       if (value != null) {
-                        billTypeStore.billType.value = BillTypes.values
+                        billTypesController.billType = BillTypes.values
                             .where((element) => element.value.contains(value))
                             .first;
                       }
                     },
-                    value: billTypeStore.billType.value.value,
+                    value: billTypesController.billType?.value,
                     labelText: "Tipos de Conta",
                   ),
                 ],
@@ -123,12 +131,9 @@ class _BillTypeWidgetState extends State<BillTypeWidget> {
         ),
         floatingActionButton: FloatingActionButton(
           // TODO Check here
-          onPressed: () {
-            billTypeStore.saveChanges(billType?.id);
-            // .then(
-            //       (value) => eitherDisplayError(context, value),
-            //     );
-          },
+          onPressed: () => billTypesController.saveChanges().then(
+                (value) => eitherDisplayError(context, value),
+              ),
           child: const Icon(Icons.save),
         ),
       ),

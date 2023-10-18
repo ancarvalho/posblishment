@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
-import '../../pages/product/product_store.dart';
 import '../../widgets/error/error_widget.dart';
 import '../../widgets/product_card/product_card_widget.dart';
 
 import 'products_list_store.dart';
 
 class ProductsWidget extends StatefulWidget {
-  final Function(int index)? setIndex;
-  const ProductsWidget({super.key, this.setIndex});
+  const ProductsWidget({super.key});
 
   @override
   State<ProductsWidget> createState() => _ProductsWidgetState();
@@ -20,8 +18,9 @@ class ProductsWidget extends StatefulWidget {
 
 class _ProductsWidgetState extends State<ProductsWidget> {
   final store = Modular.get<ProductListStore>();
-  final productStore = Modular.get<ProductStore>();
+  // final productStore = Modular.get<ProductStore>();
   // final controller = Modular.get<ProductsListController>();
+  // final productController = Modular.get<ProductController>();
 
   Future<void> reload() async {
     await store.list();
@@ -54,10 +53,6 @@ class _ProductsWidgetState extends State<ProductsWidget> {
                 return ProductCardWidget(
                   product: state[index],
                   index: index,
-                  setIndex: () {
-                    widget.setIndex!(index);
-                    productStore.resetFields(store.state[index]);
-                  },
                 );
               },
             ),
