@@ -96,7 +96,7 @@ class AdministrationModule extends Module {
     ChildRoute(PagesRoutes.lastPaidBills.route, child: (_, args) => const LastPaidBillsPage()),
     ChildRoute(PagesRoutes.lastRequests.route, child: (_, args) => const LastRequestsPage()),
 
-    ChildRoute(PagesRoutes.bill.route, child: (_, args) => BillPage(billID: args.data,)),
+    ChildRoute(PagesRoutes.bill.route, child: (_, args) => BillPage(bill: args.data,)),
     ChildRoute(PagesRoutes.menu.route, child: (_, args) => const MenuPage()),
     ChildRoute(PagesRoutes.cart.route, child: (_, args) => const CartPage()),
     ChildRoute(PagesRoutes.orderSheet.route, child: (_, args) => const OrderSheetPage()),

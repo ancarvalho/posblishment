@@ -94,7 +94,7 @@ class BillTypeController with ChangeNotifier {
   double? parseValue(BillTypes billType, String value) {
     final parsedValue = double.tryParse(value.replaceAll(RegExp('[^0-9]'), ""));
     switch (billType) {
-      case BillTypes.deliveryTax:
+      case BillTypes.fixedTax:
         return parsedValue != null ? parsedValue / 100 : null;
       case BillTypes.percentageTax:
         return parsedValue;

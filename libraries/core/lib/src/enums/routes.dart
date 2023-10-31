@@ -14,6 +14,7 @@ enum PagesRoutes {
     name: "Printer",
     route: "/printer_config",
     dependsOnModule: ModulesRoutes.posPrinter,
+    standAlone: false,
   ),
   cart(
     name: "Cart",
@@ -31,6 +32,7 @@ enum PagesRoutes {
     name: "Product",
     route: "/product/",
     dependsOnModule: ModulesRoutes.management,
+    standAlone: false,
   ),
   categories(
     name: "Categories",
@@ -41,18 +43,21 @@ enum PagesRoutes {
     name: "Category",
     route: "/category/",
     dependsOnModule: ModulesRoutes.management,
+    standAlone: false,
   ),
   // Stock Control
   stockControl(
     name: "Stock Control",
     route: "/",
     dependsOnModule: ModulesRoutes.stock,
+    standAlone: false,
   ),
   //Administration
   billType(
     name: "Bill Type",
     route: "/bill_type/",
     dependsOnModule: ModulesRoutes.management,
+    standAlone: false,
   ),
   billTypes(
     name: "Bill Types",
@@ -101,6 +106,25 @@ enum PagesRoutes {
     name: "Settings",
     route: "/",
     dependsOnModule: ModulesRoutes.settings,
+  ),
+
+  customizeSettings(
+    name: "Customization",
+    route: "/customize",
+    dependsOnModule: ModulesRoutes.settings,
+    standAlone: false,
+  ),
+  printerSettings(
+    name: "Printer Settings",
+    route: "/printer",
+    dependsOnModule: ModulesRoutes.settings,
+    standAlone: false,
+  ),
+  establishmentSettings(
+    name: "Establishment Settings",
+    route: "/establishment",
+    dependsOnModule: ModulesRoutes.settings,
+    standAlone: false,
   );
 
   const PagesRoutes({

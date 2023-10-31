@@ -1,12 +1,13 @@
 import 'package:administration/src/presenter/widgets/bill_items/bill_items_widget.dart';
+import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/bill_requests/bill_requests_widget.dart';
 
 class BillPage extends StatefulWidget {
-  const BillPage({super.key, required this.billID});
-  final String billID;
+  const BillPage({super.key, required this.bill});
+  final Bill bill;
 
   @override
   State<BillPage> createState() => _BillPageState();
@@ -25,7 +26,7 @@ class _BillPageState extends State<BillPage> with TickerProviderStateMixin {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Conta"),
+          title:  Text("Mesa ${widget.bill.table}"),
           centerTitle: true,
           bottom: Sizes.isMobile(context)
               ? TabBar(
@@ -45,19 +46,19 @@ class _BillPageState extends State<BillPage> with TickerProviderStateMixin {
                 physics: const NeverScrollableScrollPhysics(),
                 controller: _tabController,
                 children: [
-                  BillItemsWidget(billID: widget.billID),
-                  BillRequestsWidget(billID: widget.billID)
+                  BillItemsWidget(billID: widget.bill.id),
+                  BillRequestsWidget(billID: widget.bill.id)
                 ],
               )
             : Row(
                 children: [
                   Expanded(
                     flex: 3,
-                    child: BillItemsWidget(billID: widget.billID),
+                    child: BillItemsWidget(billID: widget.bill.id),
                   ),
                   Expanded(
                     flex: 2,
-                    child: BillRequestsWidget(billID: widget.billID),
+                    child: BillRequestsWidget(billID: widget.bill.id),
                   )
                 ],
               ),

@@ -47,7 +47,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
               )
             else
               IconButton(
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.clear),
                 tooltip: 'Clear Fields',
                 onPressed: productController.clearFields,
               ),

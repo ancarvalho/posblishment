@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
-import 'bills_store.dart';
 import '../../widgets/bill_card/bill_card_widget.dart';
+import 'bills_store.dart';
 
 class BillsWidget extends StatefulWidget {
   const BillsWidget({super.key});

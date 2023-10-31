@@ -3,7 +3,6 @@ import "package:core/core.dart";
 import "package:dartz/dartz.dart";
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:management/src/domain/errors/management_failures.dart';
 import 'package:management/src/presenter/widgets/products/products_list_store.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
@@ -35,6 +34,15 @@ class ProductController with ChangeNotifier {
     notifyListeners();
   }
 
+  bool _preparable = false;
+
+  bool get preparable => _preparable;
+
+  set preparable(bool value) {
+    _preparable = value;
+    notifyListeners();
+  }
+
   int? _index;
 
   int? get index => _index;
@@ -52,10 +60,13 @@ class ProductController with ChangeNotifier {
       descriptionTextController.text = product.description ?? "";
       priceTextController.text =
           CurrencyInputFormatter.formatRealCurrency(product.price);
-      _categoryID = _categoryID ?? product.categoryId; // REview
+      _categoryID = product.categoryId; // REview
+      _preparable = product.preparable;
+       notifyListeners();
     } else {
       clearFields();
     }
+   
   }
 
   void clearFields() {
@@ -64,7 +75,10 @@ class ProductController with ChangeNotifier {
     descriptionTextController.text = "";
     priceTextController.text = "";
     variationTextController.clearTags();
+    _categoryID = null;
     _index = null;
+    _preparable = false;
+    notifyListeners();
   }
 
   Future<Either<Failure, void>> saveChanges() async {
@@ -106,6 +120,7 @@ class ProductController with ChangeNotifier {
         price: parseCurrency(priceTextController.text) ?? 0.0,
         variations: getVariations(),
         categoryId: _categoryID!,
+        preparable: _preparable,
       ),
     );
   }

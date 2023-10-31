@@ -11,7 +11,6 @@ import 'package:management/src/presenter/widgets/product/product_widget.dart';
 import '../../widgets/products/products_list_store.dart';
 
 class ProductPage extends StatefulWidget {
-
   const ProductPage({super.key});
 
   @override
@@ -29,25 +28,24 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          drawer: Navigator.of(context).canPop() ? null : const DrawerWidget(),
-          appBar: AppBar(
-            title: Text(
-              productController.index != null
-                  ? "Atualizar ${productController.nameTextController.text}"
-                  : "Criar Produto",
-            ),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.clear),
-                tooltip: 'Reset Fields',
-                onPressed: productController.resetFields,
-              ),
-            ],
+        drawer: Navigator.of(context).canPop() ? null : const DrawerWidget(),
+        appBar: AppBar(
+          title: Text(
+            productController.index != null
+                ? "Atualizar ${productController.nameTextController.text}"
+                : "Criar Produto",
           ),
-          body: const ProductWidget(
-           
-          )),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.clear),
+              tooltip: 'Reset Fields',
+              onPressed: productController.resetFields,
+            ),
+          ],
+        ),
+        body: const ProductWidget(),
+      ),
     );
   }
 

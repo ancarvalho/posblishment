@@ -28,8 +28,8 @@ class _SplashPageState extends State<SplashPage> {
 
   void _connectToPrinter() {
     final settings = SettingStore().state;
-    if(settings.enablePrinter && settings.printerIp != null && settings.printerPort != null) {
-      Modular.get<PrinterAbstract>().connect(settings.printerIp!, port: settings.printerPort);
+    if(settings.printerSettings !=null && settings.printerSettings!.enablePrinter && settings.printerSettings?.printerIp != null && settings.printerSettings?.printerPort != null) {
+      Modular.get<PrinterAbstract>().connect(settings.printerSettings!.printerIp!, port: settings.printerSettings!.printerPort);
     }
   }
 

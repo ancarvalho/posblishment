@@ -14,4 +14,6 @@ class Request extends Table {
 
   DateTimeColumn get createdAt => dateTime().withDefault(Constant(DateTime.now()))();
   DateTimeColumn get updatedAt => dateTime().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
 }

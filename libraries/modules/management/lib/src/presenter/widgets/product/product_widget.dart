@@ -15,7 +15,6 @@ import '../../widgets/error/error_widget.dart';
 import '../../widgets/products/products_list_store.dart';
 
 class ProductWidget extends StatefulWidget {
-
   const ProductWidget({super.key});
 
   @override
@@ -26,8 +25,6 @@ class ProductWidget extends StatefulWidget {
 class _ProductWidgetState extends State<ProductWidget> {
   final productStore = Modular.get<ProductStore>();
   final categoriesLoadStore = Modular.get<CategoriesLoadStore>();
-  // final productsStore = Modular.get<ProductListStore>();
-
   final productController = Modular.get<ProductController>();
 
   late Disposer _createProductDisposer;
@@ -37,7 +34,8 @@ class _ProductWidgetState extends State<ProductWidget> {
 
   @override
   void initState() {
-  
+    productController.addListener(() => setState(() {}));
+
     _createProductDisposer = productStore.observer(
       onError: (error) {
         displayMessageOnSnackbar(context, error.errorMessage);
@@ -128,6 +126,17 @@ class _ProductWidgetState extends State<ProductWidget> {
                           productController.variationTextController,
                       items: product?.variations?.split(","),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Preparável"),
+                        Switch(
+                          value: productController.preparable,
+                          onChanged: (value) =>
+                              productController.preparable = value,
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -139,8 +148,9 @@ class _ProductWidgetState extends State<ProductWidget> {
       floatingActionButton: FloatingActionButton(
         // TODO Check here
         onPressed: () {
-          productController.saveChanges()
-          .then((value) => eitherDisplayError(context, value));
+          productController
+              .saveChanges()
+              .then((value) => eitherDisplayError(context, value));
         },
         child: const Icon(Icons.save),
       ),

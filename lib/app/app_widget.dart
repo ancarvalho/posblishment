@@ -19,7 +19,7 @@ class App extends StatelessWidget {
       onState: (context, state) {
         return MaterialApp.router(
           title: AppConstant.appName,
-          theme:  getTheme(state.theme),
+          theme:  getTheme(state.customization?.theme),
           routerDelegate: Modular.routerDelegate,
           routeInformationParser: Modular.routeInformationParser,
         );

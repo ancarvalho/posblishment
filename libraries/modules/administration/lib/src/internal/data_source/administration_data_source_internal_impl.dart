@@ -860,7 +860,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
         LEFT JOIN item i ON i.request_id = r.id
         LEFT JOIN product p ON p.id = i.product_id
         LEFT JOIN category c ON c.id = p.category_id
-        WHERE r.id = ? AND i.status IS NOT ?
+        WHERE r.id = ? AND i.status IS NOT ? AND p.preparable = true
         
       """,
             readsFrom: {

@@ -2,7 +2,7 @@ import 'package:core/core.dart';
 
 BillTotal calculateTotal(double subtotal, BillTypes billType, double? value) {
   switch (billType) {
-    case BillTypes.deliveryTax:
+    case BillTypes.fixedTax:
       return calculateDeliveryTax(subtotal, value!);
     case BillTypes.percentageTax:
       return calculatePercentageTax(subtotal, value!);

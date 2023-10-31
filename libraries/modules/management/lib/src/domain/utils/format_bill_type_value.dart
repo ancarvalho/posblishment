@@ -5,7 +5,7 @@ String formatBillTypeValue(BillTypes type, double value) {
   switch (type) {
     case BillTypes.percentageTax:
       return "${value.toInt()}%";
-    case BillTypes.deliveryTax:
+    case BillTypes.fixedTax:
       return CurrencyInputFormatter.formatRealCurrency(value);
     case BillTypes.withoutTax:
       return "";

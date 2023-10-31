@@ -1,13 +1,13 @@
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 
-IconData transformToIcon(String? name) {
-  switch (name) {
-    case "table_bar":
-      return Icons.table_bar;
-    case "delivery":
-      return Icons.delivery_dining;
-
-    default:
-      return Icons.delivery_dining;
+IconData transformToIcon(BillTypes billTypes) {
+  switch (billTypes) {
+    case BillTypes.percentageTax:
+      return Icons.percent;
+    case BillTypes.fixedTax:
+      return Icons.lock;
+    case BillTypes.withoutTax:
+      return Icons.clear;
   }
 }

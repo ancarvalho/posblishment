@@ -4,9 +4,8 @@ import 'package:core/core.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../../domain/entities/entities.dart';
 
-class SettingStore extends StreamStore<Failure, Settings> {
+class SettingStore extends StreamStore<Failure, Settings> implements AbstractSettingsStore {
   static SettingStore? _instance;
 
   factory SettingStore() => _instance ??= SettingStore._();
@@ -19,8 +18,6 @@ class SettingStore extends StreamStore<Failure, Settings> {
     setLoading(true);
     final newState = state.copyWith(theme: theme);
     update(newState, force: true);
-    // await saveSettings(newState);
-    // update({...state, }, force: true);
     setLoading(false);
   }
 

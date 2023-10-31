@@ -18,7 +18,7 @@ class BillCardWidget extends StatelessWidget {
       onTap: () {
         Modular.to.pushNamed(
           "${PagesRoutes.bill.dependsOnModule.route}${PagesRoutes.bill.route}",
-          arguments: bill.id,
+          arguments: bill,
         );
       },
       onLongPress: () => showDialog(
@@ -34,10 +34,10 @@ class BillCardWidget extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             color: transformBillStatusIntoColor(bill.status),
           ),
           child: Stack(
@@ -46,7 +46,7 @@ class BillCardWidget extends StatelessWidget {
                 top: 5,
                 right: 5,
                 child: Icon(
-                  transformToIcon(bill.billType?.icon),
+                  transformToIcon(bill.billType!.type),
                   color: const Color.fromARGB(255, 255, 254, 254),
                 ),
               ),

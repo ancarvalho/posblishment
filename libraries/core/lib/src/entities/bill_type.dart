@@ -17,9 +17,9 @@ class BillType {
     this.defaultType,
   });
 
-  // factory BillType.empty() {
-  //   return const BillType(id: "", name: "", type: BillTypes.percentageTax);
-  // }
+  factory BillType.empty() {
+    return const BillType(id: "", name: "", type: BillTypes.percentageTax);
+  }
 }
 
 class NewBillType {

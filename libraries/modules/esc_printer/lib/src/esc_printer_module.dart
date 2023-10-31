@@ -7,7 +7,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 class ESCPrinter extends Module {
   @override
   final List<Bind> binds = [
-    Bind.lazySingleton<PrinterAbstract>((_) => PrinterExtend(), export: true),
+    Bind.lazySingleton<PrinterAbstract>((i) => PrinterExtend(i()), export: true),
     
   ];
 
