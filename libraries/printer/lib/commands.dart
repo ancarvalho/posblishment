@@ -221,7 +221,7 @@ class PrinterCommands {
         ..write(genListStyles(printerTextStyle))
         ..write(textBytes);
     } catch (e, s) {
-      debugPrint(e.toString());
+      // debugPrint(e.toString());
       throw PrinterError(s, "PrinterModule-PrintText", e, e.toString());
     }
 
@@ -341,8 +341,8 @@ class PrinterCommands {
     return;
   }
 
-  void disconnect() {
-    if (printerConnection.isConnected()) printerConnection.disconnect();
+  Future<void> disconnect() async {
+    if (printerConnection.isConnected()) await printerConnection.disconnect();
   }
 
   // fixed size columns
@@ -389,10 +389,11 @@ class PrinterCommands {
             printerTextStyle.textAlign == TextAlign.textAlignRight ||
         printerTextStyle.textAlign == TextAlign.textAlignLeft) {
       final remaining = (totalAvailable - totalSize) + spacing;
-      debugPrint(remaining.toString());
-      if (parsedText.isNotEmpty)
+      // debugPrint(remaining.toString());
+      if (parsedText.isNotEmpty) {
         wrappedText
             .write(parsedText[0].padRight(parsedText[0].length + remaining));
+      }
       for (var i = 1; i < parsedText.length && parsedText.length > 1; i++) {
         wrappedText.write(parsedText[i]);
       }

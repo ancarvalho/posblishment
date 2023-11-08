@@ -13,6 +13,7 @@ abstract class AdministrationRepository {
   Future<Either<Failure, List<Bill>>> getLastPaidBills();
   Future<Either<Failure, Bill>> getBill(String id);
   Future<Either<Failure, Bill>> getBillByTable(int table);
+  Future<Either<Failure,int>> changeBillTable(String billId, int table);
   Future<Either<Failure, int>> finalizeBill(
     List<NewPayment> payments,
     String billID,

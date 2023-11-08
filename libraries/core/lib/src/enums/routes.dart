@@ -1,6 +1,6 @@
 enum PagesRoutes {
   statistics(
-    name: "Statistics",
+    name: "Estatísticas",
     route: "/",
     dependsOnModule: ModulesRoutes.statistics,
   ),
@@ -23,8 +23,55 @@ enum PagesRoutes {
     standAlone: false,
   ),
   //Management
+
+  // Stock Control
+  stockControl(
+    name: "Stock Control",
+    route: "/",
+    dependsOnModule: ModulesRoutes.stock,
+    standAlone: false,
+  ),
+
+  bill(
+    name: "Bill",
+    route: "/bill/",
+    dependsOnModule: ModulesRoutes.administration,
+    standAlone: false,
+  ),
+  bills(
+    name: "Contas",
+    route: "/bills/",
+    dependsOnModule: ModulesRoutes.administration,
+  ),
+
+  orderSheet(
+    name: "Comanda Digital",
+    route: "/order_sheet/",
+    dependsOnModule: ModulesRoutes.administration,
+  ),
+  menu(
+    name: "Menu",
+    route: "/menu/",
+    dependsOnModule: ModulesRoutes.administration,
+  ),
+  lastRequests(
+    name: "Últimos Pedidos",
+    route: "/last_requests/",
+    dependsOnModule: ModulesRoutes.administration,
+  ),
+  lastPaidBills(
+    name: "Ultimas Contas Pagas",
+    route: "/last_paid_bills/",
+    dependsOnModule: ModulesRoutes.administration,
+  ),
+  payment(
+    name: "payment",
+    route: "/payment/",
+    dependsOnModule: ModulesRoutes.administration,
+    standAlone: false,
+  ),
   products(
-    name: "Products",
+    name: "Produtos",
     route: "/all_products/",
     dependsOnModule: ModulesRoutes.management,
   ),
@@ -35,7 +82,7 @@ enum PagesRoutes {
     standAlone: false,
   ),
   categories(
-    name: "Categories",
+    name: "Categorias",
     route: "/all_categories/",
     dependsOnModule: ModulesRoutes.management,
   ),
@@ -43,13 +90,6 @@ enum PagesRoutes {
     name: "Category",
     route: "/category/",
     dependsOnModule: ModulesRoutes.management,
-    standAlone: false,
-  ),
-  // Stock Control
-  stockControl(
-    name: "Stock Control",
-    route: "/",
-    dependsOnModule: ModulesRoutes.stock,
     standAlone: false,
   ),
   //Administration
@@ -60,50 +100,13 @@ enum PagesRoutes {
     standAlone: false,
   ),
   billTypes(
-    name: "Bill Types",
+    name: "Tipos de Conta",
     route: "/bill_types/",
     dependsOnModule: ModulesRoutes.management,
   ),
-  bill(
-    name: "Bill",
-    route: "/bill/",
-    dependsOnModule: ModulesRoutes.administration,
-    standAlone: false,
-  ),
-  bills(
-    name: "Bills",
-    route: "/bills/",
-    dependsOnModule: ModulesRoutes.administration,
-  ),
-  lastPaidBills(
-    name: "Last Paid Bills",
-    route: "/last_paid_bills/",
-    dependsOnModule: ModulesRoutes.administration,
-  ),
-  orderSheet(
-    name: "Order Sheet",
-    route: "/order_sheet/",
-    dependsOnModule: ModulesRoutes.administration,
-  ),
-  menu(
-    name: "menu",
-    route: "/menu/",
-    dependsOnModule: ModulesRoutes.administration,
-  ),
-  lastRequests(
-    name: "lastRequests",
-    route: "/last_requests/",
-    dependsOnModule: ModulesRoutes.administration,
-  ),
-  payment(
-    name: "payment",
-    route: "/payment/",
-    dependsOnModule: ModulesRoutes.administration,
-    standAlone: false,
-  ),
   //Settings
   settings(
-    name: "Settings",
+    name: "Configurações",
     route: "/",
     dependsOnModule: ModulesRoutes.settings,
   ),
@@ -141,12 +144,12 @@ enum PagesRoutes {
 }
 
 enum ModulesRoutes {
-  statistics(name: "Dashboard", route: "/statistics"),
-  administration(name: "Dashboard", route: "/administration"),
-  management(name: "Dashboard", route: "/management"),
+  statistics(name: "Estatísticas", route: "/statistics"),
+  administration(name: "Administração", route: "/administration"),
+  management(name: "Gerenciamento", route: "/management"),
   stock(name: "Dashboard", route: "/stock"),
-  settings(name: "Settings", route: "/settings"),
-  posPrinter(name: "Settings", route: "/printer");
+  settings(name: "Configurações", route: "/settings"),
+  posPrinter(name: "Impressora", route: "/printer");
 
   const ModulesRoutes({required this.name, required this.route});
 

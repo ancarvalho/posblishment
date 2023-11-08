@@ -13,16 +13,23 @@ class PrinterExtend implements PrinterAbstract {
   PrinterExtend(this.settingsStore);
 
   @override
-  void connect(String address, {int? port = 9100}) {
+  Future<void> connect(String address, {int? port = 9100}) async {
+    await disconnectAndDestroy();
     printer = Printer.printerTCPConnection(address: address);
   }
 
   @override
-  void disconnect() {
+  Future<void> disconnectAndDestroy() async {
     if (printer != null) {
-      printer?.disconnect();
+      await printer?.disconnect();
       printer = null;
     }
+  }
+
+  @override
+  Future<void> reconnect() async {
+    await printer?.printerConnection.disconnect();
+    await printer?.printerConnection.connect();
   }
 
   @override
@@ -191,8 +198,10 @@ class PrinterExtend implements PrinterAbstract {
 
   @override
   void printTest() {
-    printer?.printHR();
-    printer?.testPrinter();
-    printer?.printHR();
+    printer
+      ?..printHR()
+      ..testPrinter()
+      ..printHR()
+      ..cutPaper();
   }
 }

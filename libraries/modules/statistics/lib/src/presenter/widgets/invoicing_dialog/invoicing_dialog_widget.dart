@@ -36,7 +36,7 @@ class InvoicingDialogWidget extends StatelessWidget {
                   const Text("Total"),
                   const Spacer(),
                   Text(
-                    "R\$ $total",
+                    "R\$ ${total.toStringAsFixed(2)}",
                     style: TextStyle(
                       color: const Color.fromARGB(255, 0, 181, 15),
                       fontSize: Sizes.dp23(context),
@@ -50,7 +50,7 @@ class InvoicingDialogWidget extends StatelessWidget {
                   const Text("Subtotal"),
                   const Spacer(),
                   Text(
-                    "R\$ $subtotal",
+                    "R\$ ${subtotal.toStringAsFixed(2)}",
                     style: TextStyle(
                       color: const Color.fromARGB(255, 0, 181, 15),
                       fontSize: Sizes.dp23(context),
@@ -64,7 +64,7 @@ class InvoicingDialogWidget extends StatelessWidget {
                    const Text("Comissão"),
                    const Spacer(),
                   Text(
-                    "R\$ $commission",
+                    "R\$ ${commission.toStringAsFixed(2)}",
                     style: TextStyle(
                       color: const Color.fromARGB(255, 0, 181, 15),
                       fontSize: Sizes.dp23(context),

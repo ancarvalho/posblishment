@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
 
+import '../../widgets/bills/bills_store.dart';
 import '../../widgets/payment/payment_floating_widget.dart';
 import '../../widgets/payment/payment_methods_widget.dart';
-import '../../widgets/bills/bills_store.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key, required this.billID});
@@ -47,18 +47,18 @@ class _PaymentPageState extends State<PaymentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedBuilder<BillTotalStore, Failure, BillTotal>(
-      store: _billTotalStore,
-      onState: (context, state) {
-        return SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              title: const Text(
-                "Pagamento",
-              ),
-              centerTitle: true,
-            ),
-            body: Padding(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Pagamento",
+          ),
+          centerTitle: true,
+        ),
+        body: ScopedBuilder<BillTotalStore, Failure, BillTotal>(
+          store: _billTotalStore,
+          onState: (context, state) {
+            return Padding(
               padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
@@ -96,17 +96,16 @@ class _PaymentPageState extends State<PaymentPage> {
                   )
                 ],
               ),
-            ),
-            //TODO include Remeaning value
-            floatingActionButton: PaymentFloatingWidget(
-              billTotal: state,
-              finalizeBill: () =>
-                  _paymentController.finalizeBill(widget.billID),
-              calculateRemaining: _paymentController.calculateTotalRemaining,
-            ),
-          ),
-        );
-      },
+            );
+          },
+          //TODO include Remeaning value
+        ),
+        floatingActionButton: PaymentFloatingWidget(
+          billTotal: _billTotalStore.state,
+          finalizeBill: () => _paymentController.finalizeBill(widget.billID),
+          calculateRemaining: _paymentController.calculateTotalRemaining,
+        ),
+      ),
     );
   }
 

@@ -1,17 +1,12 @@
 
 import 'package:administration/src/domain/use_cases/close_bill.dart';
 import 'package:administration/src/presenter/pages/bill/bill_page.dart';
-
 import 'package:administration/src/presenter/pages/bills/bills_page.dart';
-import 'package:administration/src/presenter/widgets/bills/bills_store.dart';
 import 'package:administration/src/presenter/pages/cart/cart_page.dart';
 import 'package:administration/src/presenter/pages/last_paid_bills/last_paid_bills_page.dart';
 import 'package:administration/src/presenter/pages/last_paid_bills/last_paid_bills_store.dart';
 import 'package:administration/src/presenter/pages/last_requests/last_requests_page.dart';
 import 'package:administration/src/presenter/pages/menu/menu_page.dart';
-import 'package:administration/src/presenter/widgets/dialog/bill_types_store.dart';
-
-import 'package:administration/src/presenter/widgets/order_sheet/order_sheet_store.dart';
 import 'package:administration/src/presenter/pages/payment/payment_page.dart';
 import 'package:administration/src/presenter/pages/payment/payment_store.dart';
 import 'package:administration/src/presenter/stores/bill/bill_total_store.dart';
@@ -19,17 +14,17 @@ import 'package:administration/src/presenter/stores/products/products_store.dart
 import 'package:administration/src/presenter/stores/request/make_request_store.dart';
 import 'package:administration/src/presenter/widgets/bill_items/bill_items_store.dart';
 import 'package:administration/src/presenter/widgets/bill_requests/bill_requests_store.dart';
+import 'package:administration/src/presenter/widgets/bills/bills_store.dart';
+import 'package:administration/src/presenter/widgets/dialog/bill_types_store.dart';
 import 'package:administration/src/presenter/widgets/last_requests/last_requests_store.dart';
+import 'package:administration/src/presenter/widgets/order_sheet/order_sheet_store.dart';
 import 'package:administration/src/presenter/widgets/undelivered_requests/undelivered_requests_store.dart';
 import 'package:core/core.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 import 'domain/repositories/administration_repository.dart';
-
-
 import 'domain/use_cases/cancel_bill_item.dart';
 import 'domain/use_cases/use_cases.dart';
-
 import 'infra/data_sources/administration_data_source.dart';
 import 'infra/repositories/administration_repository_impl.dart';
 import 'internal/data_source/administration_data_source_internal_impl.dart';
@@ -52,7 +47,7 @@ class AdministrationModule extends Module {
     Bind.lazySingleton((i) => LastRequestsStore(i()),export: true,),
     Bind.lazySingleton((i) => UndeliveredRequestsStore(i()),export: true,),
     Bind.lazySingleton((i) => PaymentStore(i()),export: true,),
-    Bind.lazySingleton((i) => MakeRequestStore(i(),i(),i(),),export: true,),
+    Bind.lazySingleton((i) => MakeRequestStore(i(),i(),i(), i()),export: true,),
     Bind.lazySingleton((i) => OrderSheetStore(i()),export: true,),
     Bind.lazySingleton((i) => CartStore(i()),export: true,),
     Bind.lazySingleton((i) => BillStore(i()),export: true,),
@@ -79,6 +74,7 @@ class AdministrationModule extends Module {
     Bind.lazySingleton<ICancelBillItem>((i) => CancelBillItem(i()),),
     Bind.lazySingleton<IGetRequestItemCategorized>((i) => GetRequestItemCategorized(i()),),
     Bind.lazySingleton<IUpdateTypeOfBill>((i) => UpdateTypeOfBill(i()),),
+    Bind.lazySingleton<IUpdateBillTable>((i) => UpdateBillTable(i()),),
     Bind.lazySingleton<IGetBillTypes>((i) => GetBillTypes(i()),),
 
     Bind.lazySingleton<AdministrationRepository>((i) => AdministrationRepositoryImpl(i()),),

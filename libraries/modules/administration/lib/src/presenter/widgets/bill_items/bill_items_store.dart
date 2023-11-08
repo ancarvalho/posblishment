@@ -4,7 +4,7 @@ import 'package:flutter_triple/flutter_triple.dart';
 import '../../../domain/use_cases/get_bill_items.dart';
 
 class BillItemsStore extends StreamStore<Failure, List<Item>> {
-  final GetBillItems _getBillItems;
+  final IGetBillItems _getBillItems;
 
   BillItemsStore(this._getBillItems) : super([]);
 

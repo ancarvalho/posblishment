@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:administration/src/infra/data_sources/administration_data_source.dart';
 import 'package:core/core.dart';
 
@@ -99,9 +97,6 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
         getBillTotal(billID).then((value) => billTotal = value),
         getTotalBillPayments(billID).then((value) => amountPaid = value)
       ]);
-
-      // final billTotal = await getBillTotal(billID);
-      // final amountPaid = await getTotalBillPayments(billID);
 
       billTotal.payment = amountPaid;
 
@@ -237,6 +232,32 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   }
 
   @override
+  Future<int> changeBillTable(String billId, int table) async {
+    // debugPrint(table.toString());
+    // debugPrint(billId);
+    try {
+      final txId = _internalDatabase.customUpdate(
+        """
+        UPDATE bill
+        SET 'table' = ?
+        WHERE id = ?
+        """,
+          variables: [Variable.withInt(table), Variable.withString(billId)],
+          updates: {_internalDatabase.bill},
+          updateKind: UpdateKind.update);
+
+      return txId;
+    } catch (e, s) {
+      throw AdministrationError(
+        s,
+        "InternalDatabase-Administration-changeBillTable",
+        e,
+        e.toString(),
+      );
+    }
+  }
+
+  @override
   Future<Bill> getBill(String billID) {
     try {
       final bill = (_internalDatabase.select(_internalDatabase.bill)
@@ -276,7 +297,8 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
   Future<BillTotal> getBillTotal(String billID) async {
     try {
       final total = await _internalDatabase
-          .customSelect("""
+          .customSelect(
+            """
           SELECT SUM(i.quantity * i.price) as subtotal, bt.type as type, bt.value as value
           FROM item i 
           LEFT JOIN request r ON r.id = i.request_id
@@ -284,21 +306,25 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           LEFT JOIN bill_type bt on bt.id = b.bill_type_id
           WHERE b.id = ? AND r.status is not ? AND i.status is not ?
           GROUP BY bt.type
-        """, variables: [
-            Variable.withString(billID),
-            Variable.withInt(RequestStatus.canceled.index),
-            Variable.withInt(ItemStatus.canceled.index)
-          ], readsFrom: {
-            _internalDatabase.bill,
-            _internalDatabase.billType,
-            _internalDatabase.request,
-            _internalDatabase.item,
-          },)
+        """,
+            variables: [
+              Variable.withString(billID),
+              Variable.withInt(RequestStatus.canceled.index),
+              Variable.withInt(ItemStatus.canceled.index)
+            ],
+            readsFrom: {
+              _internalDatabase.bill,
+              _internalDatabase.billType,
+              _internalDatabase.request,
+              _internalDatabase.item,
+            },
+          )
           .getSingle()
           .then((row) {
             final subtotal = row.read<double>("subtotal");
             final type = BillTypes.values.firstWhere(
-                (element) => element.index == row.read<int>("type"),);
+              (element) => element.index == row.read<int>("type"),
+            );
             final value = row.read<double?>("value");
             return calculateTotal(subtotal, type, value);
           });
@@ -767,7 +793,6 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
     }
   }
 
-
   @override
   Future<int> updateTypeOfBill(String billTypeId, String billId) async {
     try {
@@ -828,7 +853,8 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
         )
         .get()
         .then(
-            (value) => value.map((e) => e.read<String>("request_id")).toList(),);
+          (value) => value.map((e) => e.read<String>("request_id")).toList(),
+        );
     if (requests.isNotEmpty) await Future.wait(requests.map(cancelRequestItem));
   }
 
@@ -850,7 +876,8 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
 
   @override
   Future<List<RequestItemWithCategory>> getRequestItemWithCategory(
-      String requestId,) async {
+    String requestId,
+  ) async {
     try {
       final items = await _internalDatabase
           .customSelect(
@@ -877,12 +904,14 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
           .get()
           .then(
             (value) => value
-                .map((row) => RequestItemWithCategory(
-                      productName: row.read<String>("product_name"),
-                      categoryName: row.read<String>("category_name"),
-                      categoryId: row.read<String>("category_id"),
-                      quantity: row.read<int>("quantity"),
-                    ),)
+                .map(
+                  (row) => RequestItemWithCategory(
+                    productName: row.read<String>("product_name"),
+                    categoryName: row.read<String>("category_name"),
+                    categoryId: row.read<String>("category_id"),
+                    quantity: row.read<int>("quantity"),
+                  ),
+                )
                 .toList(),
           );
 
@@ -896,7 +925,6 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
       );
     }
   }
-
 
   Future<BillType> getDefaultBillType() async {
     try {

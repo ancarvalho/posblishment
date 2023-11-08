@@ -15,4 +15,5 @@ export 'get_not_paid_bills.dart';
 export 'get_request_Item_categorized.dart';
 export 'set_item_delivered.dart';
 export 'set_request_delivered.dart';
+export 'update_bill_table.dart';
 export 'update_type_of_bill.dart';

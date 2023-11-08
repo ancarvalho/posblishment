@@ -33,7 +33,7 @@ class _BillPaidCardWidgetState extends State<BillPaidCardWidget> {
       onTap: () {
         Modular.to.pushNamed(
           "${PagesRoutes.bill.dependsOnModule.route}${PagesRoutes.bill.route}",
-          arguments: widget.bill.id,
+          arguments: widget.bill,
         );
       },
       child: Card(

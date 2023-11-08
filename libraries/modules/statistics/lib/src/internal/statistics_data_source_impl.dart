@@ -19,7 +19,8 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
 
   String getStartOfWeek(DateTime date) {
     final weekday = date.weekday;
-    return formatDate(date.year, date.month, date.day - weekday);
+    return formatDate(date.year, date.month,
+        (date.day - weekday) > 0 ? (date.day - weekday) : 1);
     // return "${date.year}-${date.month.toString().padLeft(2, "0")}-${(date.day - weekday).toString().padLeft(2, "0")} 00:00:00";
   }
 
@@ -29,14 +30,15 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
   }
 
   String getStartOfDay(DateTime date) {
-     return formatDate(date.year, date.month, date.day);
+    return formatDate(date.year, date.month, date.day);
     // return "${date.year}-${date.month.toString().padLeft(2, "0")}-${date.day.toString().padLeft(2, "0")} 00:00:00";
   }
 
   DateRange getRange(Frequency frequency) {
     final dateNow = DateTime.now();
-    final endFormattedDate = formatDate(dateNow.year, dateNow.month, dateNow.day, time: "23:59:59");
-        // "${dateNow.year}-${dateNow.month.toString().padLeft(2, "0")}-${dateNow.day.toString().padLeft(2, "0")} 23:59:59";
+    final endFormattedDate =
+        formatDate(dateNow.year, dateNow.month, dateNow.day, time: "23:59:59");
+    // "${dateNow.year}-${dateNow.month.toString().padLeft(2, "0")}-${dateNow.day.toString().padLeft(2, "0")} 23:59:59";
     switch (frequency) {
       case Frequency.today:
         return DateRange(
@@ -57,6 +59,8 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
   }
 
   Future<double?> getNotPaidSubtotal(DateRange interval) async {
+    // debugPrint(interval.endDate);
+    // debugPrint(interval.startDate);
     try {
       final b = _appDatabase
           .customSelect(
@@ -66,12 +70,14 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
             FROM bill b
             LEFT JOIN request r ON r.bill_id = b.id
             LEFT JOIN item i ON r.id = i.request_id
-            WHERE b.created_at BETWEEN ? AND ? AND b.status IN (0, 1) AND r.status IN (0,1) AND i.status IN (0,1)
+            WHERE b.created_at BETWEEN ? AND ? AND b.status IN (0, 1) AND r.status IS NOT ? AND i.status IS NOT ?
             
       """,
             variables: [
               Variable.withDateTime(DateTime.parse(interval.startDate)),
               Variable.withDateTime(DateTime.parse(interval.endDate)),
+              Variable.withInt(RequestStatus.canceled.index),
+              Variable.withInt(ItemStatus.canceled.index)
             ],
             readsFrom: {
               _appDatabase.payment,
@@ -89,7 +95,11 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
       return b;
     } catch (e, s) {
       throw StatisticsError(
-          s, "StatisticsModule-getNotPaidSubtotal", e, e.toString(),);
+        s,
+        "StatisticsModule-getNotPaidSubtotal",
+        e,
+        e.toString(),
+      );
     }
   }
 
@@ -101,25 +111,46 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
       final b = await _appDatabase
           .customSelect(
             """
+            WITH bill_payments AS 
+              (
+                SELECT
+                  b.id AS bill_id, 
+                  SUM(p.value) AS total_paid
+                FROM bill b
+                LEFT JOIN payment p ON b.id = p.bill_id
+                WHERE b.created_at BETWEEN ? AND ? AND b.status IN (2,3,5)
+                GROUP BY b.id
+              ),
+             bill_subtotal_and_type AS
+              (
+                SELECT 
+                  b.id AS bill_id,
+                  SUM(i.quantity * i.price) AS subtotal,
+                  bt.value AS bill_type_value, 
+                  bt.type AS bill_type
+                FROM bill b
+                LEFT JOIN request r ON r.bill_id = b.id
+                LEFT JOIN item i ON r.id = i.request_id
+                LEFT JOIN bill_type bt ON bt.id = b.bill_type_id
+                WHERE b.created_at BETWEEN ? AND ? AND b.status IN (2,3,5) AND r.status IS NOT ? AND i.status IS NOT ?
+                GROUP BY b.id
+              )
             SELECT 
-              SUM(p.value) total_paid, 
-              SUM(i.quantity * i.price) as subtotal,
-              bt.value as bill_type_value, 
-              bt.type as bill_type
-            FROM bill b
-            LEFT JOIN request r ON r.bill_id = b.id
-            LEFT JOIN item i ON r.id = i.request_id
-            LEFT JOIN payment p ON b.id = p.bill_id
-            LEFT JOIN bill_type bt ON bt.id = b.bill_type_id
-            WHERE b.created_at BETWEEN ? AND ? AND b.status IN (2,3,5) AND r.status IN (0,1) AND i.status IN (0,1)
-            GROUP BY b.id
+              bst.subtotal AS subtotal ,
+              bst.bill_type_value AS bill_type_value ,
+              bst.bill_type AS bill_type ,
+              bp.total_paid AS total_paid
+            FROM bill_subtotal_and_type bst
+            LEFT JOIN bill_payments bp ON bp.bill_id = bst.bill_id
       """,
             variables: [
               Variable.withDateTime(DateTime.parse(interval.startDate)),
               Variable.withDateTime(DateTime.parse(interval.endDate)),
-              // Variable.withString([BillStatus.paid, BillStatus.partiallyPaid, BillStatus.paidWithoutCommission].join(",")),
-              // Variable.withString([RequestStatus.delivered ,RequestStatus.preparing].join(",")),
-              // Variable.withString([ItemStatus.delivered, ItemStatus.preparing].join(","))
+               Variable.withDateTime(DateTime.parse(interval.startDate)),
+              Variable.withDateTime(DateTime.parse(interval.endDate)),
+              // Variable.withBlob(Uint8List.fromList([BillStatus.paid.index, BillStatus.partiallyPaid.index, BillStatus.paidWithoutCommission.index])),
+              Variable.withInt(RequestStatus.canceled.index),
+              Variable.withInt(ItemStatus.canceled.index)
             ],
             readsFrom: {
               _appDatabase.payment,
@@ -150,7 +181,11 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
       return b;
     } catch (e, s) {
       throw StatisticsError(
-          s, "StatisticsModule-getBasicStatistics", e, e.toString(),);
+        s,
+        "StatisticsModule-getBasicStatistics",
+        e,
+        e.toString(),
+      );
     }
   }
 
@@ -170,7 +205,7 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
            LEFT JOIN bill b ON b.id = r.id
            WHERE i.created_at BETWEEN ? AND ? AND i.status IS NOT ? AND b.status IS NOT ? AND r.status IS NOT ?
            GROUP BY i.product_id
-           ORDER BY total_quantity
+           ORDER BY total_quantity DESC
            LIMIT 10
       """,
             variables: [
@@ -201,13 +236,19 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
       return b;
     } catch (e, s) {
       throw StatisticsError(
-          s, "StatisticsModule-getMostSoldProducts", e, e.toString(),);
+        s,
+        "StatisticsModule-getMostSoldProducts",
+        e,
+        e.toString(),
+      );
     }
   }
 
   @override
   Future<List<ItemSold>> getMostSoldProductsByCategory(
-      Frequency frequency, String categoryId,) {
+    Frequency frequency,
+    String categoryId,
+  ) {
     try {
       final interval = getRange(frequency);
       final b = _appDatabase
@@ -220,7 +261,7 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
            LEFT JOIN product p ON p.id = i.product_id
            WHERE i.created_at BETWEEN ? AND ? AND i.status NOT ? AND p.id = ?
            GROUP BY i.product_id
-           ORDER BY total_quantity
+           ORDER BY total_quantity DESC
            LIMIT 10
       """,
             variables: [
@@ -249,7 +290,11 @@ class StatisticsDataSourceImpl implements StatisticsDataSource {
       return b;
     } catch (e, s) {
       throw StatisticsError(
-          s, "StatisticsModule-getMostSoldProductsByCategory", e, e.toString(),);
+        s,
+        "StatisticsModule-getMostSoldProductsByCategory",
+        e,
+        e.toString(),
+      );
     }
   }
 }

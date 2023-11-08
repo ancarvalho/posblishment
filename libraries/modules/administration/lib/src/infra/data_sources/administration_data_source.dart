@@ -11,6 +11,7 @@ abstract class AdministrationDataSource {
 
   Future<Bill> getBill(String billID);
   Future<Bill> getBillByTable(int table);
+  Future<int> changeBillTable(String billId, int table);
   Future<int> cancelBill(String billID);
   Future<int> updateBillStatus(String billID, BillStatus status);
   Future<int> finalizeBill(List<NewPayment> payments, String billID);

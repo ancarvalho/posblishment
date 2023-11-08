@@ -1,14 +1,18 @@
 import '../../core.dart';
 
 abstract class PrinterAbstract {
-  void connect(String address, {int? port = 9100});
+  Future<void> connect(String address, {int? port = 9100});
+  
+  Future<void> reconnect();
 
-  void disconnect();
+  Future<void> disconnectAndDestroy();
 
   // void printRequest(int table, Request request);
 
   void printRequestItemByCategory(
-      List<RequestItemWithCategory> requestItemWithCategory, int table,);
+    List<RequestItemWithCategory> requestItemWithCategory,
+    int table,
+  );
 
   void printBill(Bill bill, List<Item> items, BillTotal billTotal);
 

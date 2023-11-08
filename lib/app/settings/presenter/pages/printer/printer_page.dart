@@ -35,52 +35,64 @@ class _PrinterPageState extends State<PrinterPage> {
           title: const Text("Impressora"),
           centerTitle: true,
         ),
-        body: Padding(
-          padding: Paddings.paddingForm(),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: CustomTextFormField(
-                      decorationName: "Ip da impressora",
-                      controller: printerController.printerIpTextController,
-                      keyboardType: TextInputType.number,
-                      value: printerController.printerIpTextController.text,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: Paddings.paddingForm(),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: CustomTextFormField(
+                        decorationName: "Ip da impressora",
+                        controller: printerController.printerIpTextController,
+                        keyboardType: TextInputType.number,
+                        value: printerController.printerIpTextController.text,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    // flex: 1,
-                    child: CustomTextFormField(
-                      decorationName: "Porta",
-                      controller: printerController.printerPortTextController,
-                      value: printerController.printerPortTextController.text,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    Expanded(
+                      // flex: 1,
+                      child: CustomTextFormField(
+                        decorationName: "Porta",
+                        controller: printerController.printerPortTextController,
+                        value: printerController.printerPortTextController.text,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Text("Habilitar Impressora "),
-                  Switch(
-                    value: printerController.enablePrinter,
-                    onChanged: (v) {
-                      printerController.enablePrinter = v;
-                    },
-                  )
-                ],
-              ),
-              ElevatedButton(
-                onPressed: printerController.saveChanges,
-                child: const Text("Salvar"),
-              )
-            ],
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Text("Habilitar Impressora "),
+                    Switch(
+                      value: printerController.enablePrinter,
+                      onChanged: (v) {
+                        printerController.enablePrinter = v;
+                      },
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: printerController.printer.printTest,
+                      child: const Text("Testar Impressora"),
+                    ),
+                    ElevatedButton(
+                      onPressed: printerController.connect,
+                      child: const Text("Conectar"),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
+        floatingActionButton: FloatingActionButton(onPressed: printerController.saveChanges, child: const Icon(Icons.save)),
       ),
     );
   }

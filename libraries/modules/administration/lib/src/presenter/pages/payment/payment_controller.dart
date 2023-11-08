@@ -46,25 +46,28 @@ class PaymentController extends Disposable with ChangeNotifier {
 
   void addHalfTotal() {
     final value = calculateTotalRemaining() / 2;
-
-    payments.value.add(
-      NewPayment(
-        value: value,
-        paymentType: _currentPaymentType.value,
-      ),
-    );
+    if (value > 0) {
+      payments.value.add(
+        NewPayment(
+          value: value,
+          paymentType: _currentPaymentType.value,
+        ),
+      );
+    }
     notifyListeners();
   }
 
   void addRemainingValue() {
     final value = calculateTotalRemaining();
+    if (value > 0) {
+      payments.value.add(
+        NewPayment(
+          value: value,
+          paymentType: _currentPaymentType.value,
+        ),
+      );
+    }
 
-    payments.value.add(
-      NewPayment(
-        value: value,
-        paymentType: _currentPaymentType.value,
-      ),
-    );
     notifyListeners();
   }
 
@@ -90,6 +93,7 @@ class PaymentController extends Disposable with ChangeNotifier {
           paymentType: _currentPaymentType.value,
         ),
       );
+      valueController.text = "";
     }
     notifyListeners();
   }

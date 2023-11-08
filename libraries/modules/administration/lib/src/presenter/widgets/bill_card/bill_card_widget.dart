@@ -26,7 +26,7 @@ class BillCardWidget extends StatelessWidget {
         builder: (context) => CustomBillDialog(
           bill: bill,
           closeBill: () => billCardController.closeBill(bill.id),
-          cancelAllBill: () => billCardController.cancelBill(bill.id),
+          cancelBill: () => billCardController.cancelBill(bill.id),
           paymentBill: () => Modular.to.pushNamed(
             "${PagesRoutes.payment.dependsOnModule.route}${PagesRoutes.payment.route}",
             arguments: bill.id,

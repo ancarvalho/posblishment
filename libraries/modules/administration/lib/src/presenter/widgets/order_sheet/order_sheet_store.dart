@@ -31,12 +31,13 @@ class OrderSheetStore extends NotifierStore<Failure, NewRequest> {
     );
   }
 
-  Future<void> saveChanges() async {
+  Future<void> saveChanges(FocusNode focusNode) async {
     if (formKey.currentState!.validate() &&
         int.tryParse(tableTextController.text) != null &&
         state.items.isNotEmpty) {
       await createOrUpdateBill();
-      return;
+      
+      return focusNode.requestFocus();
     }
     setError(
       AdministrationError(

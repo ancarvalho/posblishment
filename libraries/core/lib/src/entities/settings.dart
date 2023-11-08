@@ -6,6 +6,7 @@ import 'package:core/core.dart';
 class Settings {
   // final ThemesOptions theme;
   // final bool orderSheetEnabled;
+  // TODO a way only printer with ip could connect
   final Establishment? establishment;
   final PrinterSettings? printerSettings;
   final Customization? customization;

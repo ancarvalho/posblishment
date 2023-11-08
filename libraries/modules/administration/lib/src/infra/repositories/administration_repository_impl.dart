@@ -197,6 +197,16 @@ class AdministrationRepositoryImpl implements AdministrationRepository {
     }
   }
 
+    @override
+  Future<Either<Failure, int>> changeBillTable(String billId, int table) async {
+    try {
+      final txId = await _administrationDataSource.changeBillTable(billId, table);
+      return Right(txId);
+    } on Failure catch (e) {
+      return Left(e);
+    }
+  }
+
  
 
   @override

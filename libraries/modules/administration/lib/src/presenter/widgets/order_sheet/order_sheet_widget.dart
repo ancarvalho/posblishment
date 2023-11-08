@@ -1,5 +1,5 @@
-import 'package:administration/src/presenter/widgets/order_sheet/order_sheet_store.dart';
 import 'package:administration/src/presenter/stores/products/products_store.dart';
+import 'package:administration/src/presenter/widgets/order_sheet/order_sheet_store.dart';
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +10,7 @@ import "package:flutter_triple/flutter_triple.dart";
 import '../../stores/request/make_request_store.dart';
 import '../../widgets/order_sheet_item/order_sheet_add_item_widget.dart';
 import '../../widgets/order_sheet_item/order_sheet_edit_item_widget.dart';
+import '../bills/bills_store.dart';
 
 // Remember this could only be used with products using code
 class OrderSheetWidget extends StatefulWidget {
@@ -29,6 +30,7 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
   late Disposer _orderStoreListener;
   late Disposer _requestStoreListener;
 
+  final FocusNode tableFieldFocusNode = FocusNode();
   final FocusNode codeFieldFocusNode = FocusNode();
   final FocusNode quantityFieldFocusNode = FocusNode();
 
@@ -41,6 +43,7 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
       },
       onState: (req) {
         _orderSheetStore.clearRequest();
+        if(!Sizes.isMobile(context)) Modular.get<NotPaidBillsStore>().getNotPaidBills();
       },
     );
 
@@ -75,8 +78,9 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
                         height: 80,
                         width: Sizes.width(context) * .3,
                         child: TextFormField(
-                          autofocus: Sizes.isMobile(context),
+                          // autofocus: Sizes.isMobile(context),
                           controller: _orderSheetStore.tableTextController,
+                          focusNode:tableFieldFocusNode,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.next,
                           onFieldSubmitted: (state) {
@@ -128,7 +132,7 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
       floatingActionButton: FloatingActionButton(
         tooltip: "Enviar Pedido",
         // TODO Check here
-        onPressed: _orderSheetStore.saveChanges,
+        onPressed: () => _orderSheetStore.saveChanges(tableFieldFocusNode),
         child: const Icon(Icons.save),
       ),
     );

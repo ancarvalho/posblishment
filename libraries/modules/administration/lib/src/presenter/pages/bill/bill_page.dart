@@ -2,8 +2,11 @@ import 'package:administration/src/presenter/widgets/bill_items/bill_items_widge
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
+import '../../widgets/bill_card/bill_card_controller.dart';
 import '../../widgets/bill_requests/bill_requests_widget.dart';
+import '../../widgets/dialog/bill_dialog.dart';
 
 class BillPage extends StatefulWidget {
   const BillPage({super.key, required this.bill});
@@ -21,13 +24,33 @@ class _BillPageState extends State<BillPage> with TickerProviderStateMixin {
     super.initState();
   }
 
+   final billCardController = BillCardController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title:  Text("Mesa ${widget.bill.table}"),
+          title: Text("Mesa ${widget.bill.table}"),
           centerTitle: true,
+          actions: [
+            IconButton(
+                onPressed: () => showDialog(
+                      context: context,
+                      builder: (context) => CustomBillDialog(
+                        bill: widget.bill,
+                        closeBill: () =>
+                            billCardController.closeBill(widget.bill.id),
+                        cancelBill: () =>
+                            billCardController.cancelBill(widget.bill.id),
+                        paymentBill: () => Modular.to.pushNamed(
+                          "${PagesRoutes.payment.dependsOnModule.route}${PagesRoutes.payment.route}",
+                          arguments: widget.bill.id,
+                        ),
+                      ),
+                    ),
+                icon: const Icon(Icons.more_vert_rounded))
+          ],
           bottom: Sizes.isMobile(context)
               ? TabBar(
                   controller: _tabController,
@@ -47,7 +70,7 @@ class _BillPageState extends State<BillPage> with TickerProviderStateMixin {
                 controller: _tabController,
                 children: [
                   BillItemsWidget(billID: widget.bill.id),
-                  BillRequestsWidget(billID: widget.bill.id)
+                  BillRequestsWidget(bill: widget.bill)
                 ],
               )
             : Row(
@@ -58,7 +81,7 @@ class _BillPageState extends State<BillPage> with TickerProviderStateMixin {
                   ),
                   Expanded(
                     flex: 2,
-                    child: BillRequestsWidget(billID: widget.bill.id),
+                    child: BillRequestsWidget(bill: widget.bill),
                   )
                 ],
               ),

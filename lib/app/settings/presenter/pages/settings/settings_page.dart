@@ -1,13 +1,9 @@
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_triple/flutter_triple.dart';
 import 'package:posblishment/app/settings/presenter/pages/settings/settings_controller.dart';
-import 'package:posblishment/domain/entities/entities.dart';
 
-import 'settings_store.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);

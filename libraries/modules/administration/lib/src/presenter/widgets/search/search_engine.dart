@@ -48,6 +48,7 @@ class SearchEngine extends SearchDelegate {
             .where(
               (element) => [element.code, element.name, element.description]
                   .join(" ")
+                  .toLowerCase()
                   .contains(query.toLowerCase()),
             )
             .toList();

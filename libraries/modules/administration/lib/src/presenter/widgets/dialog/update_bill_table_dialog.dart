@@ -1,38 +1,33 @@
-import 'package:core/core.dart';
+import 'package:administration/src/domain/use_cases/use_cases.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "package:flutter_modular/flutter_modular.dart";
 
-import '../../../domain/use_cases/cancel_bill_item.dart';
-import '../bill_items/bill_items_store.dart';
+import '../bills/bills_store.dart';
 
-class CustomBillItemDialog extends StatelessWidget {
+class UpdateBillTableDialog extends StatelessWidget {
   // TODO change for suit better another models
 
-  final Item item;
   final String billId;
-  final int? quantity;
+  final int? table;
 
-  CustomBillItemDialog({
+  UpdateBillTableDialog({
     Key? key,
-    required this.item,
     required this.billId,
-    this.quantity,
+    this.table,
   }) : super(key: key) {
-    cancelBillItems = Modular.get<ICancelBillItem>();
-    controller = TextEditingController(
-      text: quantity != null ? quantity.toString() : "1",
-    );
+    updateBillTable = Modular.get<IUpdateBillTable>();
+    controller = TextEditingController();
   }
 
-  late final ICancelBillItem cancelBillItems;
+  late final IUpdateBillTable updateBillTable;
   late final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text("Cancelar ${item.name}"),
+      title: Text("Transferir Mesa $table"),
       alignment: Alignment.center,
       children: <Widget>[
         Padding(
@@ -46,7 +41,7 @@ class CustomBillItemDialog extends StatelessWidget {
               SizedBox(
                 width: 42,
                 child: CustomTextFormField(
-                  decorationName: "Qnt",
+                  decorationName: "Mesa",
                   controller: controller,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -57,12 +52,17 @@ class CustomBillItemDialog extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  cancelBillItems.call(billId, item.productId,
-                      int.tryParse(controller.text) ?? 1);
-                  Modular.get<BillItemsStore>().getBillItems(billId);
-                  Navigator.pop(context);
+                  if (controller.text != "" &&
+                      int.tryParse(controller.text) != null) {
+                    updateBillTable.call(
+                      billId,
+                      int.tryParse(controller.text)!,
+                    );
+                    Modular.get<NotPaidBillsStore>().getNotPaidBills();
+                    Navigator.pop(context);
+                  }
                 },
-                child: const Text('Cancelar'),
+                child: const Text('Transferir'),
               ),
               SizedBox(
                 height: Sizes.dp6(context),

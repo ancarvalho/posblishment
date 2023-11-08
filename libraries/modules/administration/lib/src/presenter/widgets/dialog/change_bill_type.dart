@@ -5,6 +5,7 @@ import "package:flutter_modular/flutter_modular.dart";
 import 'package:flutter_triple/flutter_triple.dart';
 
 import '../../../domain/use_cases/use_cases.dart';
+import '../bills/bills_store.dart';
 import 'bill_types_store.dart';
 
 class ChangeBillTypeDialog extends StatelessWidget {
@@ -12,17 +13,22 @@ class ChangeBillTypeDialog extends StatelessWidget {
 
   final Bill bill;
 
-  const ChangeBillTypeDialog(
-      {Key? key, required this.bill,})
-      : super(key: key);
+  ChangeBillTypeDialog({
+    Key? key,
+    required this.bill,
+  }) : super(key: key) {
+    updateTypeOfBill = Modular.get<IUpdateTypeOfBill>();
+    billTypesStore = Modular.get<BillTypesStore>();
+    newBillTypeId = ValueNotifier<String?>(bill.billTypeId);
+    billTypesStore.getBillTypes();
+  }
+
+  late final IUpdateTypeOfBill updateTypeOfBill;
+  late final BillTypesStore billTypesStore;
+  late final ValueNotifier<String?> newBillTypeId;
 
   @override
   Widget build(BuildContext context) {
-    final updateTypeOfBill = Modular.get<IUpdateTypeOfBill>();
-    final billTypesStore = Modular.get<BillTypesStore>();
-
-    final newBillTypeId = ValueNotifier<String?>(bill.billTypeId);
-    billTypesStore.getBillTypes();
     return SimpleDialog(
       title: Text("Mudar Tipo de Conta ${bill.table}"),
       alignment: Alignment.center,
@@ -42,8 +48,7 @@ class ChangeBillTypeDialog extends StatelessWidget {
                     width: 130,
                     child: CustomDropDown(
                       items: <String, String>{
-                        for (final status in state)
-                          status.id: status.name
+                        for (final status in state) status.id: status.name
                       },
                       value: newBillTypeId.value,
                       setValue: (value) => newBillTypeId.value = value,
@@ -51,12 +56,12 @@ class ChangeBillTypeDialog extends StatelessWidget {
                     ),
                   );
                 },
-                
               ),
               TextButton(
                 onPressed: () {
                   if (newBillTypeId.value != null) {
                     updateTypeOfBill.call(bill.id, newBillTypeId.value!);
+                    Modular.get<NotPaidBillsStore>().getNotPaidBills();
                   }
                   Navigator.pop(context);
                 },

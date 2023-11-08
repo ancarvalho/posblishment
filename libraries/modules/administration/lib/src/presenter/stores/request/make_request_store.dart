@@ -5,11 +5,16 @@ import "../../../domain/errors/administration_errors.dart";
 import "../../../domain/use_cases/use_cases.dart";
 
 class MakeRequestStore extends StreamStore<Failure, String> {
-  MakeRequestStore(this._createOrUpdateBill, this._getRequestItemCategorized, this.printerExtend)
-      : super("");
+  MakeRequestStore(
+    this._createOrUpdateBill,
+    this._getRequestItemCategorized,
+    this.printerExtend,
+    this.settingsStore,
+  ) : super("");
 
   final ICreateOrUpdateBill _createOrUpdateBill;
   final IGetRequestItemCategorized _getRequestItemCategorized;
+  final AbstractSettingsStore settingsStore;
   final PrinterAbstract? printerExtend;
 
   Future<void> createOrUpdateBill(NewBill bill, NewRequest request) async {
@@ -37,16 +42,27 @@ class MakeRequestStore extends StreamStore<Failure, String> {
       );
       if (failure != null) return setError(failure!);
       // debugPrint(categorizedRequest?.map((e) => "${e.categoryId}${e.categoryName}${e.productName}").join());
-      if (categorizedRequest != null) {
-        printerExtend?.printRequestItemByCategory(categorizedRequest, bill.table!,);
+      if (categorizedRequest != null &&
+          settingsStore.state.printerSettings!.enablePrinter) {
+        await printerExtend?.reconnect();
+        printerExtend
+            // ?..reconnect(
+            //   settingsStore.state.printerSettings!.printerIp!,
+            //   port: settingsStore.state.printerSettings!.printerPort,
+            // )
+            ?.printRequestItemByCategory(
+          categorizedRequest,
+          bill.table!,
+        );
+
         update(requestId);
       }
-      
     }
     AdministrationError(
-        StackTrace.current,
-        "AdministrationModule-createOrUpdateBill",
-        "",
-        "Currently Executing Action",);
+      StackTrace.current,
+      "AdministrationModule-createOrUpdateBill",
+      "",
+      "Currently Executing Action",
+    );
   }
 }

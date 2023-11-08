@@ -9,8 +9,8 @@ import '../error/error_widget.dart';
 import '../request_card/request_card_widget.dart';
 
 class BillRequestsWidget extends StatefulWidget {
-  final String billID;
-  const BillRequestsWidget({super.key, required this.billID});
+  final Bill bill;
+  const BillRequestsWidget({super.key, required this.bill});
 
   @override
   State<BillRequestsWidget> createState() => _BillRequestsWidgetState();
@@ -33,7 +33,7 @@ class _BillRequestsWidgetState extends State<BillRequestsWidget> {
   }
 
   void loadRequests() {
-    requestsStore.getBillRequests(widget.billID);
+    requestsStore.getBillRequests(widget.bill.id);
   }
 
 //TODO init store
@@ -53,6 +53,7 @@ class _BillRequestsWidgetState extends State<BillRequestsWidget> {
               itemBuilder: (context, index) {
                 return RequestCardWidget(
                   request: state[index],
+                  table: widget.bill.table,
                 );
               },
             ),
