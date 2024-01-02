@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 import 'package:bitmap/bitmap.dart';
-import 'package:flutter/foundation.dart';
+import 'package:printer/domain/connection/tcp/tcp_connection.dart';
 import 'package:printer/domain/enums/printer_size.dart';
 import 'package:printer/domain/errors/printer_erros.dart';
 import 'package:printer/text_styles.dart';
@@ -21,29 +21,32 @@ class PrinterCommands {
   static final List<int> LINE_SPACING_24 = [0x1b, 0x33, 0x18];
   static final List<int> LINE_SPACING_30 = [0x1b, 0x33, 0x1e];
 
-  static const int BARCODE_TYPE_UPCA = 65;
-  static const int BARCODE_TYPE_UPCE = 66;
-  static const int BARCODE_TYPE_EAN13 = 67;
-  static const int BARCODE_TYPE_EAN8 = 68;
-  static const int BARCODE_TYPE_ITF = 70;
-  static const int BARCODE_TYPE_128 = 73;
+  // static const int BARCODE_TYPE_UPCA = 65;
+  // static const int BARCODE_TYPE_UPCE = 66;
+  // static const int BARCODE_TYPE_EAN13 = 67;
+  // static const int BARCODE_TYPE_EAN8 = 68;
+  // static const int BARCODE_TYPE_ITF = 70;
+  // static const int BARCODE_TYPE_128 = 73;
 
-  static const int BARCODE_TEXT_POSITION_NONE = 0;
-  static const int BARCODE_TEXT_POSITION_ABOVE = 1;
-  static const int BARCODE_TEXT_POSITION_BELOW = 2;
+  // static const int BARCODE_TEXT_POSITION_NONE = 0;
+  // static const int BARCODE_TEXT_POSITION_ABOVE = 1;
+  // static const int BARCODE_TEXT_POSITION_BELOW = 2;
 
   static const int QRCODE_1 = 49;
   static const int QRCODE_2 = 50;
 
-  final DeviceConnection printerConnection;
-  final PrinterTextStyle defaultPrinterTextStyle;
+  late final DeviceConnection printerConnection;
+  late final PrinterTextStyle defaultPrinterTextStyle;
   final PrinterSize printerSize;
 
   PrinterCommands({
-    required this.printerConnection,
+    required String address,
+    int? port,
     PrinterTextStyle? textStyle,
     this.printerSize = PrinterSize.eightyMM,
-  }) : defaultPrinterTextStyle = textStyle ?? PrinterTextStyle() {
+  }) {
+    defaultPrinterTextStyle = textStyle ?? PrinterTextStyle();
+    printerConnection = TCPConnection(address: address, newPort: port);
     connect();
   }
 
@@ -61,10 +64,23 @@ class PrinterCommands {
     }
   }
 
-  void printQRCode(String text,
-      {int dotSize = 16,
-      int qrCodeType = QRCODE_2,
-      PrinterTextStyle? printerTextStyle,}) {
+  Future<void> disconnect() async {
+    try {
+      if (printerConnection.isConnected()) {
+        reset();
+        await printerConnection.closeConnection();
+      }
+    } catch (e, s) {
+      throw PrinterError(s, "PrinterLIB-Commands-disconnect", e, e.toString());
+    }
+  }
+
+  void printQRCode(
+    String text, {
+    int dotSize = 16,
+    int qrCodeType = QRCODE_2,
+    PrinterTextStyle? printerTextStyle,
+  }) {
     printerTextStyle ??= defaultPrinterTextStyle;
     if (!printerConnection.isConnected()) {
       return;
@@ -334,25 +350,25 @@ class PrinterCommands {
   }
 
   void reset() {
-    if (!printerConnection.isConnected()) {
-      return;
+    if (printerConnection.isConnected()) {
+      printerConnection.write(RESET_PRINTER);
     }
-    printerConnection.write(RESET_PRINTER);
-    return;
-  }
-
-  Future<void> disconnect() async {
-    if (printerConnection.isConnected()) await printerConnection.disconnect();
   }
 
   // fixed size columns
   void printTable(List<TableItem> table, [PrinterTextStyle? printerTextStyle]) {
     printerTextStyle ??= defaultPrinterTextStyle;
     final totalColumnsSize = table.fold(
-        0, (previousValue, element) => element.columns + previousValue,);
+      0,
+      (previousValue, element) => element.columns + previousValue,
+    );
     if (totalColumnsSize > printerTextStyle.textFont.columns) {
-      throw PrinterError(StackTrace.current, "PrinterModule-printTable", "",
-          "Total Columns size Exceeded",);
+      throw PrinterError(
+        StackTrace.current,
+        "PrinterModule-printTable",
+        "",
+        "Total Columns size Exceeded",
+      );
     }
     final wrappedText = StringBuffer();
     for (final element in table) {
@@ -370,8 +386,11 @@ class PrinterCommands {
     printText("$wrappedText\n");
   }
 
-  void printRow(List<String> texts,
-      [PrinterTextStyle? printerTextStyle, int spacing = 2,]) {
+  void printRow(
+    List<String> texts, [
+    PrinterTextStyle? printerTextStyle,
+    int spacing = 2,
+  ]) {
     printerTextStyle ??= defaultPrinterTextStyle;
 
     var totalSize = spacing;

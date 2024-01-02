@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_this
-
 import 'dart:io';
 
 import 'package:printer/domain/connection/device_connection.dart';
@@ -8,16 +6,20 @@ import 'package:printer/domain/errors/printer_erros.dart';
 class TCPConnection extends DeviceConnection {
   Socket? _socket;
   final String address;
-  final int port;
+  late final int port;
   final int timeout;
 
-  TCPConnection({required this.address, this.port = 9100, this.timeout = 5})
-      : super();
+  TCPConnection({required this.address, int? newPort, this.timeout = 5})
+      : super() {
+    port = newPort ?? 9100;
+  }
 
   @override
   bool isConnected() {
-    return this._socket != null;
+    return _socket != null;
   }
+
+
 
   @override
   Future<TCPConnection> connect() async {
@@ -26,12 +28,13 @@ class TCPConnection extends DeviceConnection {
     }
 
     try {
-      this._socket = await Socket.connect(
-        this.address,
-        this.port,
-        timeout: Duration(seconds: this.timeout),
+      _socket = await Socket.connect(
+        address,
+        port,
+        timeout: Duration(seconds: timeout),
       );
     } catch (e, s) {
+      _socket = null;
       throw PrinterError(
         s,
         "PrinterLib-Unable-to-Connect",
@@ -44,11 +47,11 @@ class TCPConnection extends DeviceConnection {
   }
 
   @override
-  Future<TCPConnection> disconnect() async {
-    if (this._socket != null) {
+  Future<void> closeConnection() async {
+    if (isConnected()) {
       try {
-        await this._socket?.close();
-        this._socket = null;
+        await _socket?.close();
+        _socket = null;
       } catch (e, s) {
         throw PrinterError(
           s,
@@ -58,16 +61,15 @@ class TCPConnection extends DeviceConnection {
         );
       }
     }
-    return this;
   }
 
   @override
   void send({int? addWaitingTime}) {
-    this._send(addWaitingTime ?? 0);
+    _send(addWaitingTime ?? 0);
   }
 
   Future<void> _send(int addWaitingTime) async {
-    if (!this.isConnected()) {
+    if (!isConnected()) {
       throw PrinterError(
         StackTrace.current,
         "PrinterLib-Error-ON-Send",
@@ -76,16 +78,8 @@ class TCPConnection extends DeviceConnection {
       );
     }
     try {
-      // the write method converts to a string
-      this._socket?.add(this.data);
-      
-
-      // final waitingTime = addWaitingTime + this.data.length / 8;
-      // await this
-      //     ._socket
-      //     ?.flush()
-      //     .timeout(Duration(milliseconds: waitingTime.toInt()));
-      this.data = [];
+      _socket?.add(data);
+      data = [];
     } catch (e, s) {
       throw PrinterError(
         s,

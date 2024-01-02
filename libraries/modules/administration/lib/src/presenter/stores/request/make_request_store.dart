@@ -42,18 +42,19 @@ class MakeRequestStore extends StreamStore<Failure, String> {
       );
       if (failure != null) return setError(failure!);
       // debugPrint(categorizedRequest?.map((e) => "${e.categoryId}${e.categoryName}${e.productName}").join());
+      //TODO setTimeout to paralel func, or run 
       if (categorizedRequest != null &&
           settingsStore.state.printerSettings!.enablePrinter) {
-        await printerExtend?.reconnect();
-        printerExtend
-            // ?..reconnect(
-            //   settingsStore.state.printerSettings!.printerIp!,
-            //   port: settingsStore.state.printerSettings!.printerPort,
-            // )
-            ?.printRequestItemByCategory(
-          categorizedRequest,
-          bill.table!,
-        );
+        await printerExtend
+            ?.reconnect()
+            .then((value) => printerExtend?.printRequestItemByCategory(
+                  categorizedRequest,
+                  bill.table!,
+                ));
+        // printerExtend?.printRequestItemByCategory(
+        //   categorizedRequest,
+        //   bill.table!,
+        // );
 
         update(requestId);
       }

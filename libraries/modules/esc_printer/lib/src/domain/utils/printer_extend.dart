@@ -12,24 +12,25 @@ class PrinterExtend implements PrinterAbstract {
 
   PrinterExtend(this.settingsStore);
 
+
+// TODO REDO
   @override
   Future<void> connect(String address, {int? port = 9100}) async {
-    await disconnectAndDestroy();
+    await disconnect();
     printer = Printer.printerTCPConnection(address: address);
   }
 
   @override
-  Future<void> disconnectAndDestroy() async {
+  Future<void> disconnect() async {
     if (printer != null) {
       await printer?.disconnect();
-      printer = null;
     }
   }
 
   @override
   Future<void> reconnect() async {
-    await printer?.printerConnection.disconnect();
-    await printer?.printerConnection.connect();
+    await printer?.disconnect();
+    await printer?.connect();
   }
 
   @override

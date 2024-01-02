@@ -1,14 +1,14 @@
-// ignore_for_file: unnecessary_this
-
 abstract class DeviceConnection {
   List<int> data = [];
 
-  void write(List<int> d) {
-    this.data += d;
+  void write(List<int> newData) {
+    // TODO Maybe Printer error in here
+    // data += newData;
+    data.addAll(newData);
   }
 
   bool isConnected();
   Future<DeviceConnection> connect();
-  Future<DeviceConnection> disconnect();
+  Future<void> closeConnection();
   void send({int? addWaitingTime});
 }

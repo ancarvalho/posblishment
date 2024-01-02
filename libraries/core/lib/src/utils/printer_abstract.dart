@@ -5,7 +5,7 @@ abstract class PrinterAbstract {
   
   Future<void> reconnect();
 
-  Future<void> disconnectAndDestroy();
+  Future<void> disconnect();
 
   // void printRequest(int table, Request request);
 

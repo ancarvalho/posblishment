@@ -350,6 +350,7 @@ class AdministrationDataSourceInternalImpl implements AdministrationDataSource {
                 BillStatus.paidWithoutCommission.index,
               ]),
             )
+            ..orderBy([ (p) => OrderingTerm(expression: p.createdAt, mode: OrderingMode.desc),])
             ..limit(10))
           .map(BillAdapter.convertToBill)
           .get();
