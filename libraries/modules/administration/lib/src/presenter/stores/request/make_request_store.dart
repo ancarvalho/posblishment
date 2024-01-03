@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:core/core.dart";
 import "package:flutter_triple/flutter_triple.dart";
 
@@ -19,6 +21,7 @@ class MakeRequestStore extends StreamStore<Failure, String> {
 
   Future<void> createOrUpdateBill(NewBill bill, NewRequest request) async {
     if (!isLoading) {
+      setLoading(true);
       Failure? failure;
       final requestId = await _createOrUpdateBill(bill, request).then(
         (value) => value.fold(
@@ -42,20 +45,21 @@ class MakeRequestStore extends StreamStore<Failure, String> {
       );
       if (failure != null) return setError(failure!);
       // debugPrint(categorizedRequest?.map((e) => "${e.categoryId}${e.categoryName}${e.productName}").join());
-      //TODO setTimeout to paralel func, or run 
+      //TODO setTimeout to paralel func, or run
       if (categorizedRequest != null &&
           settingsStore.state.printerSettings!.enablePrinter) {
-        await printerExtend
-            ?.reconnect()
-            .then((value) => printerExtend?.printRequestItemByCategory(
-                  categorizedRequest,
-                  bill.table!,
-                ));
+        Timer(Duration.zero, () {
+          printerExtend?.printRequestItemByCategory(
+            categorizedRequest,
+            bill.table!,
+          );
+        });
+
         // printerExtend?.printRequestItemByCategory(
         //   categorizedRequest,
         //   bill.table!,
         // );
-
+        setLoading(false);
         update(requestId);
       }
     }

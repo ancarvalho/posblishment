@@ -22,6 +22,7 @@ import 'package:administration/src/presenter/widgets/undelivered_requests/undeli
 import 'package:core/core.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import '../utils/printer.dart';
 import 'domain/repositories/administration_repository.dart';
 import 'domain/use_cases/cancel_bill_item.dart';
 import 'domain/use_cases/use_cases.dart';
@@ -53,7 +54,7 @@ class AdministrationModule extends Module {
     Bind.lazySingleton((i) => BillStore(i()),export: true,),
     Bind.lazySingleton((i) => BillTypesStore(i()),export: true,),
 
-
+    Bind.lazySingleton<PrinterAbstract>((i) => PrinterExtend(i()), export: true),
     //TODO Init Stores
 
     Bind.lazySingleton<ISetRequestDelivered>((i) => SetRequestDelivered(i()),),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_triple/flutter_triple.dart';
+import '../../stores/request/make_request_store.dart';
 import '../../widgets/cart/cart_card_widget.dart';
 import 'cart_store.dart';
 
@@ -18,6 +19,7 @@ class _CartPageState extends State<CartPage> {
   final cartStore = Modular.get<CartStore>();
 
   late final Disposer _cartStoreDisposer;
+  final MakeRequestStore _makeRequestStore = Modular.get<MakeRequestStore>();
 
   @override
   void initState() {
@@ -32,6 +34,14 @@ class _CartPageState extends State<CartPage> {
     super.initState();
   }
 
+  void handleRequest() {
+    if (!_makeRequestStore.isLoading) {
+      cartStore.saveChanges();
+      return displayMessageOnSnackbar(context, "Pedido esta sendo Criado");
+    }
+    displayMessageOnSnackbar(context, "Pedido esta sendo Processado");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +50,9 @@ class _CartPageState extends State<CartPage> {
         centerTitle: true,
         actions: [
           IconButton(
-              onPressed: cartStore.clearRequest, icon: const Icon(Icons.clear),)
+            onPressed: cartStore.clearRequest,
+            icon: const Icon(Icons.clear),
+          )
         ],
       ),
       body: ScopedBuilder<CartStore, Failure, Map<String, NewItem>>(
@@ -82,7 +94,7 @@ class _CartPageState extends State<CartPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: cartStore.saveChanges,
+        onPressed: handleRequest,
         child: const Icon(Icons.send),
       ),
     );

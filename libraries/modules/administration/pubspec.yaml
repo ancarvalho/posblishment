@@ -21,6 +21,8 @@ dependencies:
     
   design_system:
     path: "../../design_system"
+  printer: 
+    path: "../../printer"
 
 dev_dependencies:
   flutter_test:
@@ -30,11 +32,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-
-
-
-
 
   module:
     androidX: true

@@ -34,9 +34,6 @@ dependencies:
   
   stock:
     path: libraries/modules/stock
-  
-  esc_printer:
-    path: libraries/modules/esc_printer
 
   internal_database:
     path: libraries/internal_database

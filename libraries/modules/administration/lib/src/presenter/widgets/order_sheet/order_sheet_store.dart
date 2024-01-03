@@ -32,21 +32,24 @@ class OrderSheetStore extends NotifierStore<Failure, NewRequest> {
   }
 
   Future<void> saveChanges(FocusNode focusNode) async {
-    if (formKey.currentState!.validate() &&
-        int.tryParse(tableTextController.text) != null &&
-        state.items.isNotEmpty) {
-      await createOrUpdateBill();
-      
-      return focusNode.requestFocus();
+    try {
+      if (formKey.currentState!.validate() &&
+          int.tryParse(tableTextController.text) != null &&
+          state.items.isNotEmpty) {
+        await createOrUpdateBill();
+        clearRequest();
+        return focusNode.requestFocus();
+      }
+    } catch (e, s) {
+      setError(
+        AdministrationError(
+          s,
+          "AdministrationModule-orderSheetSaveChanges",
+          e,
+          "Error Validating",
+        ),
+      );
     }
-    setError(
-      AdministrationError(
-        StackTrace.current,
-        "AdministrationModule-orderSheetSaveChanges",
-        "",
-        "Error Validating",
-      ),
-    );
   }
 
   Future<void> createOrUpdateBill() async {

@@ -46,9 +46,8 @@ class CartStore extends NotifierStore<Failure, Map<String, NewItem>> {
     if (formKey.currentState!.validate() &&
         int.tryParse(tableTextController.text) != null &&
         state.isNotEmpty) {
-      await createOrUpdateBill();
+      return createOrUpdateBill();
 
-      return;
     }
     setError(
       AdministrationError(

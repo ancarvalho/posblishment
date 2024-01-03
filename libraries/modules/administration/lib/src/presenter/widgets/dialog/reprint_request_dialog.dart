@@ -35,16 +35,12 @@ class ReprintRequestDialog extends StatelessWidget {
         ),
       );
       if (categorizedRequest != null &&
-          _settingsStore.state.printerSettings!.enablePrinter) {
-        if (_settingsStore.state.printerSettings!.printerIp != null) {
-          await _printerExtend.reconnect();
-          _printerExtend
-
-            .printRequestItemByCategory(
-              categorizedRequest,
-              table,
-            );
-        }
+          _settingsStore.state.printerSettings!.enablePrinter &&
+          _settingsStore.state.printerSettings!.printerIp != null) {
+        _printerExtend.printRequestItemByCategory(
+          categorizedRequest,
+          table,
+        );
       }
     }
 

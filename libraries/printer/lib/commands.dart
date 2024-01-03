@@ -21,17 +21,6 @@ class PrinterCommands {
   static final List<int> LINE_SPACING_24 = [0x1b, 0x33, 0x18];
   static final List<int> LINE_SPACING_30 = [0x1b, 0x33, 0x1e];
 
-  // static const int BARCODE_TYPE_UPCA = 65;
-  // static const int BARCODE_TYPE_UPCE = 66;
-  // static const int BARCODE_TYPE_EAN13 = 67;
-  // static const int BARCODE_TYPE_EAN8 = 68;
-  // static const int BARCODE_TYPE_ITF = 70;
-  // static const int BARCODE_TYPE_128 = 73;
-
-  // static const int BARCODE_TEXT_POSITION_NONE = 0;
-  // static const int BARCODE_TEXT_POSITION_ABOVE = 1;
-  // static const int BARCODE_TEXT_POSITION_BELOW = 2;
-
   static const int QRCODE_1 = 49;
   static const int QRCODE_2 = 50;
 
@@ -47,11 +36,43 @@ class PrinterCommands {
   }) {
     defaultPrinterTextStyle = textStyle ?? PrinterTextStyle();
     printerConnection = TCPConnection(address: address, newPort: port);
-    connect();
+    check_connection();
   }
 
-  Future<void> connect() async {
+  Future<void> check_connection() async {
     try {
+      await printerConnection.connect();
+      reset();
+      await disconnect();
+    } catch (e, s) {
+      throw PrinterError(
+        s,
+        "PrinterModule-try-connection",
+        e,
+        "Unable To Check Printer Connection",
+      );
+    }
+  }
+
+  Future<void> connect({required String address, int? port}) async {
+    try {
+      await disconnect();
+      printerConnection = TCPConnection(address: address, newPort: port);
+      await printerConnection.connect();
+      reset();
+    } catch (e, s) {
+      throw PrinterError(
+        s,
+        "PrinterModule-connect",
+        e,
+        "Unable To Connect to Printer",
+      );
+    }
+  }
+
+  Future<void> reconnect() async {
+    try {
+      await disconnect();
       await printerConnection.connect();
       reset();
     } catch (e, s) {

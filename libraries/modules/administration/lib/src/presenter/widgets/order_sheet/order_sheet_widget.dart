@@ -34,6 +34,14 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
   final FocusNode codeFieldFocusNode = FocusNode();
   final FocusNode quantityFieldFocusNode = FocusNode();
 
+  void handleRequest() {
+    if (!_makeRequestStore.isLoading) {
+      _orderSheetStore.saveChanges(tableFieldFocusNode);
+      return displayMessageOnSnackbar(context, "Pedido esta sendo Criado");
+    }
+    displayMessageOnSnackbar(context, "Pedido esta sendo Processado");
+  }
+
   @override
   void initState() {
     // Solution For now
@@ -42,8 +50,11 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
         displayMessageOnSnackbar(context, error.errorMessage);
       },
       onState: (req) {
-        _orderSheetStore.clearRequest();
-        if(!Sizes.isMobile(context)) Modular.get<NotPaidBillsStore>().getNotPaidBills();
+       
+        displayMessageOnSnackbar(context, "Pedido Criado");
+        if (!Sizes.isMobile(context)) {
+          Modular.get<NotPaidBillsStore>().getNotPaidBills();
+        }
       },
     );
 
@@ -61,8 +72,6 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    
-
       body: ScopedBuilder<ProductStore, Failure, List<Product>>(
         store: _productStore,
         onState: (context, state) {
@@ -80,7 +89,7 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
                         child: TextFormField(
                           // autofocus: Sizes.isMobile(context),
                           controller: _orderSheetStore.tableTextController,
-                          focusNode:tableFieldFocusNode,
+                          focusNode: tableFieldFocusNode,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.next,
                           onFieldSubmitted: (state) {
@@ -89,8 +98,7 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
                           ],
-                          decoration:
-                              const InputDecoration(labelText: "Mesa"),
+                          decoration: const InputDecoration(labelText: "Mesa"),
                         ),
                       ),
                     ],
@@ -110,8 +118,7 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
                               index: e.key,
                               increaseORdecrease:
                                   _orderSheetStore.increaseOrDecreaseQuantity,
-                              removeItem:
-                                  _orderSheetStore.removeItemInRequests,
+                              removeItem: _orderSheetStore.removeItemInRequests,
                             ),
                           )
                           .toList(),
@@ -132,7 +139,7 @@ class _OrderSheetWidgetState extends State<OrderSheetWidget> {
       floatingActionButton: FloatingActionButton(
         tooltip: "Enviar Pedido",
         // TODO Check here
-        onPressed: () => _orderSheetStore.saveChanges(tableFieldFocusNode),
+        onPressed: handleRequest,
         child: const Icon(Icons.save),
       ),
     );

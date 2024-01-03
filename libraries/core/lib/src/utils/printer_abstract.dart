@@ -2,7 +2,8 @@ import '../../core.dart';
 
 abstract class PrinterAbstract {
   Future<void> connect(String address, {int? port = 9100});
-  
+  Future<void> checkConnection(String address, {int? port = 9100});
+
   Future<void> reconnect();
 
   Future<void> disconnect();

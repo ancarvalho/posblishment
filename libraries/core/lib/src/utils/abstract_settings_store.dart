@@ -4,5 +4,4 @@ import '../../core.dart';
 
 abstract class AbstractSettingsStore extends StreamStore<Failure, Settings> {
   AbstractSettingsStore(super.initialState);
-  
 }

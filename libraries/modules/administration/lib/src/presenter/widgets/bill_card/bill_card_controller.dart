@@ -38,7 +38,6 @@ class BillCardController {
         billTotal != null &&
         items != null &&
         settingsStore.state.printerSettings!.enablePrinter) {
-      await printer?.reconnect();
       printer?.printBill(bill!, items!, billTotal!);
     }
   }

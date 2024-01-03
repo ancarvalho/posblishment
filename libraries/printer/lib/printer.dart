@@ -1,8 +1,8 @@
 library printer;
 
 import 'package:printer/text_styles.dart';
-
 import 'commands.dart';
+
 
 class Printer {
   // Printer._({

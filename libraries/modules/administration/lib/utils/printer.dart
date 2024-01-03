@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:core/core.dart';
 import 'package:design_system/design_system.dart';
 import 'package:printer/commands.dart';
 import 'package:printer/domain/entities/entities.dart';
 import 'package:printer/domain/enums/enums.dart';
-import 'package:printer/printer.dart';
 
 class PrinterExtend implements PrinterAbstract {
   PrinterCommands? printer;
@@ -12,12 +13,15 @@ class PrinterExtend implements PrinterAbstract {
 
   PrinterExtend(this.settingsStore);
 
-
 // TODO REDO
   @override
+  Future<void> checkConnection(String address, {int? port = 9100}) async {
+    printer = PrinterCommands(address: address, port: port);
+  }
+
+  @override
   Future<void> connect(String address, {int? port = 9100}) async {
-    await disconnect();
-    printer = Printer.printerTCPConnection(address: address);
+    await printer?.connect(address: address, port: port);
   }
 
   @override
@@ -29,15 +33,16 @@ class PrinterExtend implements PrinterAbstract {
 
   @override
   Future<void> reconnect() async {
-    await printer?.disconnect();
-    await printer?.connect();
+    await printer?.reconnect();
   }
 
   @override
-  void printRequestItemByCategory(
+  Future<void> printRequestItemByCategory(
     List<RequestItemWithCategory> requestItemWithCategory,
     int table,
-  ) {
+  ) async {
+    await reconnect();
+
     final categorizedProduct = <String, List<RequestItemWithCategory>>{};
     for (final item in requestItemWithCategory) {
       if (categorizedProduct.containsKey(item.categoryName)) {
@@ -70,6 +75,7 @@ class PrinterExtend implements PrinterAbstract {
           ..cutPaper();
       }
     }
+    Timer(Duration.zero, disconnect);
   }
 
   void printEstablishmentHead(Establishment? establishment) {
@@ -101,7 +107,9 @@ class PrinterExtend implements PrinterAbstract {
   }
 
   @override
-  void printBill(Bill bill, List<Item> items, BillTotal billTotal) {
+  Future<void> printBill(Bill bill, List<Item> items, BillTotal billTotal) async {
+    await reconnect();
+
     final establishment = settingsStore.state.establishment;
     printEstablishmentHead(establishment);
 
@@ -121,6 +129,7 @@ class PrinterExtend implements PrinterAbstract {
       ..printRow(["Sem Valor Fiscal"])
       ..printRow(["Agradecemos a Preferência"])
       ..cutPaper();
+    Timer(Duration.zero, disconnect);
   }
 
   void printBillItem(List<Item> items) {
